@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title id="page-title">Dhan App</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -12,8 +12,8 @@
 [data-theme="sunset"]{--primary:#e76f51;--primary-light:#f4a261;--primary-dark:#c04a2e;--accent:#264653;--bg:#fff5f0;--border:#fdd5c6;--shadow:rgba(231,111,81,.12)}
 [data-theme="midnight"]{--primary:#bb86fc;--primary-light:#d4a8ff;--primary-dark:#985eff;--accent:#03dac6;--bg:#121212;--surface:#1e1e2e;--surface2:#252535;--text:#e0e0f0;--text2:#9999bb;--border:#333355;--shadow:rgba(187,134,252,.15)}
 [data-theme="rose"]{--primary:#c9184a;--primary-light:#ff4d6d;--primary-dark:#a4133c;--accent:#f77f00;--bg:#fff0f5;--border:#ffc8dd;--shadow:rgba(201,24,74,.12)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition);padding-bottom:80px}
 .app-wrapper{max-width:900px;margin:0 auto;padding:20px 16px 90px}
 .app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:18px 24px;background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
 .app-header h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--primary);letter-spacing:-.5px}
@@ -24,7 +24,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 #sync-text{font-size:.7rem;color:var(--text2);min-width:0}
 .card{background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border);overflow:hidden;animation:fadeUp .4s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 14px;box-shadow:0 -4px 24px var(--shadow);z-index:100;overflow-x:auto}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 14px;box-shadow:0 -4px 24px var(--shadow);z-index:100;overflow-x:auto;saf-area-inset-bottom: env(safe-area-inset-bottom)}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border-radius:var(--radius-sm);transition:var(--transition);color:var(--text2);font-size:.7rem;font-weight:600;border:none;background:none;white-space:nowrap}
 .nav-item.active{color:var(--primary)}
 .nav-item .nav-icon{font-size:1.3rem;transition:var(--transition)}
@@ -47,8 +47,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .cal-day.has-event::after{content:'';position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
 .cal-day.today::after{background:#fff}
 .cal-events{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.cal-events h3{font-size:.9rem;color:var(--text2);margin-bottom:12px;font-weight:700}
-.event-input-row{display:flex;gap:8px;margin-bottom:12px}
+.cal-events h3{font-size:.9rem;color:var(--text2);margin-bottom:12px;font-weight:700}.event-input-row{display:flex;gap:8px;margin-bottom:12px}
 .event-input-row input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:var(--transition)}
 .event-input-row input:focus{border-color:var(--primary)}
 .btn{padding:10px 18px;border-radius:var(--radius-sm);border:none;background:var(--primary);color:#fff;font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:var(--transition);white-space:nowrap}
@@ -97,8 +96,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .calc-btn.clear{background:var(--accent);color:#fff;border-color:var(--accent)}
 .calc-btn.zero{grid-column:span 2;aspect-ratio:auto}
 .settings-section{padding:24px}
-.settings-group{margin-bottom:28px}
-.settings-group-title{font-size:.78rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.settings-group{margin-bottom:28px}.settings-group-title{font-size:.78rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
 .settings-row:last-child{border-bottom:none}
 .settings-row-label{font-weight:600;font-size:.92rem}
@@ -147,8 +145,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="app-wrapper">
   <div class="app-header">
     <h1 id="app-title-display">Dhan App</h1>
-    <div class="user-badge">
-      <div class="sync-indicator">
+    <div class="user-badge">      <div class="sync-indicator">
         <span id="sync-dot"></span>
         <span id="sync-text"></span>
       </div>
@@ -197,8 +194,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <div class="result-box" id="curr-result">
         <div class="result-value" id="curr-result-val">&#8212;</div>
         <div class="result-label" id="curr-result-label">Masukkan jumlah untuk konversi</div>
-        <div class="rate-info" id="curr-rate-info"></div>
-      </div>
+        <div class="rate-info" id="curr-rate-info"></div>      </div>
       <div style="margin-top:20px"><label class="input-label">&#9889; Kurs Populer vs IDR</label><div class="quick-rates" id="quick-rates"></div></div>
     </div>
   </div>
@@ -246,11 +242,822 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
           <div class="settings-row-control"><input type="text" id="setting-name" class="settings-input-full" style="width:160px" placeholder="Nama kamu" value="Pengguna" oninput="updateProfile()"/></div>
         </div>
         <div class="settings-row">
-          <div><div class="settings-row-label">Judul Aplikasi</div><div class="settings-row-desc">Nama app di header &amp; tab browser</div></div>
-          <div class="settings-row-control"><input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()"/></div>
-        </div>
+          <div><div class="settings-row-label">Judul Aplikasi</div><div class="settings-row-desc">Nama app di header & tab browser</div></div>
+          <div class="settings-row-control"><input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()"/></div>        </div>
       </div>
       <div class="settings-group">
         <div class="settings-group-title">&#127912; Tema Warna</div>
         <div class="theme-grid" id="theme-grid">
-          <div class="theme-swatch active" da
+          <div class="theme-swatch active" data-theme="default" style="background:linear-gradient(135deg,#6C63FF,#FF6584)" onclick="setTheme('default',this)" title="Default"></div>
+          <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#0077b6,#00b4d8)" onclick="setTheme('ocean',this)" title="Ocean"></div>
+          <div class="theme-swatch" data-theme="forest" style="background:linear-gradient(135deg,#2d6a4f,#52b788)" onclick="setTheme('forest',this)" title="Forest"></div>
+          <div class="theme-swatch" data-theme="sunset" style="background:linear-gradient(135deg,#e76f51,#f4a261)" onclick="setTheme('sunset',this)" title="Sunset"></div>
+          <div class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#1e1e2e,#bb86fc)" onclick="setTheme('midnight',this)" title="Midnight"></div>
+          <div class="theme-swatch" data-theme="rose" style="background:linear-gradient(135deg,#c9184a,#ff4d6d)" onclick="setTheme('rose',this)" title="Rose"></div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-group-title">&#128274; Privasi</div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Sembunyikan Nama</div><div class="settings-row-desc">Tampil sebagai "Anonim"</div></div>
+          <div class="settings-row-control"><label class="toggle"><input type="checkbox" id="priv-hide-name" onchange="toggleHideName()"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Mode Privat Kalender</div><div class="settings-row-desc">Sembunyikan catatan</div></div>
+          <div class="settings-row-control"><label class="toggle"><input type="checkbox" id="priv-hide-events" onchange="togglePrivateEvents()"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Reset Semua Data</div><div class="settings-row-desc">Hapus state + semua patch cloud</div></div>
+          <div class="settings-row-control"><button class="btn btn-sm btn-danger" onclick="resetAll()">Reset</button></div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-group-title">&#9889; Dhan Updater</div>
+        <p style="font-size:.83rem;color:var(--text2);margin-bottom:16px;line-height:1.6">Upload file <strong>.dhan</strong> berisi perintah. Tersimpan ke Supabase &rarr; aktif di semua device, tidak hilang saat refresh.</p>
+        <div class="updater-box" id="updater-drop" onclick="document.getElementById('dhan-file-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDhanDrop(event)">
+          <div class="updater-icon">&#128230;</div>
+          <div class="updater-title">Klik atau Seret File .dhan</div>
+          <div class="updater-sub">Disimpan ke cloud &rarr; aktif permanen di semua device</div>
+        </div>
+        <input type="file" id="dhan-file-input" accept=".dhan,.txt" onchange="handleDhanFile(this.files[0])">
+        <div id="update-log" class="update-log" style="display:none"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="downloadDhanTemplate()">&#128229; Template .dhan</button>
+          <button class="btn btn-sm btn-ghost" onclick="clearUpdateLog()">Bersihkan Log</button>
+          <button class="btn btn-sm btn-ghost" onclick="manualSync()">&#9729;&#65039; Sync Sekarang</button>
+          <button class="btn btn-sm btn-danger" onclick="confirmClearPatches()">&#128465;&#65039; Hapus Semua Patch</button>
+        </div>
+        <div style="margin-top:16px">
+          <div style="font-size:.78rem;font-weight:800;color:var(--text2);margin-bottom:8px">&#128230; PATCH TERSIMPAN</div>
+          <div class="patch-list" id="patch-list"><div style="color:var(--text2);font-size:.8rem;padding:8px 0">Memuat...</div></div>
+        </div>
+        <div class="supabase-status-box">
+          <div style="font-size:.78rem;font-weight:800;color:var(--text2);margin-bottom:10px">&#9729;&#65039; STATUS SUPABASE</div>          <div class="sb-status-row"><span id="sb-dot"></span><span id="sb-text" style="color:var(--text2)">Memeriksa...</span></div>
+          <div style="font-size:.72rem;color:var(--text2);margin-top:8px">URL: <code style="color:var(--primary)">olkokmuburmgslpsiwpi.supabase.co</code></div>
+        </div>
+        <details style="margin-top:16px;font-size:.82rem;color:var(--text2)">
+          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">&#128203; Referensi Perintah .dhan</summary>
+          <div style="margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);line-height:1.9;font-family:monospace;font-size:.76rem">
+            <b style="color:var(--primary)">Identitas:</b> SET_TITLE | SET_USERNAME | SET_LANG<br>
+            <b style="color:var(--primary)">Tema:</b> SET_THEME | SET_CSS_VAR:--nama:val | SET_BG_COLOR | SET_PRIMARY_COLOR | SET_FONT<br>
+            <b style="color:var(--primary)">CSS:</b> INJECT_CSS:... | [CSS_BLOCK]...[/CSS_BLOCK]<br>
+            <b style="color:var(--primary)">JS:</b> INJECT_JS:... | [JS_BLOCK]...[/JS_BLOCK]<br>
+            <b style="color:var(--primary)">DOM:</b> SET_INNER_HTML:sel:html | SET_TEXT:sel:txt | HIDE_ELEMENT:sel | SHOW_ELEMENT:sel | APPEND_HTML:sel:html | REMOVE_ELEMENT:sel<br>
+            <b style="color:var(--primary)">HTML block:</b> [HTML_BLOCK]sel|||html[/HTML_BLOCK]<br>
+            <b style="color:var(--primary)">Nav:</b> NAV_TO:currency | ADD_NAV_TAB:id:emoji:label<br>
+            <b style="color:var(--primary)">Kalender:</b> ADD_EVENT:YYYY-MM-DD:teks | CLEAR_EVENTS | GO_TO_DATE<br>
+            <b style="color:var(--primary)">Kurs:</b> SET_CURRENCY_FROM:USD | SET_CURRENCY_TO:IDR | SET_EXCHANGE_RATE:USD:16000<br>
+            <b style="color:var(--primary)">UI:</b> SHOW_TOAST:pesan | SHOW_ALERT:pesan | SCROLL_TO:sel<br>
+            <b style="color:var(--primary)">Rebuild:</b> REPLACE_PAGE_SECTION:id:html | [REPLACE_FULL_HTML_BLOCK]...[/REPLACE_FULL_HTML_BLOCK]<br>
+            <b style="color:var(--primary)">Util:</b> LOG | VERSION | AUTHOR | DOWNLOAD_SELF:nama | RELOAD | SAVE_STATE
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" onclick="switchPage('calendar',this)"><span class="nav-icon">&#128197;</span>Kalender</button>
+  <button class="nav-item" onclick="switchPage('currency',this)"><span class="nav-icon">&#128178;</span>Kurs</button>
+  <button class="nav-item" onclick="switchPage('calculator',this)"><span class="nav-icon">&#129518;</span>Hitung</button>
+  <button class="nav-item" onclick="switchPage('settings',this)"><span class="nav-icon">&#9881;&#65039;</span>Pengaturan</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== STATE ====================
+var appState = {
+  appTitle: 'Dhan App', username: 'Pengguna', theme: 'default',
+  hideNamePrivacy: false, hideEventsPrivacy: false,
+  events: {}, calSelectedDate: null,
+  calYear: new Date().getFullYear(), calMonth: new Date().getMonth()
+};
+
+// ==================== SUPABASE ====================
+var SUPABASE_URL = 'https://olkokmuburmgslpsiwpi.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_FHgCHk8ocJPkEGWUiejlCA_BHRcN17v';
+var APP_ID = 'dhan_main';
+
+async function sbFetch(method, path, body) {
+  try {    var opts = {
+      method: method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
+    if (method === 'GET') return await res.json();
+    return res.ok;
+  } catch(e) { 
+    console.warn("Supabase Error:", e);
+    return method === 'GET' ? null : false; 
+  }
+}
+
+function setSyncStatus(s) {
+  var dot = document.getElementById('sync-dot');
+  var txt = document.getElementById('sync-text');
+  if (!dot) return;
+  var colors = { syncing:'#f59e0b', ok:'#22c55e', offline:'#94a3b8', error:'#ef4444' };
+  var labels = { syncing:'Menyimpan...', ok:'Tersimpan', offline:'Offline', error:'Gagal sync' };
+  dot.style.background = colors[s] || '#94a3b8';
+  if (txt) txt.textContent = labels[s] || '';
+  if (s === 'ok') setTimeout(function(){ if (txt) txt.textContent = ''; }, 3000);
+}
+
+// ── appState sync ──
+async function loadAppState() {
+  try { var loc = localStorage.getItem('dhanapp_state'); if (loc) appState = Object.assign({}, appState, JSON.parse(loc)); } catch(e) {}
+  var rows = await sbFetch('GET', 'dhan_state?device_id=eq.' + APP_ID + '&select=state_json&limit=1');
+  if (rows && rows.length > 0) {
+    try {
+      appState = Object.assign({}, appState, JSON.parse(rows[0].state_json));
+      localStorage.setItem('dhanapp_state', JSON.stringify(appState));
+    } catch(e) {}
+  }
+}
+
+var saveTimer = null;
+function saveState() {
+  try { localStorage.setItem('dhanapp_state', JSON.stringify(appState)); } catch(e) {}
+  clearTimeout(saveTimer);
+  setSyncStatus('syncing');
+  saveTimer = setTimeout(async function() {
+    var ok = await sbFetch('POST', 'dhan_state', { device_id: APP_ID, state_json: JSON.stringify(appState), updated_at: new Date().toISOString() });
+    setSyncStatus(ok ? 'ok' : 'error');  }, 800);
+}
+
+// ==================== DHAN PATCHES ====================
+async function savePatch(filename, rawContent) {
+  var ok = await sbFetch('POST', 'dhan_patches', {
+    app_id: APP_ID, filename: filename, content: rawContent,
+    applied_at: new Date().toISOString()
+  });
+  if (ok) {
+    log('ok', 'Cloud: patch "' + filename + '" tersimpan -> aktif di semua device');
+  } else {
+    log('err', 'Cloud gagal -> tersimpan lokal saja');
+    try {
+      var loc = JSON.parse(localStorage.getItem('dhan_patches_local') || '[]');
+      loc.push({ app_id: APP_ID, filename: filename, content: rawContent, applied_at: new Date().toISOString() });
+      localStorage.setItem('dhan_patches_local', JSON.stringify(loc));
+    } catch(e) {}
+  }
+  renderPatchList();
+  return ok;
+}
+
+async function loadAllPatches() {
+  var patches = [];
+  var rows = await sbFetch('GET', 'dhan_patches?app_id=eq.' + APP_ID + '&order=applied_at.asc&select=filename,content,applied_at');
+  if (rows && Array.isArray(rows)) patches = rows.slice();
+  try {
+    var loc = JSON.parse(localStorage.getItem('dhan_patches_local') || '[]');
+    loc.forEach(function(lp) {
+      if (!patches.find(function(p){ return p.filename===lp.filename && p.applied_at===lp.applied_at; })) patches.push(lp);
+    });
+  } catch(e) {}
+  patches.sort(function(a,b){ return new Date(a.applied_at) - new Date(b.applied_at); });
+  return patches;
+}
+
+async function replayPatches() {
+  setSyncStatus('syncing');
+  var patches = await loadAllPatches();
+  if (!patches || patches.length === 0) { setSyncStatus('ok'); renderPatchList(); return; }
+  var logEl = document.getElementById('update-log');
+  if (logEl) logEl.style.display = 'block';
+  log('info', 'Memuat ' + patches.length + ' patch dari cloud...');
+  for (var i = 0; i < patches.length; i++) {
+    await processDhanContent(patches[i].content, patches[i].filename, true);
+  }
+  log('ok', patches.length + ' patch di-replay. Semua perubahan aktif kembali.');
+  setSyncStatus('ok');
+  renderPatchList();  setTimeout(function(){ if (logEl) logEl.style.display = 'none'; }, 4000);
+}
+
+async function renderPatchList() {
+  var listEl = document.getElementById('patch-list');
+  if (!listEl) return;
+  var patches = await loadAllPatches();
+  if (!patches || patches.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--text2);font-size:.8rem;padding:8px 0">Belum ada patch tersimpan</div>'; return;
+  }
+  listEl.innerHTML = patches.map(function(p) {
+    var d = new Date(p.applied_at);
+    var time = d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID');
+    return '<div class="patch-item"><div><span class="patch-name">' + p.filename + '</span></div><span class="patch-time">' + time + '</span></div>';
+  }).join('');
+}
+
+async function confirmClearPatches() {
+  if (!confirm('Hapus SEMUA patch dari cloud dan lokal? Semua perubahan .dhan akan hilang.')) return;
+  await sbFetch('DELETE', 'dhan_patches?app_id=eq.' + APP_ID);
+  localStorage.removeItem('dhan_patches_local');
+  renderPatchList();
+  showToast('Semua patch dihapus');
+  log('ok', 'Semua patch dihapus dari cloud dan lokal');
+  var logEl = document.getElementById('update-log');
+  if(logEl) logEl.style.display = 'block';
+}
+
+async function manualSync() {
+  showToast('Menyinkronkan...');
+  setSyncStatus('syncing');
+  var ok = await sbFetch('POST', 'dhan_state', { device_id: APP_ID, state_json: JSON.stringify(appState), updated_at: new Date().toISOString() });
+  setSyncStatus(ok ? 'ok' : 'error');
+  showToast(ok ? 'Sync berhasil!' : 'Sync gagal', !ok);
+  checkSupabaseStatus();
+}
+
+async function checkSupabaseStatus() {
+  var dot = document.getElementById('sb-dot');
+  var txt = document.getElementById('sb-text');
+  if (!dot) return;
+  try {
+    var res = await fetch(SUPABASE_URL + '/rest/v1/dhan_patches?limit=1', { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } });
+    if (res.ok || res.status === 406) {
+      dot.style.background = '#22c55e';
+      txt.textContent = 'Terhubung - data tersimpan di cloud';
+    } else if (res.status === 404 || res.status === 42501) {
+      dot.style.background = '#f59e0b';
+      txt.innerHTML = 'Tabel belum dibuat. <a href="#" onclick="showSetupSQL()" style="color:var(--primary)">Lihat SQL Setup</a>';
+    } else {      dot.style.background = '#ef4444';
+      txt.textContent = 'Error: ' + res.status;
+    }
+  } catch(e) {
+    dot.style.background = '#94a3b8';
+    txt.textContent = 'Tidak bisa menjangkau Supabase';
+  }
+}
+
+function showSetupSQL() {
+  alert('Jalankan SQL ini di Supabase > SQL Editor:\n\n' +
+    'CREATE TABLE IF NOT EXISTS dhan_state (\n  device_id TEXT PRIMARY KEY,\n  state_json TEXT NOT NULL,\n  updated_at TIMESTAMPTZ DEFAULT now()\n);\nALTER TABLE dhan_state ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "allow_all" ON dhan_state FOR ALL USING (true) WITH CHECK (true);\n\n' +
+    'CREATE TABLE IF NOT EXISTS dhan_patches (\n  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,\n  app_id TEXT NOT NULL,\n  filename TEXT NOT NULL,\n  content TEXT NOT NULL,\n  applied_at TIMESTAMPTZ DEFAULT now()\n);\nALTER TABLE dhan_patches ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "allow_all" ON dhan_patches FOR ALL USING (true) WITH CHECK (true);'
+  );
+}
+
+async function resetAll() {
+  if (!confirm('Reset SEMUA data: state, patch cloud, dan lokal?')) return;
+  await sbFetch('DELETE', 'dhan_patches?app_id=eq.' + APP_ID);
+  localStorage.removeItem('dhanapp_state');
+  localStorage.removeItem('dhan_patches_local');
+  location.reload();
+}
+
+// ==================== NAVIGATION ====================
+function switchPage(name, el) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ==================== CALENDAR ====================
+var monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function renderCalendar() {
+  var yr = appState.calYear, mo = appState.calMonth;
+  var monthLabel = document.getElementById('cal-month-year');
+  if(monthLabel) monthLabel.textContent = monthNames[mo] + ' ' + yr;
+  
+  var grid = document.getElementById('cal-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  
+  var firstDay = new Date(yr, mo, 1).getDay();
+  var daysInMonth = new Date(yr, mo+1, 0).getDate();
+  var daysInPrev = new Date(yr, mo, 0).getDate();
+  var today = new Date();
+  
+  // Prev month days  for (var i = firstDay-1; i >= 0; i--) { 
+    var d = document.createElement('div'); 
+    d.className='cal-day other-month'; 
+    d.textContent=daysInPrev-i; 
+    grid.appendChild(d); 
+  }
+  
+  // Current month days
+  for (var d2 = 1; d2 <= daysInMonth; d2++) {
+    (function(day){
+      var el = document.createElement('div'); 
+      el.className = 'cal-day'; 
+      el.textContent = day;
+      var ds = yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+      if (day===today.getDate()&&mo===today.getMonth()&&yr===today.getFullYear()) el.classList.add('today');
+      if (appState.calSelectedDate===ds) el.classList.add('selected');
+      if (appState.events[ds]&&appState.events[ds].length>0) el.classList.add('has-event');
+      el.onclick = function(){ appState.calSelectedDate=ds; renderCalendar(); };
+      grid.appendChild(el);
+    })(d2);
+  }
+  
+  // Next month days
+  var total = firstDay + daysInMonth;
+  var remain = total%7===0?0:7-(total%7);
+  for (var r = 1; r <= remain; r++) { 
+    var rd = document.createElement('div'); 
+    rd.className='cal-day other-month'; 
+    rd.textContent=r; 
+    grid.appendChild(rd); 
+  }
+  renderEventList();
+}
+
+function changeMonth(dir){ 
+  appState.calMonth+=dir; 
+  if(appState.calMonth>11){appState.calMonth=0;appState.calYear++;} 
+  if(appState.calMonth<0){appState.calMonth=11;appState.calYear--;} 
+  renderCalendar(); 
+}
+
+function goToday(){ 
+  var t=new Date(); 
+  appState.calYear=t.getFullYear(); 
+  appState.calMonth=t.getMonth(); 
+  appState.calSelectedDate=getDateStr(t); 
+  renderCalendar(); 
+}
+
+function addEvent(){   var inp=document.getElementById('event-input'); 
+  if(!inp) return;
+  var txt=inp.value.trim(); 
+  if(!txt)return showToast('Tulis catatan dulu!',true); 
+  var dt=appState.calSelectedDate||getDateStr(new Date()); 
+  if(!appState.events[dt])appState.events[dt]=[]; 
+  appState.events[dt].push(txt); 
+  inp.value=''; 
+  saveState(); 
+  renderCalendar(); 
+  showToast('Catatan ditambahkan'); 
+}
+
+function deleteEvent(date,idx){ 
+  if(!appState.events[date]) return;
+  appState.events[date].splice(idx,1); 
+  if(appState.events[date].length===0)delete appState.events[date]; 
+  saveState(); 
+  renderCalendar(); 
+}
+
+function renderEventList(){
+  var list=document.getElementById('event-list'); 
+  if(!list) return;
+  list.innerHTML='';
+  var priv=appState.hideEventsPrivacy;
+  var allDates=Object.keys(appState.events).sort();
+  if(allDates.length===0){list.innerHTML='<div style="color:var(--text2);font-size:.82rem;padding:8px 0">Belum ada catatan</div>';return;}
+  allDates.forEach(function(date){
+    (appState.events[date]||[]).forEach(function(ev,idx){
+      var item=document.createElement('div'); item.className='event-item';
+      item.innerHTML='<span>'+(priv?'Tersembunyi':ev)+' <span class="event-date">'+formatDate(date)+'</span></span><button class="btn btn-sm btn-danger" onclick="deleteEvent(\''+date+'\','+idx+')">x</button>';
+      list.appendChild(item);
+    });
+  });
+}
+
+function getDateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function formatDate(s){ var p=s.split('-'); return p[2]+' '+monthNames[parseInt(p[1])-1]+' '+p[0]; }
+
+// ==================== CURRENCY ====================
+var CURRENCIES = { IDR:{name:'Rupiah',symbol:'Rp',flag:'ID'},USD:{name:'US Dollar',symbol:'$',flag:'US'},EUR:{name:'Euro',symbol:'€',flag:'EU'},GBP:{name:'Pound',symbol:'£',flag:'GB'},JPY:{name:'Yen',symbol:'¥',flag:'JP'},SGD:{name:'SGD',symbol:'S$',flag:'SG'},MYR:{name:'Ringgit',symbol:'RM',flag:'MY'},AUD:{name:'AUD',symbol:'A$',flag:'AU'},CNY:{name:'Yuan',symbol:'¥',flag:'CN'},KRW:{name:'Won',symbol:'W',flag:'KR'},SAR:{name:'Riyal',symbol:'R',flag:'SA'},AED:{name:'Dirham',symbol:'D',flag:'AE'},THB:{name:'Baht',symbol:'B',flag:'TH'},HKD:{name:'HKD',symbol:'HK$',flag:'HK'},CAD:{name:'CAD',symbol:'C$',flag:'CA'} };
+var RATES_TO_IDR = { IDR:1,USD:15800,EUR:17200,GBP:20100,JPY:107,SGD:11800,MYR:3400,AUD:10400,CNY:2200,KRW:12,SAR:4200,AED:4300,THB:450,HKD:2020,CAD:11700 };
+
+function initCurrencySelects(){
+  var from=document.getElementById('curr-from'); 
+  var to=document.getElementById('curr-to');
+  if(!from || !to) return;
+  from.innerHTML=''; to.innerHTML='';
+  Object.keys(CURRENCIES).forEach(function(code){    var info=CURRENCIES[code];
+    from.appendChild(new Option(code+' - '+info.name, code));
+    to.appendChild(new Option(code+' - '+info.name, code));
+  });
+  from.value='USD'; to.value='IDR';
+}
+
+function convertCurrency(){
+  var amountEl = document.getElementById('curr-amount');
+  var fromEl = document.getElementById('curr-from');
+  var toEl = document.getElementById('curr-to');
+  var resVal = document.getElementById('curr-result-val');
+  var resLab = document.getElementById('curr-result-label');
+  var rateInfo = document.getElementById('curr-rate-info');
+
+  if(!amountEl || !fromEl || !toEl) return;
+
+  var amount=parseFloat(amountEl.value)||0;
+  var from=fromEl.value;
+  var to=toEl.value;
+  
+  if(!amount){
+    if(resVal) resVal.textContent='—';
+    if(resLab) resLab.textContent='Masukkan jumlah';
+    if(rateInfo) rateInfo.textContent='';
+    return;
+  }
+  
+  var result=(amount*RATES_TO_IDR[from])/RATES_TO_IDR[to];
+  var rate=RATES_TO_IDR[from]/RATES_TO_IDR[to];
+  var toInfo=CURRENCIES[to]; var fromInfo=CURRENCIES[from];
+  var decimals=(to==='IDR'||to==='KRW')?0:4;
+  
+  if(resVal) resVal.textContent=toInfo.symbol+' '+result.toLocaleString('id-ID',{maximumFractionDigits:decimals});
+  if(resLab) resLab.textContent=amount.toLocaleString()+' '+from+' = '+toInfo.symbol+' '+result.toLocaleString('id-ID',{maximumFractionDigits:4})+' '+to;
+  if(rateInfo) rateInfo.textContent='1 '+from+' = '+toInfo.symbol+' '+rate.toLocaleString('id-ID',{maximumFractionDigits:4})+' '+to+' *kurs perkiraan';
+}
+
+function swapCurrencies(){ 
+  var f=document.getElementById('curr-from'); 
+  var t=document.getElementById('curr-to'); 
+  if(!f || !t) return;
+  var tmp=f.value; f.value=t.value; t.value=tmp; 
+  convertCurrency(); 
+}
+
+function renderQuickRates(){
+  var c=document.getElementById('quick-rates');
+  if(!c) return;
+  ['USD','EUR','SGD','MYR','JPY','AUD'].forEach(function(code){    var info=CURRENCIES[code]; var rate=RATES_TO_IDR[code];
+    var el=document.createElement('div'); el.className='rate-card';
+    el.innerHTML='<div class="flag">'+code+'</div><div class="code">'+code+'</div><div class="val">Rp '+rate.toLocaleString('id-ID')+'</div>';
+    el.onclick=function(){ 
+      var from=document.getElementById('curr-from'); 
+      var to=document.getElementById('curr-to'); 
+      var amt=document.getElementById('curr-amount');
+      if(from) from.value=code; 
+      if(to) to.value='IDR'; 
+      if(amt) amt.value='1'; 
+      convertCurrency(); 
+    };
+    c.appendChild(el);
+  });
+}
+
+// ==================== CALCULATOR ====================
+var calcState = { expr:'', waitingForOperand:false };
+
+function updateCalcDisplay(v){ 
+  var d=document.getElementById('calc-display');
+  if(d) d.textContent=v; 
+}
+
+function calcInput(v){
+  var d=document.getElementById('calc-display');
+  if(!d) return;
+  var isOp=['+','-','*','/'].indexOf(v)!==-1;
+  if(isOp){ 
+    document.getElementById('calc-expr').textContent=d.textContent+' '+(v==='*'?'x':v==='/'?'/':v); 
+    calcState.expr=d.textContent+v; 
+    calcState.waitingForOperand=true; 
+  } else { 
+    if(calcState.waitingForOperand||d.textContent==='0'){
+      updateCalcDisplay(v);
+      calcState.waitingForOperand=false;
+    } else {
+      updateCalcDisplay(d.textContent+v);
+    } 
+  }
+}
+
+function calcDot(){ 
+  var d=document.getElementById('calc-display'); 
+  if(d && d.textContent.indexOf('.')===-1) updateCalcDisplay(d.textContent+'.'); 
+}
+
+function calcEquals(){
+  var d=document.getElementById('calc-display'); 
+  if(!d || !calcState.expr) return;  var full=calcState.expr+d.textContent;
+  try { 
+    var r=Math.round((new Function('"use strict";return('+full+')')())*1e10)/1e10; 
+    document.getElementById('calc-expr').textContent=full+' ='; 
+    document.getElementById('calc-history').textContent=full+' = '+r.toLocaleString('id-ID'); 
+    updateCalcDisplay(r.toString()); 
+    calcState.expr=''; 
+    calcState.waitingForOperand=true; 
+  } catch(e){ 
+    updateCalcDisplay('Error'); 
+    calcState.expr=''; 
+  }
+}
+
+function calcClear(){ 
+  updateCalcDisplay('0'); 
+  var expr=document.getElementById('calc-expr');
+  if(expr) expr.textContent=''; 
+  calcState={expr:'',waitingForOperand:false}; 
+}
+
+function calcSign(){ 
+  var d=document.getElementById('calc-display'); 
+  if(d) updateCalcDisplay((parseFloat(d.textContent)*-1).toString()); 
+}
+
+function calcPercent(){ 
+  var d=document.getElementById('calc-display'); 
+  if(d) updateCalcDisplay((parseFloat(d.textContent)/100).toString()); 
+}
+
+// ==================== SETTINGS ====================
+function updateProfile(){
+  var nameEl=document.getElementById('setting-name');
+  if(!nameEl) return;
+  var name=nameEl.value.trim()||'Pengguna';
+  appState.username=name;
+  var display=appState.hideNamePrivacy?'Anonim':name;
+  var userEl=document.getElementById('header-username');
+  var avEl=document.getElementById('header-avatar');
+  if(userEl) userEl.textContent=display;
+  if(avEl) avEl.textContent=display[0].toUpperCase();
+  saveState();
+}
+
+function updateAppTitle(){
+  var titleEl=document.getElementById('setting-apptitle');
+  if(!titleEl) return;
+  var title=titleEl.value.trim()||'Dhan App';
+  appState.appTitle=title;  var dispEl=document.getElementById('app-title-display');
+  var pageEl=document.getElementById('page-title');
+  if(dispEl) dispEl.textContent=title;
+  if(pageEl) pageEl.textContent=title;
+  saveState();
+}
+
+function setTheme(theme, el){
+  document.querySelectorAll('.theme-swatch').forEach(function(s){s.classList.remove('active');});
+  if(el) el.classList.add('active');
+  if(theme==='default') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme=theme;
+  appState.theme=theme; saveState();
+}
+
+function toggleHideName(){ 
+  var chk=document.getElementById('priv-hide-name');
+  if(chk) appState.hideNamePrivacy=chk.checked; 
+  updateProfile(); 
+}
+
+function togglePrivateEvents(){ 
+  var chk=document.getElementById('priv-hide-events');
+  if(chk) appState.hideEventsPrivacy=chk.checked; 
+  renderEventList(); 
+  saveState(); 
+}
+
+function applyLoadedState(){
+  if(appState.theme&&appState.theme!=='default'){ 
+    document.documentElement.dataset.theme=appState.theme; 
+    var sw=document.querySelector('[data-theme="'+appState.theme+'"]'); 
+    if(sw){
+      document.querySelectorAll('.theme-swatch').forEach(function(s){s.classList.remove('active');}); 
+      sw.classList.add('active');
+    } 
+  }
+  var t1=document.getElementById('app-title-display');
+  var t2=document.getElementById('page-title');
+  var t3=document.getElementById('setting-apptitle');
+  if(t1) t1.textContent=appState.appTitle;
+  if(t2) t2.textContent=appState.appTitle;
+  if(t3) t3.value=appState.appTitle;
+  
+  var n1=document.getElementById('setting-name');
+  if(n1) n1.value=appState.username;
+  
+  var dn=appState.hideNamePrivacy?'Anonim':appState.username;
+  var u1=document.getElementById('header-username');
+  var u2=document.getElementById('header-avatar');  if(u1) u1.textContent=dn;
+  if(u2) u2.textContent=dn[0].toUpperCase();
+  
+  var p1=document.getElementById('priv-hide-name');
+  var p2=document.getElementById('priv-hide-events');
+  if(p1) p1.checked=appState.hideNamePrivacy;
+  if(p2) p2.checked=appState.hideEventsPrivacy;
+}
+
+// ==================== DHAN UPDATER ENGINE ====================
+function handleDhanFile(file){
+  if(!file)return;
+  var drop=document.getElementById('updater-drop');
+  if(drop) drop.classList.remove('dragover');
+  var reader=new FileReader();
+  reader.onload=function(e){ processDhanContent(e.target.result, file.name, false); };
+  reader.readAsText(file);
+  var inp=document.getElementById('dhan-file-input');
+  if(inp) inp.value='';
+}
+
+function handleDhanDrop(e){
+  e.preventDefault();
+  var drop=document.getElementById('updater-drop');
+  if(drop) drop.classList.remove('dragover');
+  var file=e.dataTransfer.files[0]; if(file) handleDhanFile(file);
+}
+
+async function processDhanContent(content, filename, silent) {
+  var logEl = document.getElementById('update-log');
+  if (!silent) { 
+    if(logEl) {
+      logEl.style.display='block'; 
+      logEl.innerHTML=''; 
+    }
+    log('info','Memproses: '+filename); 
+    log('info','─────────────────────────────────'); 
+  }
+
+  // Extract block commands [NAME]...[/NAME]
+  var blockCmds = [];
+  var processed = content.replace(/\[([A-Za-z_]+)\]([\s\S]*?)\[\/\1\]/g, function(_, name, body){
+    var cmdName = name.toUpperCase().endsWith('_BLOCK') ? name.toUpperCase() : name.toUpperCase()+'_BLOCK';
+    blockCmds.push({ cmd: cmdName, val: body }); return '@@BLOCK@@';
+  });
+
+  // Parse line commands
+  var lineCmds = [];
+  processed.split('\n').forEach(function(rawLine){
+    var line = rawLine.trim();    if (!line || line.startsWith('#') || line.startsWith('//') || line==='@@BLOCK@@') return;
+    if (/^\[.*\]$/.test(line)) return;
+    if (line.startsWith('<')) { lineCmds.push({cmd:'__HTML__',val:line}); return; }
+    var ci = line.indexOf(':');
+    if (ci===-1) lineCmds.push({cmd:line.toUpperCase().replace(/\s+/g,'_'),val:''});
+    else lineCmds.push({cmd:line.substring(0,ci).trim().toUpperCase(), val:line.substring(ci+1).trim()});
+  });
+
+  var allCmds = lineCmds.concat(blockCmds);
+  var ok=0, err=0;
+  var sep, parts, elFound, styleEl, blob, url, a, pageEl;
+
+  allCmds.forEach(function(item){
+    var cmd=item.cmd, val=item.val;
+    try {
+      if (cmd==='__HTML__') { if(!silent)log('err','Baris HTML mentah tidak valid. Gunakan SET_INNER_HTML atau [HTML_BLOCK]'); err++; return; }
+      switch(cmd) {
+        case 'VERSION': if(!silent)log('info','Versi: '+val); ok++; break;
+        case 'AUTHOR': if(!silent)log('info','Author: '+val); ok++; break;
+        case 'DESCRIPTION': if(!silent)log('info',val); ok++; break;
+        case 'LOG': if(!silent)log('info',val); ok++; break;
+        case 'SET_TITLE': 
+          appState.appTitle=val; 
+          var t1=document.getElementById('app-title-display');
+          var t2=document.getElementById('page-title');
+          var t3=document.getElementById('setting-apptitle');
+          if(t1) t1.textContent=val; 
+          if(t2) t2.textContent=val; 
+          if(t3) t3.value=val; 
+          if(!silent)log('ok','Judul -> '+val); ok++; break;
+        case 'SET_USERNAME': 
+          appState.username=val; 
+          var n1=document.getElementById('setting-name');
+          if(n1) n1.value=val; 
+          updateProfile(); 
+          if(!silent)log('ok','Username -> '+val); ok++; break;
+        case 'SET_LANG': document.documentElement.lang=val; if(!silent)log('ok','Lang -> '+val); ok++; break;
+        case 'SET_THEME':
+          var validT=['default','ocean','forest','sunset','midnight','rose'];
+          if(validT.indexOf(val.toLowerCase())!==-1){ 
+            var sw=document.querySelector('[data-theme="'+val.toLowerCase()+'"]'); 
+            if(sw)setTheme(val.toLowerCase(),sw); 
+            if(!silent)log('ok','Tema -> '+val); ok++; 
+          } else { if(!silent)log('err','Tema tidak dikenal: '+val); err++; } break;
+        case 'SET_CSS_VAR': parts=val.split(':'); if(parts.length>=2){document.documentElement.style.setProperty(parts[0].trim(),parts.slice(1).join(':').trim()); if(!silent)log('ok','CSS var '+parts[0].trim()); ok++;}else{if(!silent)log('err','Format: SET_CSS_VAR:--nama:nilai');err++;} break;
+        case 'SET_BG_COLOR': document.documentElement.style.setProperty('--bg',val); if(!silent)log('ok','--bg -> '+val); ok++; break;
+        case 'SET_PRIMARY_COLOR': document.documentElement.style.setProperty('--primary',val); if(!silent)log('ok','--primary -> '+val); ok++; break;
+        case 'SET_ACCENT_COLOR': document.documentElement.style.setProperty('--accent',val); if(!silent)log('ok','--accent -> '+val); ok++; break;
+        case 'SET_TEXT_COLOR': document.documentElement.style.setProperty('--text',val); if(!silent)log('ok','--text -> '+val); ok++; break;
+        case 'SET_BORDER_RADIUS': document.documentElement.style.setProperty('--radius',val); if(!silent)log('ok','--radius -> '+val); ok++; break;        case 'SET_FONT': var fl=document.createElement('link'); fl.rel='stylesheet'; fl.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(val)+':wght@400;600;700&display=swap'; document.head.appendChild(fl); document.body.style.fontFamily="'"+val+"',sans-serif"; if(!silent)log('ok','Font -> '+val); ok++; break;
+        case 'REPLACE_STYLE': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','theme-override'); styleEl.textContent=':root{'+val+'}'; document.querySelectorAll('style[data-dhan="theme-override"]').forEach(function(s){s.remove();}); document.head.appendChild(styleEl); if(!silent)log('ok',':root override'); ok++; break;
+        case 'INJECT_CSS': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','injected'); styleEl.textContent=val; document.head.appendChild(styleEl); if(!silent)log('ok','CSS injeksi'); ok++; break;
+        case 'CSS_BLOCK': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','block'); styleEl.textContent=val; document.head.appendChild(styleEl); if(!silent)log('ok','CSS block ('+val.trim().split('\n').length+' baris)'); ok++; break;
+        case 'REMOVE_CSS_INJECTED': document.querySelectorAll('style[data-dhan]').forEach(function(s){s.remove();}); if(!silent)log('ok','CSS injeksi dihapus'); ok++; break;
+        case 'INJECT_JS': try{(new Function(val))(); if(!silent)log('ok','JS dieksekusi'); ok++;}catch(je){if(!silent)log('err','JS error: '+je.message); err++;} break;
+        case 'JS_BLOCK': try{(new Function(val))(); if(!silent)log('ok','JS block ('+val.trim().split('\n').length+' baris)'); ok++;}catch(je){if(!silent)log('err','JS block error: '+je.message); err++;} break;
+        case 'LOAD_SCRIPT': var sc=document.createElement('script'); sc.src=val; sc.async=true; document.head.appendChild(sc); if(!silent)log('ok','Script dimuat: '+val); ok++; break;
+        case 'SET_INNER_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.innerHTML=val.substring(sep+1).trim(); if(!silent)log('ok','innerHTML diupdate'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan: '+val.substring(0,sep));err++;}}else{if(!silent)log('err','Format: SET_INNER_HTML:sel:html');err++;} break;
+        case 'HTML_BLOCK': sep=val.indexOf('|||'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.innerHTML=val.substring(sep+3).trim(); if(!silent)log('ok','HTML block injected'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}}else{if(!silent)log('err','Format: [HTML_BLOCK]sel|||html[/HTML_BLOCK]');err++;} break;
+        case 'SET_TEXT': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.textContent=val.substring(sep+1).trim(); if(!silent)log('ok','Text diupdate'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
+        case 'SET_ATTR': parts=val.split(':'); if(parts.length>=3){elFound=document.querySelector(parts[0].trim()); if(elFound){elFound.setAttribute(parts[1].trim(),parts.slice(2).join(':').trim()); if(!silent)log('ok','Attr diset'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}}else{if(!silent)log('err','Format: SET_ATTR:sel:attr:val');err++;} break;
+        case 'ADD_CLASS': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.classList.add(val.substring(sep+1).trim()); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
+        case 'REMOVE_CLASS': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.classList.remove(val.substring(sep+1).trim()); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
+        case 'HIDE_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.style.display='none'; if(!silent)log('ok','Disembunyikan: '+val); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
+        case 'SHOW_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.style.display=''; if(!silent)log('ok','Ditampilkan: '+val); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
+        case 'REMOVE_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.remove(); if(!silent)log('ok','Dihapus dari DOM'); ok++;}else{if(!silent)log('err','Tidak ditemukan');err++;} break;
+        case 'APPEND_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.insertAdjacentHTML('beforeend',val.substring(sep+1).trim()); if(!silent)log('ok','HTML di-append'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}} break;
+        case 'PREPEND_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.insertAdjacentHTML('afterbegin',val.substring(sep+1).trim()); if(!silent)log('ok','HTML di-prepend'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}} break;
+        case 'NAV_TO':
+          var navFound=false;
+          document.querySelectorAll('.nav-item').forEach(function(btn){ var oc=btn.getAttribute('onclick'); if(oc&&oc.indexOf("'"+val+"'")!==-1){btn.click();navFound=true;} });
+          if(navFound){if(!silent)log('ok','Navigasi -> '+val); ok++;}else{if(!silent)log('err','Tab tidak ditemukan: '+val+' (pilihan: calendar,currency,calculator,settings)');err++;} break;
+        case 'ADD_NAV_TAB':
+          parts=val.split(':'); if(parts.length>=3){
+            var tid=parts[0].trim(),temoji=parts[1].trim(),tlabel=parts.slice(2).join(':').trim();
+            if(!document.getElementById('page-'+tid)){
+              var np=document.createElement('div'); np.className='page card'; np.id='page-'+tid;
+              np.innerHTML='<div class="section-pad"><div class="section-title">'+temoji+' '+tlabel+'</div><div id="custom-'+tid+'-content" style="color:var(--text2);text-align:center;padding:40px 0">Tab baru</div></div>';
+              var wr=document.querySelector('.app-wrapper'); if(wr) wr.insertBefore(np,wr.lastElementChild);
+            }
+            if(!document.querySelector('.nav-item[onclick*="\''+tid+'\'"]')){
+              var nb=document.createElement('button'); nb.className='nav-item';
+              nb.innerHTML='<span class="nav-icon">'+temoji+'</span>'+tlabel;
+              nb.setAttribute('onclick',"switchPage('"+tid+"',this)");
+              var nav=document.getElementById('bottom-nav'); if(nav) nav.appendChild(nb);
+            }
+            if(!silent)log('ok','Tab "'+tlabel+'" ditambahkan'); ok++;
+          }else{if(!silent)log('err','Format: ADD_NAV_TAB:id:emoji:label');err++;} break;
+        case 'REPLACE_PAGE_SECTION': sep=val.indexOf(':'); if(sep>-1){pageEl=document.getElementById('page-'+val.substring(0,sep).trim()); if(pageEl){pageEl.innerHTML=val.substring(sep+1).trim(); if(!silent)log('ok','Page diganti'); ok++;}else{if(!silent)log('err','Page tidak ditemukan');err++;}} break;
+        case 'REPLACE_FULL_HTML_BLOCK': if(confirm('Ganti SELURUH halaman dengan HTML baru?')){document.open();document.write(val.trim());document.close(); return;}else{if(!silent)log('info','Dibatalkan');} break;
+        case 'ADD_EVENT': parts=val.split(':'); if(parts.length>=2){var ed=parts[0].trim(),et=parts.slice(1).join(':').trim(); if(/^\d{4}-\d{2}-\d{2}$/.test(ed)){if(!appState.events[ed])appState.events[ed]=[]; appState.events[ed].push(et); renderCalendar(); if(!silent)log('ok','Event: "'+et+'" @ '+ed); ok++;}else{if(!silent)log('err','Format tanggal: YYYY-MM-DD');err++;}}else{if(!silent)log('err','Format: ADD_EVENT:YYYY-MM-DD:teks');err++;} break;
+        case 'REMOVE_EVENT': parts=val.split(':'); if(parts.length>=2){var rd2=parts[0].trim(),ri=parts[1].trim(); if(ri==='all')delete appState.events[rd2]; else if(appState.events[rd2])appState.events[rd2].splice(parseInt(ri),1); renderCalendar(); if(!silent)log('ok','Event dihapus'); ok++;} break;
+        case 'CLEAR_EVENTS': appState.events={}; renderCalendar(); if(!silent)log('ok','Semua event dihapus'); ok++; break;
+        case 'GO_TO_DATE': if(/^\d{4}-\d{2}-\d{2}$/.test(val)){parts=val.split('-'); appState.calYear=parseInt(parts[0]); appState.calMonth=parseInt(parts[1])-1; appState.calSelectedDate=val; renderCalendar(); if(!silent)log('ok','Kalender -> '+val); ok++;}else{if(!silent)log('err','Format: YYYY-MM-DD');err++;} break;
+        case 'CALC_PRESET': var cd=document.getElementById('calc-display'); if(cd){cd.textContent=val; calcState={expr:'',waitingForOperand:false};} if(!silent)log('ok','Kalkulator -> '+val); ok++; break;
+        case 'CALC_EVAL': try{var cr=(new Function('"use strict";return('+val+')')());var cd2=document.getElementById('calc-display'); if(cd2){cd2.textContent=cr; var ch=document.getElementById('calc-history'); if(ch)ch.textContent=val+' = '+cr;} if(!silent)log('ok',val+' = '+cr); ok++;}catch(ce){if(!silent)log('err','Eval error: '+ce.message);err++;} break;
+        case 'SET_CURRENCY_FROM': if(CURRENCIES[val.toUpperCase()]){var cf=document.getElementById('curr-from'); if(cf){cf.value=val.toUpperCase(); convertCurrency();} if(!silent)log('ok','Kurs dari -> '+val.toUpperCase()); ok++;}else{if(!silent)log('err','Kode tidak valid: '+val);err++;} break;
+        case 'SET_CURRENCY_TO': if(CURRENCIES[val.toUpperCase()]){var ct=document.getElementById('curr-to'); if(ct){ct.value=val.toUpperCase(); convertCurrency();} if(!silent)log('ok','Kurs ke -> '+val.toUpperCase()); ok++;}else{if(!silent)log('err','Kode tidak valid: '+val);err++;} break;
+        case 'SET_CURRENCY_AMOUNT': var ca=document.getElementById('curr-amount'); if(ca){ca.value=val; convertCurrency();} if(!silent)log('ok','Jumlah -> '+val); ok++; break;        case 'SET_EXCHANGE_RATE': parts=val.split(':'); if(parts.length===2&&RATES_TO_IDR[parts[0].trim().toUpperCase()]!==undefined){RATES_TO_IDR[parts[0].trim().toUpperCase()]=parseFloat(parts[1].trim()); convertCurrency(); renderQuickRates(); if(!silent)log('ok','Rate '+parts[0].trim().toUpperCase()+' -> '+parts[1].trim()); ok++;}else{if(!silent)log('err','Format: SET_EXCHANGE_RATE:KODE:nilai');err++;} break;
+        case 'SHOW_TOAST': showToast(val); if(!silent)log('ok','Toast: "'+val+'"'); ok++; break;
+        case 'SHOW_TOAST_ERROR': showToast(val,true); ok++; break;
+        case 'SHOW_ALERT': alert(val); ok++; break;
+        case 'SCROLL_TO': elFound=document.querySelector(val); if(elFound){elFound.scrollIntoView({behavior:'smooth'}); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
+        case 'FOCUS_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.focus(); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
+        case 'SET_PRIVACY_NAME': appState.hideNamePrivacy=(val==='true'||val==='1'||val==='on'); var phn=document.getElementById('priv-hide-name'); if(phn)phn.checked=appState.hideNamePrivacy; updateProfile(); ok++; break;
+        case 'SET_PRIVACY_EVENTS': appState.hideEventsPrivacy=(val==='true'||val==='1'||val==='on'); var phe=document.getElementById('priv-hide-events'); if(phe)phe.checked=appState.hideEventsPrivacy; renderEventList(); ok++; break;
+        case 'SAVE_STATE': saveState(); if(!silent)log('ok','State disimpan'); ok++; break;
+        case 'CLEAR_STATE': localStorage.removeItem('dhanapp_state'); if(!silent)log('ok','State dihapus'); ok++; break;
+        case 'SET_STATE_KEY': sep=val.indexOf(':'); if(sep>-1){appState[val.substring(0,sep).trim()]=val.substring(sep+1).trim(); saveState(); ok++;} break;
+        case 'WAIT': ok++; break;
+        case 'RELOAD': if(val==='confirm'){if(confirm('Reload?'))location.reload();}else{setTimeout(function(){location.reload();},parseInt(val)||1000);} ok++; break;
+        case 'REDIRECT': window.location.href=val; ok++; break;
+        case 'OPEN_URL': window.open(val,'_blank'); ok++; break;
+        case 'COPY_TO_CLIPBOARD': if(navigator.clipboard) navigator.clipboard.writeText(val); ok++; break;
+        case 'SET_FAVICON': var fv=document.querySelector('link[rel="icon"]'); if(!fv){fv=document.createElement('link');fv.rel='icon';document.head.appendChild(fv);} fv.href=val; ok++; break;
+        case 'DOWNLOAD_SELF': var dh='<!DOCTYPE html>'+document.documentElement.outerHTML; blob=new Blob([dh],{type:'text/html'}); url=URL.createObjectURL(blob); a=document.createElement('a'); a.href=url; a.download=(val||'dhan-app-updated')+'.html'; a.click(); URL.revokeObjectURL(url); if(!silent)log('ok','Diunduh: '+(val||'dhan-app-updated')+'.html'); ok++; break;
+        case 'REBUILD_PAGE': if(!silent)log('info','Gunakan [REPLACE_FULL_HTML_BLOCK] untuk rebuild penuh'); break;
+        default: if(!silent)log('err','Perintah tidak dikenal: "'+cmd+'"'); err++;
+      }
+    } catch(execErr) { if(!silent)log('err','Exception "'+cmd+'": '+execErr.message); err++; }
+  });
+
+  saveState();
+  if (!silent) {
+    log('info','─────────────────────────────────');
+    log(err===0?'ok':'info','Selesai: '+ok+' berhasil, '+err+' gagal dari '+allCmds.length+' perintah');
+    showToast(err===0 ? 'Update berhasil! ('+ok+' perintah)' : 'Selesai dengan '+err+' error', err>0);
+    await savePatch(filename, content);
+  }
+}
+
+// ==================== LOG & TOAST ====================
+function log(type, msg){
+  var logEl=document.getElementById('update-log');
+  if(!logEl) return;
+  var line=document.createElement('div'); line.className='log-line log-'+type;
+  line.textContent='['+new Date().toLocaleTimeString()+'] '+msg;
+  logEl.appendChild(line); logEl.scrollTop=logEl.scrollHeight;
+}
+
+function clearUpdateLog(){ 
+  var l=document.getElementById('update-log'); 
+  if(l) { l.innerHTML=''; l.style.display='none'; } 
+}
+
+var toastTimer;
+function showToast(msg, isError){
+  var t=document.getElementById('toast');   if(!t) return;
+  t.textContent=msg;
+  t.className='toast show'+(isError?' error':'');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+function downloadDhanTemplate(){
+  var tpl='# DHAN FILE TEMPLATE\nVERSION:1.0\nAUTHOR:AI\nDESCRIPTION:Update ini\n\nSET_TITLE:Nama Baru\nSET_USERNAME:Nama Kamu\nSET_THEME:midnight\n\nSET_CSS_VAR:--primary:#ff6b35\n\n[CSS_BLOCK]\n.app-header { background: linear-gradient(135deg,#1a1a2e,#16213e) !important; }\n[/CSS_BLOCK]\n\n[JS_BLOCK]\nconsole.log("Dhan patch aktif");\n[/JS_BLOCK]\n\nADD_EVENT:2024-12-25:Selamat Natal!\nSET_CURRENCY_FROM:USD\nSHOW_TOAST:Update berhasil!\nSAVE_STATE:\n';
+  var blob=new Blob([tpl],{type:'text/plain'}); var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='template.dhan'; a.click(); URL.revokeObjectURL(url);
+  showToast('Template diunduh!');
+}
+
+// ==================== INIT ====================
+(async function init(){
+  // 1. Tampilkan UI dari localStorage dulu (instan)
+  try { var loc=localStorage.getItem('dhanapp_state'); if(loc) appState=Object.assign({},appState,JSON.parse(loc)); } catch(e){}
+  applyLoadedState(); initCurrencySelects(); convertCurrency(); renderQuickRates();
+  appState.calSelectedDate = getDateStr(new Date()); renderCalendar();
+  setSyncStatus('syncing');
+
+  // 2. Load appState dari Supabase
+  await loadAppState(); applyLoadedState(); renderCalendar(); convertCurrency();
+
+  // 3. Replay semua patch .dhan dari Supabase
+  await replayPatches();
+
+  // 4. Cek status Supabase
+  checkSupabaseStatus();
+  renderPatchList();
+})();
+</script>
+</body>
+</html>
