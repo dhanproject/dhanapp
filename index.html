@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Dhan App</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #6C63FF;
+    --primary-light: #a099ff;
+    --primary-dark: #4a43cc;
+    --accent: #FF6584;
+    --bg: #F0F4FF;
+    --surface: #ffffff;
+    --surface2: #f7f8ff;
+    --text: #2d2d3f;
+    --text2: #6b6b8a;
+    --border: #e2e6ff;
+    --shadow: rgba(108, 99, 255, 0.12);
+    --radius: 18px;
+    --radius-sm: 10px;
+    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Theme variations */
+  [data-theme="ocean"] {
+    --primary: #0077b6; --primary-light: #00b4d8; --primary-dark: #005f8a;
+    --accent: #f77f00; --bg: #e8f4fd; --border: #cce7f5; --shadow: rgba(0,119,182,0.12);
+  }
+  [data-theme="forest"] {
+    --primary: #2d6a4f; --primary-light: #52b788; --primary-dark: #1b4332;
+    --accent: #d62828; --bg: #edf7ee; --border: #c8e6d0; --shadow: rgba(45,106,79,0.12);
+  }
+  [data-theme="sunset"] {
+    --primary: #e76f51; --primary-light: #f4a261; --primary-dark: #c04a2e;
+    --accent: #264653; --bg: #fff5f0; --border: #fdd5c6; --shadow: rgba(231,111,81,0.12);
+  }
+  [data-theme="midnight"] {
+    --primary: #bb86fc; --primary-light: #d4a8ff; --primary-dark: #985eff;
+    --accent: #03dac6; --bg: #121212; --surface: #1e1e2e; --surface2: #252535;
+    --text: #e0e0f0; --text2: #9999bb; --border: #333355; --shadow: rgba(187,134,252,0.15);
+  }
+  [data-theme="rose"] {
+    --primary: #c9184a; --primary-light: #ff4d6d; --primary-dark: #a4133c;
+    --accent: #f77f00; --bg: #fff0f5; --border: #ffc8dd; --shadow: rgba(201,24,74,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  /* App Shell */
+  .app-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 90px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding: 18px 24px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .app-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+  .app-header .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text2);
+    font-size: 0.9rem;
+  }
+  .avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 0.9rem;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 14px;
+    box-shadow: 0 -4px 24px var(--shadow);
+    z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; cursor: pointer; padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition); color: var(--text2);
+    font-size: 0.72rem; font-weight: 600;
+    border: none; background: none;
+  }
+  .nav-item.active { color: var(--primary); }
+  .nav-item .nav-icon { font-size: 1.4rem; transition: var(--transition); }
+  .nav-item.active .nav-icon { transform: scale(1.15); }
+  .nav-item:hover { color: var(--primary); }
+
+  /* Tabs / Pages */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== CALENDAR ===== */
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+  .cal-nav { display: flex; gap: 8px; }
+  .cal-nav button {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 6px 12px;
+    cursor: pointer; font-weight: 700; font-size: 1rem; transition: var(--transition);
+  }
+  .cal-nav button:hover { background: var(--primary); color: white; border-color: var(--primary); }
+  .cal-body { padding: 20px 24px; }
+  .cal-days-header {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    text-align: center; margin-bottom: 10px;
+  }
+  .cal-days-header span {
+    font-size: 0.75rem; font-weight: 700; color: var(--text2); padding: 4px 0;
+  }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+  }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.88rem;
+    transition: var(--transition); position: relative;
+  }
+  .cal-day:hover { background: var(--surface2); }
+  .cal-day.other-month { color: var(--border); }
+  .cal-day.today {
+    background: var(--primary); color: white;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  .cal-day.selected {
+    background: var(--accent); color: white;
+  }
+  .cal-day.has-event::after {
+    content: ''; position: absolute; bottom: 3px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .cal-day.today::after { background: white; }
+
+  .cal-events { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .cal-events h3 { font-size: 0.9rem; color: var(--text2); margin-bottom: 12px; font-weight: 700; }
+  .event-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .event-input-row input {
+    flex: 1; padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: inherit; font-size: 0.88rem; outline: none;
+    transition: var(--transition);
+  }
+  .event-input-row input:focus { border-color: var(--primary); }
+  .btn { 
+    padding: 10px 18px; border-radius: var(--radius-sm); border: none;
+    background: var(--primary); color: white; font-family: inherit;
+    font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: var(--transition);
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+  .btn-danger { background: var(--accent); }
+  .btn-danger:hover { background: #cc3a5a; }
+  .event-list { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; }
+  .event-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--surface2);
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+  }
+  .event-item span { font-size: 0.85rem; font-weight: 600; }
+  .event-date { font-size: 0.75rem; color: var(--text2); margin-left: 8px; }
+
+  /* ===== CURRENCY ===== */
+  .section-pad { padding: 24px; }
+  .section-title {
+    font-size: 1.1rem; font-weight: 800; color: var(--primary);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+  .input-group { margin-bottom: 16px; }
+  .input-label { font-size: 0.8rem; font-weight: 700; color: var(--text2); margin-bottom: 6px; display: block; }
+  .input-row { display: flex; gap: 10px; }
+  .styled-input {
+    width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: inherit; font-size: 1rem; outline: none;
+    transition: var(--transition);
+  }
+  .styled-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
+  .styled-select {
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none;
+    transition: var(--transition); cursor: pointer; min-width: 100px;
+  }
+  .styled-select:focus { border-color: var(--primary); }
+  .swap-btn {
+    background: var(--primary); color: white; border: none; border-radius: 50%;
+    width: 44px; height: 44px; font-size: 1.3rem; cursor: pointer;
+    transition: var(--transition); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; align-self: flex-end; margin-bottom: 2px;
+  }
+  .swap-btn:hover { background: var(--primary-dark); transform: rotate(180deg); }
+  .result-box {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; border-radius: var(--radius); padding: 20px 24px;
+    text-align: center; margin-top: 16px;
+  }
+  .result-box .result-value { font-size: 2rem; font-weight: 800; }
+  .result-box .result-label { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+  .rate-info { font-size: 0.75rem; opacity: 0.7; margin-top: 8px; }
+
+  /* Popular currencies */
+  .quick-rates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+  .rate-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px;
+    text-align: center; cursor: pointer; transition: var(--transition);
+  }
+  .rate-card:hover { border-color: var(--primary); background: var(--surface); }
+  .rate-card .flag { font-size: 1.4rem; }
+  .rate-card .code { font-size: 0.75rem; font-weight: 700; color: var(--text2); margin-top: 4px; }
+  .rate-card .val { font-size: 0.9rem; font-weight: 800; color: var(--primary); }
+
+  /* ===== CALCULATOR ===== */
+  .calc-wrapper { padding: 24px; max-width: 360px; margin: 0 auto; }
+  .calc-display {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+    color: white; text-align: right; min-height: 90px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    box-shadow: 0 8px 24px var(--shadow);
+  }
+  .calc-expr { font-size: 0.85rem; opacity: 0.7; min-height: 20px; }
+  .calc-result { font-size: 2.4rem; font-weight: 800; line-height: 1.1; word-break: break-all; }
+  .calc-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .calc-btn {
+    padding: 18px; border: none; border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 1.05rem; font-weight: 700;
+    cursor: pointer; transition: var(--transition);
+    background: var(--surface2); color: var(--text);
+    border: 1.5px solid var(--border);
+    aspect-ratio: 1;
+  }
+  .calc-btn:hover { transform: scale(1.05); }
+  .calc-btn:active { transform: scale(0.97); }
+  .calc-btn.op { background: var(--surface); color: var(--primary); border-color: var(--primary-light); }
+  .calc-btn.eq { background: var(--primary); color: white; border-color: var(--primary); }
+  .calc-btn.eq:hover { background: var(--primary-dark); }
+  .calc-btn.clear { background: var(--accent); color: white; border-color: var(--accent); }
+  .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; }
+
+  /* ===== SETTINGS ===== */
+  .settings-section { padding: 24px; }
+  .settings-group { margin-bottom: 28px; }
+  .settings-group-title {
+    font-size: 0.78rem; font-weight: 800; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1.2px;
+    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-label { font-weight: 600; font-size: 0.92rem; }
+  .settings-row-desc { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+  .settings-row-control { flex-shrink: 0; margin-left: 16px; }
+
+  .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; }
+  .theme-swatch {
+    height: 42px; border-radius: var(--radius-sm); cursor: pointer;
+    border: 3px solid transparent; transition: var(--transition);
+    position: relative;
+  }
+  .theme-swatch:hover { transform: scale(1.08); }
+  .theme-swatch.active { border-color: var(--text); box-shadow: 0 4px 12px var(--shadow); }
+  .theme-swatch.active::after {
+    content: '✓'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.1rem; font-weight: 800;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .settings-input-full {
+    width: 100%; padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: inherit; font-size: 0.92rem; outline: none;
+    transition: var(--transition);
+  }
+  .settings-input-full:focus { border-color: var(--primary); }
+
+  /* Toggle */
+  .toggle { position: relative; width: 48px; height: 26px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: var(--border);
+    border-radius: 26px; cursor: pointer; transition: var(--transition);
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute;
+    left: 3px; top: 3px; width: 20px; height: 20px;
+    background: white; border-radius: 50%; transition: var(--transition);
+  }
+  .toggle input:checked + .toggle-slider { background: var(--primary); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(22px); }
+
+  /* Dhan Updater */
+  .updater-box {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 36px 24px; text-align: center; cursor: pointer;
+    transition: var(--transition); margin-bottom: 20px;
+  }
+  .updater-box:hover { border-color: var(--primary); background: var(--surface2); }
+  .updater-box.dragover { border-color: var(--primary); background: rgba(108,99,255,0.06); }
+  .updater-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .updater-title { font-weight: 800; font-size: 1rem; color: var(--primary); }
+  .updater-sub { font-size: 0.82rem; color: var(--text2); margin-top: 6px; }
+  #dhan-file-input { display: none; }
+  .update-log {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px;
+    font-family: 'Courier New', monospace; font-size: 0.8rem;
+    max-height: 200px; overflow-y: auto; color: var(--text2);
+  }
+  .update-log .log-line { margin-bottom: 4px; }
+  .update-log .log-ok { color: #27ae60; }
+  .update-log .log-err { color: var(--accent); }
+  .update-log .log-info { color: var(--primary); }
+
+  /* Notification toast */
+  .toast {
+    position: fixed; top: 20px; right: 20px; z-index: 9999;
+    background: var(--primary); color: white;
+    padding: 14px 20px; border-radius: var(--radius-sm);
+    font-weight: 700; font-size: 0.88rem;
+    box-shadow: 0 8px 24px var(--shadow);
+    transform: translateX(110%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    max-width: 280px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.error { background: var(--accent); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .quick-rates { grid-template-columns: repeat(3, 1fr); }
+    .calc-btn { padding: 14px; font-size: 0.95rem; }
+    .theme-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- Header -->
+  <div class="app-header">
+    <h1 id="app-title-display">Dhan App</h1>
+    <div class="user-badge">
+      <span id="header-username">Pengguna</span>
+      <div class="avatar" id="header-avatar">D</div>
+    </div>
+  </div>
+
+  <!-- Calendar Page -->
+  <div class="page active card" id="page-calendar">
+    <div class="cal-header">
+      <h2 id="cal-month-year">Januari 2024</h2>
+      <div class="cal-nav">
+        <button onclick="changeMonth(-1)">‹</button>
+        <button onclick="goToday()">Hari Ini</button>
+        <button onclick="changeMonth(1)">›</button>
+      </div>
+    </div>
+    <div class="cal-body">
+      <div class="cal-days-header">
+        <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span>
+        <span>Kam</span><span>Jum</span><span>Sab</span>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-events">
+        <h3>📌 Catatan / Event</h3>
+        <div class="event-input-row">
+          <input type="text" id="event-input" placeholder="Tambah catatan untuk tanggal terpilih..." />
+          <button class="btn" onclick="addEvent()">+ Tambah</button>
+        </div>
+        <div class="event-list" id="event-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currency Page -->
+  <div class="page card" id="page-currency">
+    <div class="section-pad">
+      <div class="section-title">💱 Konverter Mata Uang</div>
+      <div class="input-group">
+        <label class="input-label">Jumlah</label>
+        <input type="number" id="curr-amount" class="styled-input" value="1" oninput="convertCurrency()" />
+      </div>
+      <div class="input-row" style="align-items:flex-end;gap:10px;">
+        <div style="flex:1">
+          <label class="input-label">Dari</label>
+          <select id="curr-from" class="styled-select" style="width:100%" onchange="convertCurrency()">
+          </select>
+        </div>
+        <button class="swap-btn" onclick="swapCurrencies()" title="Tukar">⇄</button>
+        <div style="flex:1">
+          <label class="input-label">Ke</label>
+          <select id="curr-to" class="styled-select" style="width:100%" onchange="convertCurrency()">
+          </select>
+        </div>
+      </div>
+      <div class="result-box" id="curr-result">
+        <div class="result-value" id="curr-result-val">—</div>
+        <div class="result-label" id="curr-result-label">Masukkan jumlah untuk konversi</div>
+        <div class="rate-info" id="curr-rate-info"></div>
+      </div>
+      <div style="margin-top:20px;">
+        <label class="input-label">⚡ Kurs Populer vs IDR (1 unit)</label>
+        <div class="quick-rates" id="quick-rates"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculator Page -->
+  <div class="page card" id="page-calculator">
+    <div class="calc-wrapper">
+      <div class="section-title">🧮 Kalkulator</div>
+      <div class="calc-display">
+        <div class="calc-expr" id="calc-expr"></div>
+        <div class="calc-result" id="calc-display">0</div>
+      </div>
+      <div class="calc-grid">
+        <button class="calc-btn clear" onclick="calcClear()">AC</button>
+        <button class="calc-btn op" onclick="calcSign()">+/-</button>
+        <button class="calc-btn op" onclick="calcPercent()">%</button>
+        <button class="calc-btn op" onclick="calcInput('/')">÷</button>
+
+        <button class="calc-btn" onclick="calcInput('7')">7</button>
+        <button class="calc-btn" onclick="calcInput('8')">8</button>
+        <button class="calc-btn" onclick="calcInput('9')">9</button>
+        <button class="calc-btn op" onclick="calcInput('*')">×</button>
+
+        <button class="calc-btn" onclick="calcInput('4')">4</button>
+        <button class="calc-btn" onclick="calcInput('5')">5</button>
+        <button class="calc-btn" onclick="calcInput('6')">6</button>
+        <button class="calc-btn op" onclick="calcInput('-')">−</button>
+
+        <button class="calc-btn" onclick="calcInput('1')">1</button>
+        <button class="calc-btn" onclick="calcInput('2')">2</button>
+        <button class="calc-btn" onclick="calcInput('3')">3</button>
+        <button class="calc-btn op" onclick="calcInput('+')">+</button>
+
+        <button class="calc-btn zero" onclick="calcInput('0')">0</button>
+        <button class="calc-btn" onclick="calcDot()">.</button>
+        <button class="calc-btn eq" onclick="calcEquals()">=</button>
+      </div>
+      <div style="margin-top:16px;text-align:center;color:var(--text2);font-size:0.78rem;">
+        Riwayat: <span id="calc-history" style="color:var(--text)">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Page -->
+  <div class="page card" id="page-settings">
+    <div class="settings-section">
+
+      <!-- Profile -->
+      <div class="settings-group">
+        <div class="settings-group-title">👤 Profil</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Nama Pengguna</div>
+            <div class="settings-row-desc">Nama yang tampil di header</div>
+          </div>
+          <div class="settings-row-control">
+            <input type="text" id="setting-name" class="settings-input-full" style="width:160px" placeholder="Nama kamu" value="Pengguna" oninput="updateProfile()" />
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Judul Aplikasi</div>
+            <div class="settings-row-desc">Nama app di header & tab browser</div>
+          </div>
+          <div class="settings-row-control">
+            <input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="settings-group">
+        <div class="settings-group-title">🎨 Tema Warna</div>
+        <div class="theme-grid" id="theme-grid">
+          <div class="theme-swatch active" data-theme="default" style="background:linear-gradient(135deg,#6C63FF,#FF6584)" onclick="setTheme('default',this)" title="Default"></div>
+          <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#0077b6,#00b4d8)" onclick="setTheme('ocean',this)" title="Ocean"></div>
+          <div class="theme-swatch" data-theme="forest" style="background:linear-gradient(135deg,#2d6a4f,#52b788)" onclick="setTheme('forest',this)" title="Forest"></div>
+          <div class="theme-swatch" data-theme="sunset" style="background:linear-gradient(135deg,#e76f51,#f4a261)" onclick="setTheme('sunset',this)" title="Sunset"></div>
+          <div class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#1e1e2e,#bb86fc)" onclick="setTheme('midnight',this)" title="Midnight"></div>
+          <div class="theme-swatch" data-theme="rose" style="background:linear-gradient(135deg,#c9184a,#ff4d6d)" onclick="setTheme('rose',this)" title="Rose"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer" 
+                onclick="document.querySelector('[data-theme=default]').click()">🟣 Default</span>
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
+                onclick="document.querySelector('[data-theme=ocean]').click()">🔵 Ocean</span>
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
+                onclick="document.querySelector('[data-theme=forest]').click()">🟢 Forest</span>
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
+                onclick="document.querySelector('[data-theme=sunset]').click()">🟠 Sunset</span>
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
+                onclick="document.querySelector('[data-theme=midnight]').click()">🌙 Midnight</span>
+          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
+                onclick="document.querySelector('[data-theme=rose]').click()">🌹 Rose</span>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div class="settings-group">
+        <div class="settings-group-title">🔒 Privasi</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Sembunyikan Nama</div>
+            <div class="settings-row-desc">Tampilkan nama sebagai "Anonim"</div>
+          </div>
+          <div class="settings-row-control">
+            <label class="toggle">
+              <input type="checkbox" id="priv-hide-name" onchange="toggleHideName()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Mode Privat</div>
+            <div class="settings-row-desc">Sembunyikan catatan kalender</div>
+          </div>
+          <div class="settings-row-control">
+            <label class="toggle">
+              <input type="checkbox" id="priv-hide-events" onchange="togglePrivateEvents()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Hapus Semua Data</div>
+            <div class="settings-row-desc">Reset kalender & pengaturan tersimpan</div>
+          </div>
+          <div class="settings-row-control">
+            <button class="btn btn-sm btn-danger" onclick="clearAllData()">Hapus</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dhan Updater -->
+      <div class="settings-group">
+        <div class="settings-group-title">⚡ Dhan Updater</div>
+        <p style="font-size:0.83rem;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+          Upload file <strong>.dhan</strong> (sebenarnya file .txt) berisi instruksi pembaruan untuk mengupdate konfigurasi, pengaturan, atau catatan aplikasi ini secara otomatis.
+        </p>
+        <div class="updater-box" id="updater-drop" onclick="document.getElementById('dhan-file-input').click()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="handleDhanDrop(event)">
+          <div class="updater-icon">📦</div>
+          <div class="updater-title">Klik atau Seret File .dhan</div>
+          <div class="updater-sub">Format file: teks berisi perintah pembaruan</div>
+        </div>
+        <input type="file" id="dhan-file-input" accept=".dhan,.txt" onchange="handleDhanFile(this.files[0])">
+        <div id="update-log" class="update-log" style="display:none"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm" onclick="downloadDhanTemplate()">📥 Unduh Template .dhan</button>
+          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="clearUpdateLog()">Bersihkan Log</button>
+        </div>
+        <details style="margin-top:16px;font-size:0.82rem;color:var(--text2)">
+          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">📋 Format Perintah .dhan</summary>
+          <div style="margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);line-height:2;font-family:monospace">
+            SET_TITLE:NamaAplikasimu<br>
+            SET_USERNAME:NamaKamu<br>
+            SET_THEME:ocean<br>
+            ADD_EVENT:2024-12-25:Selamat Natal!<br>
+            CLEAR_EVENTS:<br>
+            SET_CURRENCY_FROM:USD<br>
+            SET_CURRENCY_TO:IDR<br>
+            SHOW_TOAST:Pembaruan berhasil!<br>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchPage('calendar',this)">
+    <span class="nav-icon">📅</span>Kalender
+  </button>
+  <button class="nav-item" onclick="switchPage('currency',this)">
+    <span class="nav-icon">💱</span>Kurs
+  </button>
+  <button class="nav-item" onclick="switchPage('calculator',this)">
+    <span class="nav-icon">🧮</span>Hitung
+  </button>
+  <button class="nav-item" onclick="switchPage('settings',this)">
+    <span class="nav-icon">⚙️</span>Pengaturan
+  </button>
+</nav>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== STATE ====================
+let appState = {
+  appTitle: 'Dhan App',
+  username: 'Pengguna',
+  theme: 'default',
+  hideNamePrivacy: false,
+  hideEventsPrivacy: false,
+  events: {}, // { 'YYYY-MM-DD': ['event1','event2'] }
+  calSelectedDate: null,
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+};
+
+// Load from localStorage
+function loadState() {
+  try {
+    const saved = localStorage.getItem('dhanapp_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      appState = { ...appState, ...parsed };
+    }
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem('dhanapp_state', JSON.stringify(appState)); } catch(e) {}
+}
+
+// ==================== NAVIGATION ====================
+function switchPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+}
+
+// ==================== CALENDAR ====================
+const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function renderCalendar() {
+  const { calYear, calMonth } = appState;
+  document.getElementById('cal-month-year').textContent = `${monthNames[calMonth]} ${calYear}`;
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  
+  // Prev month days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = document.createElement('div');
+    d.className = 'cal-day other-month';
+    d.textContent = daysInPrev - i;
+    grid.appendChild(d);
+  }
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) {
+      el.classList.add('today');
+    }
+    if (appState.calSelectedDate === dateStr) el.classList.add('selected');
+    if (appState.events[dateStr] && appState.events[dateStr].length > 0) el.classList.add('has-event');
+    el.onclick = () => selectDate(dateStr);
+    grid.appendChild(el);
+  }
+  // Next month
+  const total = firstDay + daysInMonth;
+  const remain = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let d = 1; d <= remain; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day other-month';
+    el.textContent = d;
+    grid.appendChild(el);
+  }
+  renderEventList();
+}
+
+function selectDate(dateStr) {
+  appState.calSelectedDate = dateStr;
+  renderCalendar();
+}
+
+function changeMonth(dir) {
+  appState.calMonth += dir;
+  if (appState.calMonth > 11) { appState.calMonth = 0; appState.calYear++; }
+  if (appState.calMonth < 0) { appState.calMonth = 11; appState.calYear--; }
+  renderCalendar();
+}
+
+function goToday() {
+  const t = new Date();
+  appState.calYear = t.getFullYear();
+  appState.calMonth = t.getMonth();
+  const ds = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  appState.calSelectedDate = ds;
+  renderCalendar();
+}
+
+function addEvent() {
+  const input = document.getElementById('event-input');
+  const txt = input.value.trim();
+  if (!txt) return showToast('Tulis catatan terlebih dahulu!', true);
+  const date = appState.calSelectedDate || getDateStr(new Date());
+  if (!appState.events[date]) appState.events[date] = [];
+  appState.events[date].push(txt);
+  input.value = '';
+  saveState();
+  renderCalendar();
+  showToast('Catatan ditambahkan ✓');
+}
+
+function deleteEvent(date, idx) {
+  appState.events[date].splice(idx, 1);
+  if (appState.events[date].length === 0) delete appState.events[date];
+  saveState();
+  renderCalendar();
+}
+
+function renderEventList() {
+  const list = document.getElementById('event-list');
+  list.innerHTML = '';
+  const isPrivate = appState.hideEventsPrivacy;
+  const allDates = Object.keys(appState.events).sort();
+  if (allDates.length === 0) {
+    list.innerHTML = '<div style="color:var(--text2);font-size:0.82rem;padding:8px 0">Belum ada catatan</div>';
+    return;
+  }
+  allDates.forEach(date => {
+    (appState.events[date] || []).forEach((ev, idx) => {
+      const item = document.createElement('div');
+      item.className = 'event-item';
+      item.innerHTML = `
+        <span>${isPrivate ? '🔒 Tersembunyi' : ev} <span class="event-date">${formatDate(date)}</span></span>
+        <button class="btn btn-sm btn-danger" onclick="deleteEvent('${date}',${idx})">✕</button>
+      `;
+      list.appendChild(item);
+    });
+  });
+}
+
+function getDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatDate(s) {
+  const [y,m,d] = s.split('-');
+  return `${d} ${monthNames[parseInt(m)-1]} ${y}`;
+}
+
+// ==================== CURRENCY ====================
+const CURRENCIES = {
+  IDR: { name: 'Rupiah', symbol: 'Rp', flag: '🇮🇩' },
+  USD: { name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
+  EUR: { name: 'Euro', symbol: '€', flag: '🇪🇺' },
+  GBP: { name: 'Pound Sterling', symbol: '£', flag: '🇬🇧' },
+  JPY: { name: 'Yen Jepang', symbol: '¥', flag: '🇯🇵' },
+  SGD: { name: 'Dollar Singapura', symbol: 'S$', flag: '🇸🇬' },
+  MYR: { name: 'Ringgit Malaysia', symbol: 'RM', flag: '🇲🇾' },
+  AUD: { name: 'Dollar Australia', symbol: 'A$', flag: '🇦🇺' },
+  CNY: { name: 'Yuan China', symbol: '¥', flag: '🇨🇳' },
+  KRW: { name: 'Won Korea', symbol: '₩', flag: '🇰🇷' },
+  SAR: { name: 'Riyal Saudi', symbol: '﷼', flag: '🇸🇦' },
+  AED: { name: 'Dirham UAE', symbol: 'د.إ', flag: '🇦🇪' },
+  THB: { name: 'Baht Thailand', symbol: '฿', flag: '🇹🇭' },
+  HKD: { name: 'Dollar HK', symbol: 'HK$', flag: '🇭🇰' },
+  CAD: { name: 'Dollar Kanada', symbol: 'CA$', flag: '🇨🇦' },
+};
+
+// Approximate rates to IDR
+const RATES_TO_IDR = {
+  IDR: 1, USD: 15800, EUR: 17200, GBP: 20100, JPY: 107,
+  SGD: 11800, MYR: 3400, AUD: 10400, CNY: 2200, KRW: 12,
+  SAR: 4200, AED: 4300, THB: 450, HKD: 2020, CAD: 11700,
+};
+
+function initCurrencySelects() {
+  const from = document.getElementById('curr-from');
+  const to = document.getElementById('curr-to');
+  from.innerHTML = ''; to.innerHTML = '';
+  Object.entries(CURRENCIES).forEach(([code, info]) => {
+    const opt1 = new Option(`${info.flag} ${code} - ${info.name}`, code);
+    const opt2 = new Option(`${info.flag} ${code} - ${info.name}`, code);
+    from.appendChild(opt1);
+    to.appendChild(opt2);
+  });
+  from.value = 'USD';
+  to.value = 'IDR';
+}
+
+function convertCurrency() {
+  const amount = parseFloat(document.getElementById('curr-amount').value) || 0;
+  const from = document.getElementById('curr-from').value;
+  const to = document.getElementById('curr-to').value;
+  if (!amount) {
+    document.getElementById('curr-result-val').textContent = '—';
+    document.getElementById('curr-result-label').textContent = 'Masukkan jumlah untuk konversi';
+    document.getElementById('curr-rate-info').textContent = '';
+    return;
+  }
+  const inIDR = amount * RATES_TO_IDR[from];
+  const result = inIDR / RATES_TO_IDR[to];
+  const rate = RATES_TO_IDR[from] / RATES_TO_IDR[to];
+  const toInfo = CURRENCIES[to];
+  const fromInfo = CURRENCIES[from];
+  document.getElementById('curr-result-val').textContent = 
+    `${toInfo.symbol} ${result.toLocaleString('id-ID', {maximumFractionDigits: to==='IDR'||to==='KRW'?0:4})}`;
+  document.getElementById('curr-result-label').textContent = 
+    `${amount.toLocaleString()} ${from} = ${toInfo.symbol} ${result.toLocaleString('id-ID', {maximumFractionDigits:4})} ${to}`;
+  document.getElementById('curr-rate-info').textContent = 
+    `1 ${from} = ${toInfo.symbol} ${rate.toLocaleString('id-ID', {maximumFractionDigits:4})} ${to} • *kurs perkiraan`;
+}
+
+function swapCurrencies() {
+  const from = document.getElementById('curr-from');
+  const to = document.getElementById('curr-to');
+  [from.value, to.value] = [to.value, from.value];
+  convertCurrency();
+}
+
+function renderQuickRates() {
+  const container = document.getElementById('quick-rates');
+  const featured = ['USD','EUR','SGD','MYR','JPY','AUD'];
+  container.innerHTML = featured.map(code => {
+    const info = CURRENCIES[code];
+    const rate = RATES_TO_IDR[code];
+    return `<div class="rate-card" onclick="setQuickRate('${code}')">
+      <div class="flag">${info.flag}</div>
+      <div class="code">${code}</div>
+      <div class="val">Rp ${rate.toLocaleString('id-ID')}</div>
+    </div>`;
+  }).join('');
+}
+
+function setQuickRate(code) {
+  document.getElementById('curr-from').value = code;
+  document.getElementById('curr-to').value = 'IDR';
+  document.getElementById('curr-amount').value = '1';
+  convertCurrency();
+}
+
+// ==================== CALCULATOR ====================
+let calcState = { expr: '', waitingForOperand: false, lastResult: null };
+
+function updateCalcDisplay(val) {
+  document.getElementById('calc-display').textContent = val;
+}
+
+function calcInput(val) {
+  const display = document.getElementById('calc-display');
+  const isOp = ['+','-','*','/'].includes(val);
+  
+  if (isOp) {
+    const cur = display.textContent;
+    document.getElementById('calc-expr').textContent = cur + ' ' + (val==='*'?'×':val==='/'?'÷':val);
+    calcState.expr = cur + val;
+    calcState.waitingForOperand = true;
+  } else {
+    if (calcState.waitingForOperand || display.textContent === '0') {
+      updateCalcDisplay(val);
+      calcState.waitingForOperand = false;
+    } else {
+      updateCalcDisplay(display.textContent + val);
+    }
+    calcState.expr = (calcState.expr || '') + '';
+  }
+}
+
+function calcDot() {
+  const d = document.getElementById('calc-display');
+  if (!d.textContent.includes('.')) updateCalcDisplay(d.textContent + '.');
+}
+
+function calcEquals() {
+  const display = document.getElementById('calc-display');
+  const exprEl = document.getElementById('calc-expr');
+  const full = calcState.expr + display.textContent;
+  if (!calcState.expr) return;
+  try {
+    const result = Function('"use strict"; return (' + full + ')')();
+    const rounded = Math.round(result * 1e10) / 1e10;
+    exprEl.textContent = full.replace(/\*/g,'×').replace(/\//g,'÷') + ' =';
+    document.getElementById('calc-history').textContent = 
+      full.replace(/\*/g,'×').replace(/\//g,'÷') + ' = ' + rounded.toLocaleString('id-ID');
+    updateCalcDisplay(rounded.toString());
+    calcState.expr = '';
+    calcState.waitingForOperand = true;
+  } catch(e) {
+    updateCalcDisplay('Error');
+    calcState.expr = '';
+  }
+}
+
+function calcClear() {
+  updateCalcDisplay('0');
+  document.getElementById('calc-expr').textContent = '';
+  calcState = { expr: '', waitingForOperand: false };
+}
+
+function calcSign() {
+  const d = document.getElementById('calc-display');
+  updateCalcDisplay((parseFloat(d.textContent) * -1).toString());
+}
+
+function calcPercent() {
+  const d = document.getElementById('calc-display');
+  updateCalcDisplay((parseFloat(d.textContent) / 100).toString());
+}
+
+// ==================== SETTINGS ====================
+function updateProfile() {
+  const name = document.getElementById('setting-name').value.trim() || 'Pengguna';
+  appState.username = name;
+  const display = appState.hideNamePrivacy ? 'Anonim' : name;
+  document.getElementById('header-username').textContent = display;
+  document.getElementById('header-avatar').textContent = display[0].toUpperCase();
+  saveState();
+}
+
+function updateAppTitle() {
+  const title = document.getElementById('setting-apptitle').value.trim() || 'Dhan App';
+  appState.appTitle = title;
+  document.getElementById('app-title-display').textContent = title;
+  document.getElementById('page-title').textContent = title;
+  saveState();
+}
+
+function setTheme(theme, el) {
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.documentElement.dataset.theme = theme === 'default' ? '' : theme;
+  if (theme === 'default') delete document.documentElement.dataset.theme;
+  appState.theme = theme;
+  saveState();
+}
+
+function toggleHideName() {
+  appState.hideNamePrivacy = document.getElementById('priv-hide-name').checked;
+  updateProfile();
+  saveState();
+}
+
+function togglePrivateEvents() {
+  appState.hideEventsPrivacy = document.getElementById('priv-hide-events').checked;
+  renderEventList();
+  saveState();
+  showToast(appState.hideEventsPrivacy ? '🔒 Mode privat aktif' : '🔓 Mode privat nonaktif');
+}
+
+function clearAllData() {
+  if (!confirm('Yakin ingin menghapus semua data? Aksi ini tidak bisa dibatalkan.')) return;
+  localStorage.removeItem('dhanapp_state');
+  location.reload();
+}
+
+// ==================== DHAN UPDATER ====================
+function handleDhanFile(file) {
+  if (!file) return;
+  if (!file.name.endsWith('.dhan') && !file.name.endsWith('.txt')) {
+    showToast('File harus berekstensi .dhan atau .txt', true);
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => processDhanContent(e.target.result, file.name);
+  reader.readAsText(file);
+  document.getElementById('dhan-file-input').value = '';
+  document.getElementById('updater-drop').classList.remove('dragover');
+}
+
+function handleDhanDrop(e) {
+  e.preventDefault();
+  document.getElementById('updater-drop').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleDhanFile(file);
+}
+
+function processDhanContent(content, filename) {
+  const logEl = document.getElementById('update-log');
+  logEl.style.display = 'block';
+  logEl.innerHTML = '';
+  log('info', `📦 Memproses file: ${filename}`);
+  
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  let successCount = 0, errorCount = 0;
+
+  lines.forEach(line => {
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) { log('err', `❌ Format tidak valid: "${line}"`); errorCount++; return; }
+    const cmd = line.substring(0, colonIdx).trim().toUpperCase();
+    const val = line.substring(colonIdx + 1).trim();
+
+    switch(cmd) {
+      case 'SET_TITLE':
+        appState.appTitle = val;
+        document.getElementById('app-title-display').textContent = val;
+        document.getElementById('page-title').textContent = val;
+        document.getElementById('setting-apptitle').value = val;
+        log('ok', `✅ Judul diubah ke: "${val}"`); successCount++; break;
+
+      case 'SET_USERNAME':
+        appState.username = val;
+        document.getElementById('setting-name').value = val;
+        updateProfile();
+        log('ok', `✅ Nama pengguna: "${val}"`); successCount++; break;
+
+      case 'SET_THEME':
+        const validThemes = ['default','ocean','forest','sunset','midnight','rose'];
+        if (validThemes.includes(val.toLowerCase())) {
+          const swatch = document.querySelector(`[data-theme="${val.toLowerCase()}"]`);
+          if (swatch) setTheme(val.toLowerCase(), swatch);
+          log('ok', `✅ Tema diubah ke: "${val}"`); successCount++;
+        } else {
+          log('err', `❌ Tema tidak dikenal: "${val}". Pilihan: ${validThemes.join(', ')}`); errorCount++;
+        }
+        break;
+
+      case 'ADD_EVENT':
+        const parts = val.split(':');
+        if (parts.length >= 2) {
+          const date = parts[0].trim();
+          const eventText = parts.slice(1).join(':').trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            if (!appState.events[date]) appState.events[date] = [];
+            appState.events[date].push(eventText);
+            renderCalendar();
+            log('ok', `✅ Event ditambahkan: "${eventText}" pada ${date}`); successCount++;
+          } else {
+            log('err', `❌ Format tanggal salah: "${date}" (gunakan YYYY-MM-DD)`); errorCount++;
+          }
+        } else {
+          log('err', `❌ Format ADD_EVENT: ADD_EVENT:YYYY-MM-DD:teks event`); errorCount++;
+        }
+        break;
+
+      case 'CLEAR_EVENTS':
+        appState.events = {};
+        renderCalendar();
+        log('ok', '✅ Semua event dihapus'); successCount++; break;
+
+      case 'SET_CURRENCY_FROM':
+        if (CURRENCIES[val.toUpperCase()]) {
+          document.getElementById('curr-from').value = val.toUpperCase();
+          convertCurrency();
+          log('ok', `✅ Mata uang asal: ${val.toUpperCase()}`); successCount++;
+        } else { log('err', `❌ Kode mata uang tidak valid: "${val}"`); errorCount++; }
+        break;
+
+      case 'SET_CURRENCY_TO':
+        if (CURRENCIES[val.toUpperCase()]) {
+          document.getElementById('curr-to').value = val.toUpperCase();
+          convertCurrency();
+          log('ok', `✅ Mata uang tujuan: ${val.toUpperCase()}`); successCount++;
+        } else { log('err', `❌ Kode mata uang tidak valid: "${val}"`); errorCount++; }
+        break;
+
+      case 'SHOW_TOAST':
+        showToast(val);
+        log('ok', `✅ Toast ditampilkan: "${val}"`); successCount++; break;
+
+      default:
+        log('err', `❌ Perintah tidak dikenal: "${cmd}"`); errorCount++;
+    }
+  });
+
+  saveState();
+  log('info', `─────────────────────────────────`);
+  log(errorCount === 0 ? 'ok' : 'info', 
+      `📊 Selesai: ${successCount} berhasil, ${errorCount} gagal dari ${lines.length} baris`);
+  showToast(errorCount === 0 ? `✅ Update berhasil! (${successCount} perintah)` : `⚠️ Update selesai dengan ${errorCount} error`, errorCount > 0);
+}
+
+function log(type, msg) {
+  const logEl = document.getElementById('update-log');
+  const line = document.createElement('div');
+  line.className = `log-line log-${type}`;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearUpdateLog() {
+  const logEl = document.getElementById('update-log');
+  logEl.innerHTML = '';
+  logEl.style.display = 'none';
+}
+
+function downloadDhanTemplate() {
+  const template = `# Template Dhan Updater
+# Baris dimulai dengan # adalah komentar dan diabaikan
+# Format: PERINTAH:nilai
+# Simpan file ini sebagai nama_file.dhan
+
+# Ubah judul aplikasi
+SET_TITLE:Aplikasi Saya
+
+# Ubah nama pengguna
+SET_USERNAME:Nama Kamu
+
+# Ubah tema (pilihan: default, ocean, forest, sunset, midnight, rose)
+SET_THEME:ocean
+
+# Tambah event kalender (format tanggal: YYYY-MM-DD)
+ADD_EVENT:2024-12-25:Selamat Natal!
+ADD_EVENT:2024-01-01:Tahun Baru!
+
+# Atur mata uang default
+SET_CURRENCY_FROM:USD
+SET_CURRENCY_TO:IDR
+
+# Tampilkan pesan notifikasi
+SHOW_TOAST:Update berhasil diterapkan!
+`;
+  const blob = new Blob([template], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'template-update.dhan';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Template berhasil diunduh!');
+}
+
+// ==================== TOAST ====================
+let toastTimer;
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ==================== INIT ====================
+function applyLoadedState() {
+  if (appState.theme && appState.theme !== 'default') {
+    document.documentElement.dataset.theme = appState.theme;
+    const swatch = document.querySelector(`[data-theme="${appState.theme}"]`);
+    if (swatch) { document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active')); swatch.classList.add('active'); }
+  }
+  document.getElementById('app-title-display').textContent = appState.appTitle;
+  document.getElementById('page-title').textContent = appState.appTitle;
+  document.getElementById('setting-apptitle').value = appState.appTitle;
+  document.getElementById('setting-name').value = appState.username;
+  const displayName = appState.hideNamePrivacy ? 'Anonim' : appState.username;
+  document.getElementById('header-username').textContent = displayName;
+  document.getElementById('header-avatar').textContent = displayName[0].toUpperCase();
+  document.getElementById('priv-hide-name').checked = appState.hideNamePrivacy;
+  document.getElementById('priv-hide-events').checked = appState.hideEventsPrivacy;
+}
+
+loadState();
+applyLoadedState();
+renderCalendar();
+initCurrencySelects();
+convertCurrency();
+renderQuickRates();
+
+// Set today as selected date on init
+const today = new Date();
+appState.calSelectedDate = getDateStr(today);
+renderCalendar();
+</script>
+</body>
+</html>
