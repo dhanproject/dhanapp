@@ -6,435 +6,174 @@
 <title id="page-title">Dhan App</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #6C63FF;
-    --primary-light: #a099ff;
-    --primary-dark: #4a43cc;
-    --accent: #FF6584;
-    --bg: #F0F4FF;
-    --surface: #ffffff;
-    --surface2: #f7f8ff;
-    --text: #2d2d3f;
-    --text2: #6b6b8a;
-    --border: #e2e6ff;
-    --shadow: rgba(108, 99, 255, 0.12);
-    --radius: 18px;
-    --radius-sm: 10px;
-    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  /* Theme variations */
-  [data-theme="ocean"] {
-    --primary: #0077b6; --primary-light: #00b4d8; --primary-dark: #005f8a;
-    --accent: #f77f00; --bg: #e8f4fd; --border: #cce7f5; --shadow: rgba(0,119,182,0.12);
-  }
-  [data-theme="forest"] {
-    --primary: #2d6a4f; --primary-light: #52b788; --primary-dark: #1b4332;
-    --accent: #d62828; --bg: #edf7ee; --border: #c8e6d0; --shadow: rgba(45,106,79,0.12);
-  }
-  [data-theme="sunset"] {
-    --primary: #e76f51; --primary-light: #f4a261; --primary-dark: #c04a2e;
-    --accent: #264653; --bg: #fff5f0; --border: #fdd5c6; --shadow: rgba(231,111,81,0.12);
-  }
-  [data-theme="midnight"] {
-    --primary: #bb86fc; --primary-light: #d4a8ff; --primary-dark: #985eff;
-    --accent: #03dac6; --bg: #121212; --surface: #1e1e2e; --surface2: #252535;
-    --text: #e0e0f0; --text2: #9999bb; --border: #333355; --shadow: rgba(187,134,252,0.15);
-  }
-  [data-theme="rose"] {
-    --primary: #c9184a; --primary-light: #ff4d6d; --primary-dark: #a4133c;
-    --accent: #f77f00; --bg: #fff0f5; --border: #ffc8dd; --shadow: rgba(201,24,74,0.12);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background var(--transition), color var(--transition);
-  }
-
-  /* App Shell */
-  .app-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px 16px 90px;
-    min-height: 100vh;
-  }
-
-  /* Header */
-  .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-    padding: 18px 24px;
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 24px var(--shadow);
-    border: 1px solid var(--border);
-  }
-  .app-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    color: var(--primary);
-    letter-spacing: -0.5px;
-  }
-  .app-header .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    color: var(--text2);
-    font-size: 0.9rem;
-  }
-  .avatar {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 0.9rem;
-  }
-
-  /* Card */
-  .card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 24px var(--shadow);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    animation: fadeUp 0.4s ease both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Bottom Nav */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0 14px;
-    box-shadow: 0 -4px 24px var(--shadow);
-    z-index: 100;
-  }
-  .nav-item {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 4px; cursor: pointer; padding: 6px 16px;
-    border-radius: var(--radius-sm);
-    transition: var(--transition); color: var(--text2);
-    font-size: 0.72rem; font-weight: 600;
-    border: none; background: none;
-  }
-  .nav-item.active { color: var(--primary); }
-  .nav-item .nav-icon { font-size: 1.4rem; transition: var(--transition); }
-  .nav-item.active .nav-icon { transform: scale(1.15); }
-  .nav-item:hover { color: var(--primary); }
-
-  /* Tabs / Pages */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* ===== CALENDAR ===== */
-  .cal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .cal-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
-  .cal-nav { display: flex; gap: 8px; }
-  .cal-nav button {
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); border-radius: 8px; padding: 6px 12px;
-    cursor: pointer; font-weight: 700; font-size: 1rem; transition: var(--transition);
-  }
-  .cal-nav button:hover { background: var(--primary); color: white; border-color: var(--primary); }
-  .cal-body { padding: 20px 24px; }
-  .cal-days-header {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    text-align: center; margin-bottom: 10px;
-  }
-  .cal-days-header span {
-    font-size: 0.75rem; font-weight: 700; color: var(--text2); padding: 4px 0;
-  }
-  .cal-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
-  }
-  .cal-day {
-    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.88rem;
-    transition: var(--transition); position: relative;
-  }
-  .cal-day:hover { background: var(--surface2); }
-  .cal-day.other-month { color: var(--border); }
-  .cal-day.today {
-    background: var(--primary); color: white;
-    box-shadow: 0 4px 12px var(--shadow);
-  }
-  .cal-day.selected {
-    background: var(--accent); color: white;
-  }
-  .cal-day.has-event::after {
-    content: ''; position: absolute; bottom: 3px;
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--accent);
-  }
-  .cal-day.today::after { background: white; }
-
-  .cal-events { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .cal-events h3 { font-size: 0.9rem; color: var(--text2); margin-bottom: 12px; font-weight: 700; }
-  .event-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
-  .event-input-row input {
-    flex: 1; padding: 10px 14px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: inherit; font-size: 0.88rem; outline: none;
-    transition: var(--transition);
-  }
-  .event-input-row input:focus { border-color: var(--primary); }
-  .btn { 
-    padding: 10px 18px; border-radius: var(--radius-sm); border: none;
-    background: var(--primary); color: white; font-family: inherit;
-    font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: var(--transition);
-    white-space: nowrap;
-  }
-  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
-  .btn-danger { background: var(--accent); }
-  .btn-danger:hover { background: #cc3a5a; }
-  .event-list { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; }
-  .event-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; background: var(--surface2);
-    border-radius: var(--radius-sm); border: 1px solid var(--border);
-  }
-  .event-item span { font-size: 0.85rem; font-weight: 600; }
-  .event-date { font-size: 0.75rem; color: var(--text2); margin-left: 8px; }
-
-  /* ===== CURRENCY ===== */
-  .section-pad { padding: 24px; }
-  .section-title {
-    font-size: 1.1rem; font-weight: 800; color: var(--primary);
-    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
-  }
-  .input-group { margin-bottom: 16px; }
-  .input-label { font-size: 0.8rem; font-weight: 700; color: var(--text2); margin-bottom: 6px; display: block; }
-  .input-row { display: flex; gap: 10px; }
-  .styled-input {
-    width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: inherit; font-size: 1rem; outline: none;
-    transition: var(--transition);
-  }
-  .styled-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
-  .styled-select {
-    padding: 12px 16px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none;
-    transition: var(--transition); cursor: pointer; min-width: 100px;
-  }
-  .styled-select:focus { border-color: var(--primary); }
-  .swap-btn {
-    background: var(--primary); color: white; border: none; border-radius: 50%;
-    width: 44px; height: 44px; font-size: 1.3rem; cursor: pointer;
-    transition: var(--transition); display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; align-self: flex-end; margin-bottom: 2px;
-  }
-  .swap-btn:hover { background: var(--primary-dark); transform: rotate(180deg); }
-  .result-box {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white; border-radius: var(--radius); padding: 20px 24px;
-    text-align: center; margin-top: 16px;
-  }
-  .result-box .result-value { font-size: 2rem; font-weight: 800; }
-  .result-box .result-label { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
-  .rate-info { font-size: 0.75rem; opacity: 0.7; margin-top: 8px; }
-
-  /* Popular currencies */
-  .quick-rates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-  .rate-card {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px;
-    text-align: center; cursor: pointer; transition: var(--transition);
-  }
-  .rate-card:hover { border-color: var(--primary); background: var(--surface); }
-  .rate-card .flag { font-size: 1.4rem; }
-  .rate-card .code { font-size: 0.75rem; font-weight: 700; color: var(--text2); margin-top: 4px; }
-  .rate-card .val { font-size: 0.9rem; font-weight: 800; color: var(--primary); }
-
-  /* ===== CALCULATOR ===== */
-  .calc-wrapper { padding: 24px; max-width: 360px; margin: 0 auto; }
-  .calc-display {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
-    color: white; text-align: right; min-height: 90px;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    box-shadow: 0 8px 24px var(--shadow);
-  }
-  .calc-expr { font-size: 0.85rem; opacity: 0.7; min-height: 20px; }
-  .calc-result { font-size: 2.4rem; font-weight: 800; line-height: 1.1; word-break: break-all; }
-  .calc-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-  }
-  .calc-btn {
-    padding: 18px; border: none; border-radius: var(--radius-sm);
-    font-family: inherit; font-size: 1.05rem; font-weight: 700;
-    cursor: pointer; transition: var(--transition);
-    background: var(--surface2); color: var(--text);
-    border: 1.5px solid var(--border);
-    aspect-ratio: 1;
-  }
-  .calc-btn:hover { transform: scale(1.05); }
-  .calc-btn:active { transform: scale(0.97); }
-  .calc-btn.op { background: var(--surface); color: var(--primary); border-color: var(--primary-light); }
-  .calc-btn.eq { background: var(--primary); color: white; border-color: var(--primary); }
-  .calc-btn.eq:hover { background: var(--primary-dark); }
-  .calc-btn.clear { background: var(--accent); color: white; border-color: var(--accent); }
-  .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; }
-
-  /* ===== SETTINGS ===== */
-  .settings-section { padding: 24px; }
-  .settings-group { margin-bottom: 28px; }
-  .settings-group-title {
-    font-size: 0.78rem; font-weight: 800; color: var(--text2);
-    text-transform: uppercase; letter-spacing: 1.2px;
-    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-  }
-  .settings-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 0; border-bottom: 1px solid var(--border);
-  }
-  .settings-row:last-child { border-bottom: none; }
-  .settings-row-label { font-weight: 600; font-size: 0.92rem; }
-  .settings-row-desc { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
-  .settings-row-control { flex-shrink: 0; margin-left: 16px; }
-
-  .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; }
-  .theme-swatch {
-    height: 42px; border-radius: var(--radius-sm); cursor: pointer;
-    border: 3px solid transparent; transition: var(--transition);
-    position: relative;
-  }
-  .theme-swatch:hover { transform: scale(1.08); }
-  .theme-swatch.active { border-color: var(--text); box-shadow: 0 4px 12px var(--shadow); }
-  .theme-swatch.active::after {
-    content: '✓'; position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 1.1rem; font-weight: 800;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  }
-
-  .settings-input-full {
-    width: 100%; padding: 10px 14px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: inherit; font-size: 0.92rem; outline: none;
-    transition: var(--transition);
-  }
-  .settings-input-full:focus { border-color: var(--primary); }
-
-  /* Toggle */
-  .toggle { position: relative; width: 48px; height: 26px; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider {
-    position: absolute; inset: 0; background: var(--border);
-    border-radius: 26px; cursor: pointer; transition: var(--transition);
-  }
-  .toggle-slider::before {
-    content: ''; position: absolute;
-    left: 3px; top: 3px; width: 20px; height: 20px;
-    background: white; border-radius: 50%; transition: var(--transition);
-  }
-  .toggle input:checked + .toggle-slider { background: var(--primary); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(22px); }
-
-  /* Dhan Updater */
-  .updater-box {
-    border: 2px dashed var(--border); border-radius: var(--radius);
-    padding: 36px 24px; text-align: center; cursor: pointer;
-    transition: var(--transition); margin-bottom: 20px;
-  }
-  .updater-box:hover { border-color: var(--primary); background: var(--surface2); }
-  .updater-box.dragover { border-color: var(--primary); background: rgba(108,99,255,0.06); }
-  .updater-icon { font-size: 2.5rem; margin-bottom: 12px; }
-  .updater-title { font-weight: 800; font-size: 1rem; color: var(--primary); }
-  .updater-sub { font-size: 0.82rem; color: var(--text2); margin-top: 6px; }
-  #dhan-file-input { display: none; }
-  .update-log {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 16px;
-    font-family: 'Courier New', monospace; font-size: 0.8rem;
-    max-height: 200px; overflow-y: auto; color: var(--text2);
-  }
-  .update-log .log-line { margin-bottom: 4px; }
-  .update-log .log-ok { color: #27ae60; }
-  .update-log .log-err { color: var(--accent); }
-  .update-log .log-info { color: var(--primary); }
-
-  /* Notification toast */
-  .toast {
-    position: fixed; top: 20px; right: 20px; z-index: 9999;
-    background: var(--primary); color: white;
-    padding: 14px 20px; border-radius: var(--radius-sm);
-    font-weight: 700; font-size: 0.88rem;
-    box-shadow: 0 8px 24px var(--shadow);
-    transform: translateX(110%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    max-width: 280px;
-  }
-  .toast.show { transform: translateX(0); }
-  .toast.error { background: var(--accent); }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    .quick-rates { grid-template-columns: repeat(3, 1fr); }
-    .calc-btn { padding: 14px; font-size: 0.95rem; }
-    .theme-grid { grid-template-columns: repeat(5, 1fr); }
-  }
+:root{--primary:#6C63FF;--primary-light:#a099ff;--primary-dark:#4a43cc;--accent:#FF6584;--bg:#F0F4FF;--surface:#fff;--surface2:#f7f8ff;--text:#2d2d3f;--text2:#6b6b8a;--border:#e2e6ff;--shadow:rgba(108,99,255,.12);--radius:18px;--radius-sm:10px;--transition:.3s cubic-bezier(.4,0,.2,1)}
+[data-theme="ocean"]{--primary:#0077b6;--primary-light:#00b4d8;--primary-dark:#005f8a;--accent:#f77f00;--bg:#e8f4fd;--border:#cce7f5;--shadow:rgba(0,119,182,.12)}
+[data-theme="forest"]{--primary:#2d6a4f;--primary-light:#52b788;--primary-dark:#1b4332;--accent:#d62828;--bg:#edf7ee;--border:#c8e6d0;--shadow:rgba(45,106,79,.12)}
+[data-theme="sunset"]{--primary:#e76f51;--primary-light:#f4a261;--primary-dark:#c04a2e;--accent:#264653;--bg:#fff5f0;--border:#fdd5c6;--shadow:rgba(231,111,81,.12)}
+[data-theme="midnight"]{--primary:#bb86fc;--primary-light:#d4a8ff;--primary-dark:#985eff;--accent:#03dac6;--bg:#121212;--surface:#1e1e2e;--surface2:#252535;--text:#e0e0f0;--text2:#9999bb;--border:#333355;--shadow:rgba(187,134,252,.15)}
+[data-theme="rose"]{--primary:#c9184a;--primary-light:#ff4d6d;--primary-dark:#a4133c;--accent:#f77f00;--bg:#fff0f5;--border:#ffc8dd;--shadow:rgba(201,24,74,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition)}
+.app-wrapper{max-width:900px;margin:0 auto;padding:20px 16px 90px}
+.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:18px 24px;background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
+.app-header h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--primary);letter-spacing:-.5px}
+.user-badge{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text2);font-size:.9rem}
+.avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem}
+.sync-indicator{display:flex;align-items:center;gap:5px}
+#sync-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;transition:background .3s;flex-shrink:0}
+#sync-text{font-size:.7rem;color:var(--text2);min-width:0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border);overflow:hidden;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 14px;box-shadow:0 -4px 24px var(--shadow);z-index:100;overflow-x:auto}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border-radius:var(--radius-sm);transition:var(--transition);color:var(--text2);font-size:.7rem;font-weight:600;border:none;background:none;white-space:nowrap}
+.nav-item.active{color:var(--primary)}
+.nav-item .nav-icon{font-size:1.3rem;transition:var(--transition)}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.page{display:none}.page.active{display:block}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
+.cal-header h2{font-size:1.2rem;font-weight:700;color:var(--primary)}
+.cal-nav{display:flex;gap:8px}
+.cal-nav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:1rem;transition:var(--transition)}
+.cal-nav button:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cal-body{padding:20px 24px}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:10px}
+.cal-days-header span{font-size:.75rem;font-weight:700;color:var(--text2);padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;font-weight:600;font-size:.88rem;transition:var(--transition);position:relative}
+.cal-day:hover{background:var(--surface2)}
+.cal-day.other-month{color:var(--border)}
+.cal-day.today{background:var(--primary);color:#fff;box-shadow:0 4px 12px var(--shadow)}
+.cal-day.selected{background:var(--accent);color:#fff}
+.cal-day.has-event::after{content:'';position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cal-day.today::after{background:#fff}
+.cal-events{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.cal-events h3{font-size:.9rem;color:var(--text2);margin-bottom:12px;font-weight:700}
+.event-input-row{display:flex;gap:8px;margin-bottom:12px}
+.event-input-row input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:var(--transition)}
+.event-input-row input:focus{border-color:var(--primary)}
+.btn{padding:10px 18px;border-radius:var(--radius-sm);border:none;background:var(--primary);color:#fff;font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:var(--transition);white-space:nowrap}
+.btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.btn-sm{padding:6px 12px;font-size:.8rem}
+.btn-danger{background:var(--accent)}
+.btn-danger:hover{background:#cc3a5a}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);border-color:var(--primary);color:var(--primary);transform:translateY(-1px)}
+.event-list{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto}
+.event-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.event-item span{font-size:.85rem;font-weight:600}
+.event-date{font-size:.75rem;color:var(--text2);margin-left:8px}
+.section-pad{padding:24px}
+.section-title{font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.input-group{margin-bottom:16px}
+.input-label{font-size:.8rem;font-weight:700;color:var(--text2);margin-bottom:6px;display:block}
+.input-row{display:flex;gap:10px}
+.styled-input{width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:1rem;outline:none;transition:var(--transition)}
+.styled-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
+.styled-select{padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.9rem;outline:none;transition:var(--transition);cursor:pointer;min-width:100px}
+.styled-select:focus{border-color:var(--primary)}
+.swap-btn{background:var(--primary);color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.3rem;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end;margin-bottom:2px}
+.swap-btn:hover{background:var(--primary-dark);transform:rotate(180deg)}
+.result-box{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-radius:var(--radius);padding:20px 24px;text-align:center;margin-top:16px}
+.result-box .result-value{font-size:2rem;font-weight:800}
+.result-box .result-label{font-size:.85rem;opacity:.85;margin-top:4px}
+.rate-info{font-size:.75rem;opacity:.7;margin-top:8px}
+.quick-rates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.rate-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;cursor:pointer;transition:var(--transition)}
+.rate-card:hover{border-color:var(--primary);background:var(--surface)}
+.rate-card .flag{font-size:1.4rem}
+.rate-card .code{font-size:.75rem;font-weight:700;color:var(--text2);margin-top:4px}
+.rate-card .val{font-size:.9rem;font-weight:800;color:var(--primary)}
+.calc-wrapper{padding:24px;max-width:360px;margin:0 auto}
+.calc-display{background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;color:#fff;text-align:right;min-height:90px;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 8px 24px var(--shadow)}
+.calc-expr{font-size:.85rem;opacity:.7;min-height:20px}
+.calc-result{font-size:2.4rem;font-weight:800;line-height:1.1;word-break:break-all}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.calc-btn{padding:18px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;transition:var(--transition);background:var(--surface2);color:var(--text);border:1.5px solid var(--border);aspect-ratio:1}
+.calc-btn:hover{transform:scale(1.05)}
+.calc-btn:active{transform:scale(.97)}
+.calc-btn.op{background:var(--surface);color:var(--primary);border-color:var(--primary-light)}
+.calc-btn.eq{background:var(--primary);color:#fff;border-color:var(--primary)}
+.calc-btn.eq:hover{background:var(--primary-dark)}
+.calc-btn.clear{background:var(--accent);color:#fff;border-color:var(--accent)}
+.calc-btn.zero{grid-column:span 2;aspect-ratio:auto}
+.settings-section{padding:24px}
+.settings-group{margin-bottom:28px}
+.settings-group-title{font-size:.78rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.settings-row:last-child{border-bottom:none}
+.settings-row-label{font-weight:600;font-size:.92rem}
+.settings-row-desc{font-size:.78rem;color:var(--text2);margin-top:2px}
+.settings-row-control{flex-shrink:0;margin-left:16px}
+.theme-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+.theme-swatch{height:42px;border-radius:var(--radius-sm);cursor:pointer;border:3px solid transparent;transition:var(--transition);position:relative}
+.theme-swatch:hover{transform:scale(1.08)}
+.theme-swatch.active{border-color:var(--text);box-shadow:0 4px 12px var(--shadow)}
+.theme-swatch.active::after{content:'ok';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65rem;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.settings-input-full{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.92rem;outline:none;transition:var(--transition)}
+.settings-input-full:focus{border-color:var(--primary)}
+.toggle{position:relative;width:48px;height:26px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:26px;cursor:pointer;transition:var(--transition)}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked + .toggle-slider{background:var(--primary)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(22px)}
+.updater-box{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:var(--transition);margin-bottom:20px}
+.updater-box:hover,.updater-box.dragover{border-color:var(--primary);background:var(--surface2)}
+.updater-icon{font-size:2.5rem;margin-bottom:12px}
+.updater-title{font-weight:800;font-size:1rem;color:var(--primary)}
+.updater-sub{font-size:.82rem;color:var(--text2);margin-top:6px}
+#dhan-file-input{display:none}
+.update-log{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-family:'Courier New',monospace;font-size:.78rem;max-height:220px;overflow-y:auto;color:var(--text2)}
+.update-log .log-line{margin-bottom:3px}
+.update-log .log-ok{color:#22c55e}
+.update-log .log-err{color:var(--accent)}
+.update-log .log-info{color:var(--primary)}
+.patch-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:160px;overflow-y:auto}
+.patch-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.8rem}
+.patch-item .patch-name{font-weight:700;color:var(--primary)}
+.patch-item .patch-time{color:var(--text2);font-size:.72rem}
+.supabase-status-box{margin-top:16px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.sb-status-row{display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:6px}
+#sb-dot{width:10px;height:10px;border-radius:50%;background:#94a3b8;flex-shrink:0;transition:background .3s}
+.toast{position:fixed;top:20px;right:20px;z-index:9999;background:var(--primary);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:700;font-size:.88rem;box-shadow:0 8px 24px var(--shadow);transform:translateX(110%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-width:280px}
+.toast.show{transform:translateX(0)}
+.toast.error{background:var(--accent)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 </style>
 </head>
 <body>
-
 <div class="app-wrapper">
-  <!-- Header -->
   <div class="app-header">
     <h1 id="app-title-display">Dhan App</h1>
     <div class="user-badge">
-      <span id="sync-text" style="font-size:0.72rem;color:var(--text2);margin-right:2px"></span>
-      <span id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;margin-right:8px;transition:background 0.3s"></span>
+      <div class="sync-indicator">
+        <span id="sync-dot"></span>
+        <span id="sync-text"></span>
+      </div>
       <span id="header-username">Pengguna</span>
       <div class="avatar" id="header-avatar">D</div>
     </div>
   </div>
 
-  <!-- Calendar Page -->
+  <!-- CALENDAR -->
   <div class="page active card" id="page-calendar">
     <div class="cal-header">
       <h2 id="cal-month-year">Januari 2024</h2>
       <div class="cal-nav">
-        <button onclick="changeMonth(-1)">‹</button>
+        <button onclick="changeMonth(-1)">&#8249;</button>
         <button onclick="goToday()">Hari Ini</button>
-        <button onclick="changeMonth(1)">›</button>
+        <button onclick="changeMonth(1)">&#8250;</button>
       </div>
     </div>
     <div class="cal-body">
-      <div class="cal-days-header">
-        <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span>
-        <span>Kam</span><span>Jum</span><span>Sab</span>
-      </div>
+      <div class="cal-days-header"><span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span></div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-events">
-        <h3>📌 Catatan / Event</h3>
+        <h3>&#128205; Catatan / Event</h3>
         <div class="event-input-row">
-          <input type="text" id="event-input" placeholder="Tambah catatan untuk tanggal terpilih..." />
+          <input type="text" id="event-input" placeholder="Tambah catatan untuk tanggal terpilih..."/>
           <button class="btn" onclick="addEvent()">+ Tambah</button>
         </div>
         <div class="event-list" id="event-list"></div>
@@ -442,43 +181,32 @@
     </div>
   </div>
 
-  <!-- Currency Page -->
+  <!-- CURRENCY -->
   <div class="page card" id="page-currency">
     <div class="section-pad">
-      <div class="section-title">💱 Konverter Mata Uang</div>
+      <div class="section-title">&#128178; Konverter Mata Uang</div>
       <div class="input-group">
         <label class="input-label">Jumlah</label>
-        <input type="number" id="curr-amount" class="styled-input" value="1" oninput="convertCurrency()" />
+        <input type="number" id="curr-amount" class="styled-input" value="1" oninput="convertCurrency()"/>
       </div>
-      <div class="input-row" style="align-items:flex-end;gap:10px;">
-        <div style="flex:1">
-          <label class="input-label">Dari</label>
-          <select id="curr-from" class="styled-select" style="width:100%" onchange="convertCurrency()">
-          </select>
-        </div>
-        <button class="swap-btn" onclick="swapCurrencies()" title="Tukar">⇄</button>
-        <div style="flex:1">
-          <label class="input-label">Ke</label>
-          <select id="curr-to" class="styled-select" style="width:100%" onchange="convertCurrency()">
-          </select>
-        </div>
+      <div class="input-row" style="align-items:flex-end;gap:10px">
+        <div style="flex:1"><label class="input-label">Dari</label><select id="curr-from" class="styled-select" style="width:100%" onchange="convertCurrency()"></select></div>
+        <button class="swap-btn" onclick="swapCurrencies()" title="Tukar">&#8644;</button>
+        <div style="flex:1"><label class="input-label">Ke</label><select id="curr-to" class="styled-select" style="width:100%" onchange="convertCurrency()"></select></div>
       </div>
       <div class="result-box" id="curr-result">
-        <div class="result-value" id="curr-result-val">—</div>
+        <div class="result-value" id="curr-result-val">&#8212;</div>
         <div class="result-label" id="curr-result-label">Masukkan jumlah untuk konversi</div>
         <div class="rate-info" id="curr-rate-info"></div>
       </div>
-      <div style="margin-top:20px;">
-        <label class="input-label">⚡ Kurs Populer vs IDR (1 unit)</label>
-        <div class="quick-rates" id="quick-rates"></div>
-      </div>
+      <div style="margin-top:20px"><label class="input-label">&#9889; Kurs Populer vs IDR</label><div class="quick-rates" id="quick-rates"></div></div>
     </div>
   </div>
 
-  <!-- Calculator Page -->
+  <!-- CALCULATOR -->
   <div class="page card" id="page-calculator">
     <div class="calc-wrapper">
-      <div class="section-title">🧮 Kalkulator</div>
+      <div class="section-title">&#129518; Kalkulator</div>
       <div class="calc-display">
         <div class="calc-expr" id="calc-expr"></div>
         <div class="calc-result" id="calc-display">0</div>
@@ -487,1439 +215,42 @@
         <button class="calc-btn clear" onclick="calcClear()">AC</button>
         <button class="calc-btn op" onclick="calcSign()">+/-</button>
         <button class="calc-btn op" onclick="calcPercent()">%</button>
-        <button class="calc-btn op" onclick="calcInput('/')">÷</button>
-
+        <button class="calc-btn op" onclick="calcInput('/')">&#247;</button>
         <button class="calc-btn" onclick="calcInput('7')">7</button>
         <button class="calc-btn" onclick="calcInput('8')">8</button>
         <button class="calc-btn" onclick="calcInput('9')">9</button>
-        <button class="calc-btn op" onclick="calcInput('*')">×</button>
-
+        <button class="calc-btn op" onclick="calcInput('*')">&#215;</button>
         <button class="calc-btn" onclick="calcInput('4')">4</button>
         <button class="calc-btn" onclick="calcInput('5')">5</button>
         <button class="calc-btn" onclick="calcInput('6')">6</button>
-        <button class="calc-btn op" onclick="calcInput('-')">−</button>
-
+        <button class="calc-btn op" onclick="calcInput('-')">&#8722;</button>
         <button class="calc-btn" onclick="calcInput('1')">1</button>
         <button class="calc-btn" onclick="calcInput('2')">2</button>
         <button class="calc-btn" onclick="calcInput('3')">3</button>
         <button class="calc-btn op" onclick="calcInput('+')">+</button>
-
         <button class="calc-btn zero" onclick="calcInput('0')">0</button>
         <button class="calc-btn" onclick="calcDot()">.</button>
         <button class="calc-btn eq" onclick="calcEquals()">=</button>
       </div>
-      <div style="margin-top:16px;text-align:center;color:var(--text2);font-size:0.78rem;">
-        Riwayat: <span id="calc-history" style="color:var(--text)">—</span>
-      </div>
+      <div style="margin-top:16px;text-align:center;color:var(--text2);font-size:.78rem">Riwayat: <span id="calc-history" style="color:var(--text)">&#8212;</span></div>
     </div>
   </div>
 
-  <!-- Settings Page -->
+  <!-- SETTINGS -->
   <div class="page card" id="page-settings">
     <div class="settings-section">
-
-      <!-- Profile -->
       <div class="settings-group">
-        <div class="settings-group-title">👤 Profil</div>
+        <div class="settings-group-title">&#128100; Profil</div>
         <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Nama Pengguna</div>
-            <div class="settings-row-desc">Nama yang tampil di header</div>
-          </div>
-          <div class="settings-row-control">
-            <input type="text" id="setting-name" class="settings-input-full" style="width:160px" placeholder="Nama kamu" value="Pengguna" oninput="updateProfile()" />
-          </div>
+          <div><div class="settings-row-label">Nama Pengguna</div><div class="settings-row-desc">Tampil di header</div></div>
+          <div class="settings-row-control"><input type="text" id="setting-name" class="settings-input-full" style="width:160px" placeholder="Nama kamu" value="Pengguna" oninput="updateProfile()"/></div>
         </div>
         <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Judul Aplikasi</div>
-            <div class="settings-row-desc">Nama app di header & tab browser</div>
-          </div>
-          <div class="settings-row-control">
-            <input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()" />
-          </div>
+          <div><div class="settings-row-label">Judul Aplikasi</div><div class="settings-row-desc">Nama app di header &amp; tab browser</div></div>
+          <div class="settings-row-control"><input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()"/></div>
         </div>
       </div>
-
-      <!-- Theme -->
       <div class="settings-group">
-        <div class="settings-group-title">🎨 Tema Warna</div>
+        <div class="settings-group-title">&#127912; Tema Warna</div>
         <div class="theme-grid" id="theme-grid">
-          <div class="theme-swatch active" data-theme="default" style="background:linear-gradient(135deg,#6C63FF,#FF6584)" onclick="setTheme('default',this)" title="Default"></div>
-          <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#0077b6,#00b4d8)" onclick="setTheme('ocean',this)" title="Ocean"></div>
-          <div class="theme-swatch" data-theme="forest" style="background:linear-gradient(135deg,#2d6a4f,#52b788)" onclick="setTheme('forest',this)" title="Forest"></div>
-          <div class="theme-swatch" data-theme="sunset" style="background:linear-gradient(135deg,#e76f51,#f4a261)" onclick="setTheme('sunset',this)" title="Sunset"></div>
-          <div class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#1e1e2e,#bb86fc)" onclick="setTheme('midnight',this)" title="Midnight"></div>
-          <div class="theme-swatch" data-theme="rose" style="background:linear-gradient(135deg,#c9184a,#ff4d6d)" onclick="setTheme('rose',this)" title="Rose"></div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer" 
-                onclick="document.querySelector('[data-theme=default]').click()">🟣 Default</span>
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
-                onclick="document.querySelector('[data-theme=ocean]').click()">🔵 Ocean</span>
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
-                onclick="document.querySelector('[data-theme=forest]').click()">🟢 Forest</span>
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
-                onclick="document.querySelector('[data-theme=sunset]').click()">🟠 Sunset</span>
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
-                onclick="document.querySelector('[data-theme=midnight]').click()">🌙 Midnight</span>
-          <span style="font-size:0.78rem;color:var(--text2);padding:4px 10px;background:var(--surface2);border-radius:6px;cursor:pointer"
-                onclick="document.querySelector('[data-theme=rose]').click()">🌹 Rose</span>
-        </div>
-      </div>
-
-      <!-- Privacy -->
-      <div class="settings-group">
-        <div class="settings-group-title">🔒 Privasi</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Sembunyikan Nama</div>
-            <div class="settings-row-desc">Tampilkan nama sebagai "Anonim"</div>
-          </div>
-          <div class="settings-row-control">
-            <label class="toggle">
-              <input type="checkbox" id="priv-hide-name" onchange="toggleHideName()">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Mode Privat</div>
-            <div class="settings-row-desc">Sembunyikan catatan kalender</div>
-          </div>
-          <div class="settings-row-control">
-            <label class="toggle">
-              <input type="checkbox" id="priv-hide-events" onchange="togglePrivateEvents()">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Hapus Semua Data</div>
-            <div class="settings-row-desc">Reset kalender & pengaturan tersimpan</div>
-          </div>
-          <div class="settings-row-control">
-            <button class="btn btn-sm btn-danger" onclick="clearAllData()">Hapus</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dhan Updater -->
-      <div class="settings-group">
-        <div class="settings-group-title">⚡ Dhan Updater</div>
-        <p style="font-size:0.83rem;color:var(--text2);margin-bottom:16px;line-height:1.6;">
-          Upload file <strong>.dhan</strong> (sebenarnya file .txt) berisi instruksi pembaruan untuk mengupdate konfigurasi, pengaturan, atau catatan aplikasi ini secara otomatis.
-        </p>
-        <div class="updater-box" id="updater-drop" onclick="document.getElementById('dhan-file-input').click()"
-             ondragover="event.preventDefault();this.classList.add('dragover')"
-             ondragleave="this.classList.remove('dragover')"
-             ondrop="handleDhanDrop(event)">
-          <div class="updater-icon">📦</div>
-          <div class="updater-title">Klik atau Seret File .dhan</div>
-          <div class="updater-sub">Format file: teks berisi perintah pembaruan</div>
-        </div>
-        <input type="file" id="dhan-file-input" accept=".dhan,.txt" onchange="handleDhanFile(this.files[0])">
-        <div id="update-log" class="update-log" style="display:none"></div>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-sm" onclick="downloadDhanTemplate()">📥 Unduh Template .dhan</button>
-          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="clearUpdateLog()">Bersihkan Log</button>
-          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="manualSync()">☁️ Sync Sekarang</button>
-        </div>
-        <div style="margin-top:16px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
-          <div style="font-size:0.78rem;font-weight:800;color:var(--text2);margin-bottom:8px">☁️ STATUS SUPABASE</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:0.82rem">
-            <span id="supabase-status-dot" style="width:10px;height:10px;border-radius:50%;background:#94a3b8;flex-shrink:0"></span>
-            <span id="supabase-status-text" style="color:var(--text2)">Memeriksa koneksi...</span>
-          </div>
-          <div style="font-size:0.75rem;color:var(--text2);margin-top:8px">
-            Project: <code style="color:var(--primary)">olkokmuburmgslpsiwpi.supabase.co</code><br>
-            Device ID: <code style="color:var(--primary)" id="device-id-display">dhan_main</code>
-          </div>
-        </div>
-        <details style="margin-top:16px;font-size:0.82rem;color:var(--text2)">
-          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">📋 Referensi Cepat Perintah .dhan (50+ cmd)</summary>
-          <div style="margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);line-height:1.9;font-family:monospace;font-size:0.78rem">
-            <b style="color:var(--primary)">── Identitas ──</b><br>
-            SET_TITLE:Nama App &nbsp;|&nbsp; SET_USERNAME:Nama &nbsp;|&nbsp; SET_LANG:id<br><br>
-            <b style="color:var(--primary)">── Tema & Warna ──</b><br>
-            SET_THEME:midnight &nbsp;|&nbsp; SET_CSS_VAR:--primary:#ff0000<br>
-            SET_BG_COLOR:#fff &nbsp;|&nbsp; SET_PRIMARY_COLOR:#6C63FF<br>
-            SET_ACCENT_COLOR:#FF6584 &nbsp;|&nbsp; SET_FONT:Poppins<br><br>
-            <b style="color:var(--primary)">── CSS & JS ──</b><br>
-            INJECT_CSS:.card{transform:scale(1.02)}<br>
-            [CSS_BLOCK] ... css ... [/CSS_BLOCK]<br>
-            INJECT_JS:alert('hi') &nbsp;|&nbsp; [JS_BLOCK] ... [/JS_BLOCK]<br><br>
-            <b style="color:var(--primary)">── DOM ──</b><br>
-            SET_INNER_HTML:#id:html &nbsp;|&nbsp; SET_TEXT:#id:teks<br>
-            HIDE_ELEMENT:.class &nbsp;|&nbsp; SHOW_ELEMENT:.class<br>
-            APPEND_HTML:sel:html &nbsp;|&nbsp; REMOVE_ELEMENT:#id<br>
-            SET_ATTR:sel:attr:val &nbsp;|&nbsp; ADD_CLASS:sel:kelas<br><br>
-            <b style="color:var(--primary)">── Kalender ──</b><br>
-            ADD_EVENT:2024-12-25:Teks &nbsp;|&nbsp; CLEAR_EVENTS:<br>
-            GO_TO_DATE:2024-12-25 &nbsp;|&nbsp; REMOVE_EVENT:2024-12-25:0<br><br>
-            <b style="color:var(--primary)">── Kurs ──</b><br>
-            SET_CURRENCY_FROM:USD &nbsp;|&nbsp; SET_CURRENCY_TO:IDR<br>
-            SET_EXCHANGE_RATE:USD:16000 &nbsp;|&nbsp; SET_CURRENCY_AMOUNT:100<br><br>
-            <b style="color:var(--primary)">── Kalkulator ──</b><br>
-            CALC_PRESET:9999 &nbsp;|&nbsp; CALC_EVAL:100*365<br><br>
-            <b style="color:var(--primary)">── Navigasi & UI ──</b><br>
-            NAV_TO:currency &nbsp;|&nbsp; ADD_NAV_TAB:id:emoji:label<br>
-            SHOW_TOAST:pesan &nbsp;|&nbsp; SHOW_ALERT:pesan<br>
-            SCROLL_TO:.class &nbsp;|&nbsp; REPLACE_PAGE_SECTION:id:html<br><br>
-            <b style="color:var(--primary)">── Rebuild Penuh ──</b><br>
-            [REPLACE_FULL_HTML_BLOCK] ... html ... [/REPLACE_FULL_HTML_BLOCK]<br><br>
-            <b style="color:var(--primary)">── Utilitas ──</b><br>
-            DOWNLOAD_SELF:nama &nbsp;|&nbsp; RELOAD:confirm<br>
-            LOG:pesan &nbsp;|&nbsp; VERSION:1.0 &nbsp;|&nbsp; AUTHOR:Nama<br>
-            OPEN_URL:https://... &nbsp;|&nbsp; SET_FAVICON:url<br>
-            SAVE_STATE: &nbsp;|&nbsp; CLEAR_STATE:
-          </div>
-        </details>
-      </div>
-
-    </div>
-  </div>
-
-</div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="switchPage('calendar',this)">
-    <span class="nav-icon">📅</span>Kalender
-  </button>
-  <button class="nav-item" onclick="switchPage('currency',this)">
-    <span class="nav-icon">💱</span>Kurs
-  </button>
-  <button class="nav-item" onclick="switchPage('calculator',this)">
-    <span class="nav-icon">🧮</span>Hitung
-  </button>
-  <button class="nav-item" onclick="switchPage('settings',this)">
-    <span class="nav-icon">⚙️</span>Pengaturan
-  </button>
-</nav>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<script>
-// ==================== STATE ====================
-let appState = {
-  appTitle: 'Dhan App',
-  username: 'Pengguna',
-  theme: 'default',
-  hideNamePrivacy: false,
-  hideEventsPrivacy: false,
-  events: {}, // { 'YYYY-MM-DD': ['event1','event2'] }
-  calSelectedDate: null,
-  calYear: new Date().getFullYear(),
-  calMonth: new Date().getMonth(),
-};
-
-// ==================== SUPABASE CONFIG ====================
-const SUPABASE_URL = 'https://olkokmuburmgslpsiwpi.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_FHgCHk8ocJPkEGWUiejlCA_BHRcN17v';
-const DEVICE_ID = 'dhan_main';
-
-async function sbFetch(method, path, body) {
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-      method,
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-      },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    if (method === 'GET') return await res.json();
-    return res.ok;
-  } catch(e) {
-    console.warn('Supabase error:', e.message);
-    return method === 'GET' ? null : false;
-  }
-}
-
-function setSyncStatus(status) {
-  const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-text');
-  if (!dot || !txt) return;
-  const map = {
-    syncing: { color: '#f59e0b', label: 'Menyimpan...' },
-    ok:      { color: '#22c55e', label: 'Tersimpan ✓' },
-    offline: { color: '#94a3b8', label: 'Offline' },
-    error:   { color: '#ef4444', label: 'Gagal sync' }
-  };
-  const s = map[status] || map.offline;
-  dot.style.background = s.color;
-  txt.textContent = s.label;
-  if (status === 'ok') setTimeout(() => { if (txt) txt.textContent = ''; }, 3000);
-}
-
-async function loadState() {
-  try {
-    const local = localStorage.getItem('dhanapp_state');
-    if (local) appState = { ...appState, ...JSON.parse(local) };
-  } catch(e) {}
-
-  setSyncStatus('syncing');
-  const rows = await sbFetch('GET', 'dhan_state?device_id=eq.' + DEVICE_ID + '&select=state_json&limit=1');
-  if (rows && rows.length > 0) {
-    try {
-      const remote = JSON.parse(rows[0].state_json);
-      appState = { ...appState, ...remote };
-      localStorage.setItem('dhanapp_state', JSON.stringify(appState));
-      setSyncStatus('ok');
-      applyLoadedState();
-      renderCalendar();
-      convertCurrency();
-    } catch(e) { setSyncStatus('error'); }
-  } else if (rows === null) {
-    setSyncStatus('offline');
-  } else {
-    setSyncStatus('ok');
-  }
-}
-
-let saveTimer = null;
-function saveState() {
-  try { localStorage.setItem('dhanapp_state', JSON.stringify(appState)); } catch(e) {}
-  clearTimeout(saveTimer);
-  setSyncStatus('syncing');
-  saveTimer = setTimeout(async () => {
-    const ok = await sbFetch('POST', 'dhan_state', {
-      device_id: DEVICE_ID,
-      state_json: JSON.stringify(appState),
-      updated_at: new Date().toISOString()
-    });
-    setSyncStatus(ok ? 'ok' : 'error');
-    if (!ok) showToast('⚠️ Gagal sync ke cloud, tersimpan lokal', true);
-  }, 800);
-}
-
-// ==================== NAVIGATION ====================
-function switchPage(name, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  el.classList.add('active');
-}
-
-// ==================== CALENDAR ====================
-const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
-function renderCalendar() {
-  const { calYear, calMonth } = appState;
-  document.getElementById('cal-month-year').textContent = `${monthNames[calMonth]} ${calYear}`;
-  const grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
-  const today = new Date();
-  
-  // Prev month days
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const d = document.createElement('div');
-    d.className = 'cal-day other-month';
-    d.textContent = daysInPrev - i;
-    grid.appendChild(d);
-  }
-  // Current month
-  for (let d = 1; d <= daysInMonth; d++) {
-    const el = document.createElement('div');
-    el.className = 'cal-day';
-    el.textContent = d;
-    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) {
-      el.classList.add('today');
-    }
-    if (appState.calSelectedDate === dateStr) el.classList.add('selected');
-    if (appState.events[dateStr] && appState.events[dateStr].length > 0) el.classList.add('has-event');
-    el.onclick = () => selectDate(dateStr);
-    grid.appendChild(el);
-  }
-  // Next month
-  const total = firstDay + daysInMonth;
-  const remain = total % 7 === 0 ? 0 : 7 - (total % 7);
-  for (let d = 1; d <= remain; d++) {
-    const el = document.createElement('div');
-    el.className = 'cal-day other-month';
-    el.textContent = d;
-    grid.appendChild(el);
-  }
-  renderEventList();
-}
-
-function selectDate(dateStr) {
-  appState.calSelectedDate = dateStr;
-  renderCalendar();
-}
-
-function changeMonth(dir) {
-  appState.calMonth += dir;
-  if (appState.calMonth > 11) { appState.calMonth = 0; appState.calYear++; }
-  if (appState.calMonth < 0) { appState.calMonth = 11; appState.calYear--; }
-  renderCalendar();
-}
-
-function goToday() {
-  const t = new Date();
-  appState.calYear = t.getFullYear();
-  appState.calMonth = t.getMonth();
-  const ds = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
-  appState.calSelectedDate = ds;
-  renderCalendar();
-}
-
-function addEvent() {
-  const input = document.getElementById('event-input');
-  const txt = input.value.trim();
-  if (!txt) return showToast('Tulis catatan terlebih dahulu!', true);
-  const date = appState.calSelectedDate || getDateStr(new Date());
-  if (!appState.events[date]) appState.events[date] = [];
-  appState.events[date].push(txt);
-  input.value = '';
-  saveState();
-  renderCalendar();
-  showToast('Catatan ditambahkan ✓');
-}
-
-function deleteEvent(date, idx) {
-  appState.events[date].splice(idx, 1);
-  if (appState.events[date].length === 0) delete appState.events[date];
-  saveState();
-  renderCalendar();
-}
-
-function renderEventList() {
-  const list = document.getElementById('event-list');
-  list.innerHTML = '';
-  const isPrivate = appState.hideEventsPrivacy;
-  const allDates = Object.keys(appState.events).sort();
-  if (allDates.length === 0) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:0.82rem;padding:8px 0">Belum ada catatan</div>';
-    return;
-  }
-  allDates.forEach(date => {
-    (appState.events[date] || []).forEach((ev, idx) => {
-      const item = document.createElement('div');
-      item.className = 'event-item';
-      item.innerHTML = `
-        <span>${isPrivate ? '🔒 Tersembunyi' : ev} <span class="event-date">${formatDate(date)}</span></span>
-        <button class="btn btn-sm btn-danger" onclick="deleteEvent('${date}',${idx})">✕</button>
-      `;
-      list.appendChild(item);
-    });
-  });
-}
-
-function getDateStr(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function formatDate(s) {
-  const [y,m,d] = s.split('-');
-  return `${d} ${monthNames[parseInt(m)-1]} ${y}`;
-}
-
-// ==================== CURRENCY ====================
-const CURRENCIES = {
-  IDR: { name: 'Rupiah', symbol: 'Rp', flag: '🇮🇩' },
-  USD: { name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
-  EUR: { name: 'Euro', symbol: '€', flag: '🇪🇺' },
-  GBP: { name: 'Pound Sterling', symbol: '£', flag: '🇬🇧' },
-  JPY: { name: 'Yen Jepang', symbol: '¥', flag: '🇯🇵' },
-  SGD: { name: 'Dollar Singapura', symbol: 'S$', flag: '🇸🇬' },
-  MYR: { name: 'Ringgit Malaysia', symbol: 'RM', flag: '🇲🇾' },
-  AUD: { name: 'Dollar Australia', symbol: 'A$', flag: '🇦🇺' },
-  CNY: { name: 'Yuan China', symbol: '¥', flag: '🇨🇳' },
-  KRW: { name: 'Won Korea', symbol: '₩', flag: '🇰🇷' },
-  SAR: { name: 'Riyal Saudi', symbol: '﷼', flag: '🇸🇦' },
-  AED: { name: 'Dirham UAE', symbol: 'د.إ', flag: '🇦🇪' },
-  THB: { name: 'Baht Thailand', symbol: '฿', flag: '🇹🇭' },
-  HKD: { name: 'Dollar HK', symbol: 'HK$', flag: '🇭🇰' },
-  CAD: { name: 'Dollar Kanada', symbol: 'CA$', flag: '🇨🇦' },
-};
-
-// Approximate rates to IDR
-const RATES_TO_IDR = {
-  IDR: 1, USD: 15800, EUR: 17200, GBP: 20100, JPY: 107,
-  SGD: 11800, MYR: 3400, AUD: 10400, CNY: 2200, KRW: 12,
-  SAR: 4200, AED: 4300, THB: 450, HKD: 2020, CAD: 11700,
-};
-
-function initCurrencySelects() {
-  const from = document.getElementById('curr-from');
-  const to = document.getElementById('curr-to');
-  from.innerHTML = ''; to.innerHTML = '';
-  Object.entries(CURRENCIES).forEach(([code, info]) => {
-    const opt1 = new Option(`${info.flag} ${code} - ${info.name}`, code);
-    const opt2 = new Option(`${info.flag} ${code} - ${info.name}`, code);
-    from.appendChild(opt1);
-    to.appendChild(opt2);
-  });
-  from.value = 'USD';
-  to.value = 'IDR';
-}
-
-function convertCurrency() {
-  const amount = parseFloat(document.getElementById('curr-amount').value) || 0;
-  const from = document.getElementById('curr-from').value;
-  const to = document.getElementById('curr-to').value;
-  if (!amount) {
-    document.getElementById('curr-result-val').textContent = '—';
-    document.getElementById('curr-result-label').textContent = 'Masukkan jumlah untuk konversi';
-    document.getElementById('curr-rate-info').textContent = '';
-    return;
-  }
-  const inIDR = amount * RATES_TO_IDR[from];
-  const result = inIDR / RATES_TO_IDR[to];
-  const rate = RATES_TO_IDR[from] / RATES_TO_IDR[to];
-  const toInfo = CURRENCIES[to];
-  const fromInfo = CURRENCIES[from];
-  document.getElementById('curr-result-val').textContent = 
-    `${toInfo.symbol} ${result.toLocaleString('id-ID', {maximumFractionDigits: to==='IDR'||to==='KRW'?0:4})}`;
-  document.getElementById('curr-result-label').textContent = 
-    `${amount.toLocaleString()} ${from} = ${toInfo.symbol} ${result.toLocaleString('id-ID', {maximumFractionDigits:4})} ${to}`;
-  document.getElementById('curr-rate-info').textContent = 
-    `1 ${from} = ${toInfo.symbol} ${rate.toLocaleString('id-ID', {maximumFractionDigits:4})} ${to} • *kurs perkiraan`;
-}
-
-function swapCurrencies() {
-  const from = document.getElementById('curr-from');
-  const to = document.getElementById('curr-to');
-  [from.value, to.value] = [to.value, from.value];
-  convertCurrency();
-}
-
-function renderQuickRates() {
-  const container = document.getElementById('quick-rates');
-  const featured = ['USD','EUR','SGD','MYR','JPY','AUD'];
-  container.innerHTML = featured.map(code => {
-    const info = CURRENCIES[code];
-    const rate = RATES_TO_IDR[code];
-    return `<div class="rate-card" onclick="setQuickRate('${code}')">
-      <div class="flag">${info.flag}</div>
-      <div class="code">${code}</div>
-      <div class="val">Rp ${rate.toLocaleString('id-ID')}</div>
-    </div>`;
-  }).join('');
-}
-
-function setQuickRate(code) {
-  document.getElementById('curr-from').value = code;
-  document.getElementById('curr-to').value = 'IDR';
-  document.getElementById('curr-amount').value = '1';
-  convertCurrency();
-}
-
-// ==================== CALCULATOR ====================
-let calcState = { expr: '', waitingForOperand: false, lastResult: null };
-
-function updateCalcDisplay(val) {
-  document.getElementById('calc-display').textContent = val;
-}
-
-function calcInput(val) {
-  const display = document.getElementById('calc-display');
-  const isOp = ['+','-','*','/'].includes(val);
-  
-  if (isOp) {
-    const cur = display.textContent;
-    document.getElementById('calc-expr').textContent = cur + ' ' + (val==='*'?'×':val==='/'?'÷':val);
-    calcState.expr = cur + val;
-    calcState.waitingForOperand = true;
-  } else {
-    if (calcState.waitingForOperand || display.textContent === '0') {
-      updateCalcDisplay(val);
-      calcState.waitingForOperand = false;
-    } else {
-      updateCalcDisplay(display.textContent + val);
-    }
-    calcState.expr = (calcState.expr || '') + '';
-  }
-}
-
-function calcDot() {
-  const d = document.getElementById('calc-display');
-  if (!d.textContent.includes('.')) updateCalcDisplay(d.textContent + '.');
-}
-
-function calcEquals() {
-  const display = document.getElementById('calc-display');
-  const exprEl = document.getElementById('calc-expr');
-  const full = calcState.expr + display.textContent;
-  if (!calcState.expr) return;
-  try {
-    const result = Function('"use strict"; return (' + full + ')')();
-    const rounded = Math.round(result * 1e10) / 1e10;
-    exprEl.textContent = full.replace(/\*/g,'×').replace(/\//g,'÷') + ' =';
-    document.getElementById('calc-history').textContent = 
-      full.replace(/\*/g,'×').replace(/\//g,'÷') + ' = ' + rounded.toLocaleString('id-ID');
-    updateCalcDisplay(rounded.toString());
-    calcState.expr = '';
-    calcState.waitingForOperand = true;
-  } catch(e) {
-    updateCalcDisplay('Error');
-    calcState.expr = '';
-  }
-}
-
-function calcClear() {
-  updateCalcDisplay('0');
-  document.getElementById('calc-expr').textContent = '';
-  calcState = { expr: '', waitingForOperand: false };
-}
-
-function calcSign() {
-  const d = document.getElementById('calc-display');
-  updateCalcDisplay((parseFloat(d.textContent) * -1).toString());
-}
-
-function calcPercent() {
-  const d = document.getElementById('calc-display');
-  updateCalcDisplay((parseFloat(d.textContent) / 100).toString());
-}
-
-// ==================== SETTINGS ====================
-function updateProfile() {
-  const name = document.getElementById('setting-name').value.trim() || 'Pengguna';
-  appState.username = name;
-  const display = appState.hideNamePrivacy ? 'Anonim' : name;
-  document.getElementById('header-username').textContent = display;
-  document.getElementById('header-avatar').textContent = display[0].toUpperCase();
-  saveState();
-}
-
-function updateAppTitle() {
-  const title = document.getElementById('setting-apptitle').value.trim() || 'Dhan App';
-  appState.appTitle = title;
-  document.getElementById('app-title-display').textContent = title;
-  document.getElementById('page-title').textContent = title;
-  saveState();
-}
-
-function setTheme(theme, el) {
-  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-  document.documentElement.dataset.theme = theme === 'default' ? '' : theme;
-  if (theme === 'default') delete document.documentElement.dataset.theme;
-  appState.theme = theme;
-  saveState();
-}
-
-function toggleHideName() {
-  appState.hideNamePrivacy = document.getElementById('priv-hide-name').checked;
-  updateProfile();
-  saveState();
-}
-
-function togglePrivateEvents() {
-  appState.hideEventsPrivacy = document.getElementById('priv-hide-events').checked;
-  renderEventList();
-  saveState();
-  showToast(appState.hideEventsPrivacy ? '🔒 Mode privat aktif' : '🔓 Mode privat nonaktif');
-}
-
-function clearAllData() {
-  if (!confirm('Yakin ingin menghapus semua data? Aksi ini tidak bisa dibatalkan.')) return;
-  localStorage.removeItem('dhanapp_state');
-  location.reload();
-}
-
-// ==================== DHAN UPDATER ====================
-function handleDhanFile(file) {
-  if (!file) return;
-  if (!file.name.endsWith('.dhan') && !file.name.endsWith('.txt')) {
-    showToast('File harus berekstensi .dhan atau .txt', true);
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => processDhanContent(e.target.result, file.name);
-  reader.readAsText(file);
-  document.getElementById('dhan-file-input').value = '';
-  document.getElementById('updater-drop').classList.remove('dragover');
-}
-
-function handleDhanDrop(e) {
-  e.preventDefault();
-  document.getElementById('updater-drop').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) handleDhanFile(file);
-}
-
-function processDhanContent(content, filename) {
-  const logEl = document.getElementById('update-log');
-  logEl.style.display = 'block';
-  logEl.innerHTML = '';
-  log('info', `📦 Memproses: ${filename}`);
-  log('info', `─────────────────────────────────`);
-
-  // ══════════════════════════════════════════════════
-  // STEP 1: Extract ALL block commands first
-  // Syntax: [BLOCKNAME] ... [/BLOCKNAME]  (no _BLOCK suffix needed in file)
-  // Also supports: [BLOCKNAME_BLOCK] ... [/BLOCKNAME_BLOCK]
-  // ══════════════════════════════════════════════════
-  let processed = content;
-  const blockCmds = [];
-
-  // Match [ANYTHING] body [/ANYTHING] — case-insensitive, captures block name + body
-  processed = processed.replace(/\[([A-Za-z_]+)\]([\s\S]*?)\[\/\1\]/g, (_, name, body) => {
-    // Normalize: if name ends in _BLOCK keep it, else add _BLOCK
-    const cmdName = name.toUpperCase().endsWith('_BLOCK') ? name.toUpperCase() : name.toUpperCase() + '_BLOCK';
-    blockCmds.push({ cmd: cmdName, val: body });
-    return '@@BLOCK_EXTRACTED@@'; // placeholder so line parser skips it
-  });
-
-  // ══════════════════════════════════════════════════
-  // STEP 2: Parse line commands
-  // Accept: CMD:value  OR  CMD:  (empty value)  OR  CMD  (no colon, treated as CMD with empty val)
-  // Skip: comments (#, //), empty lines, block placeholders
-  // ══════════════════════════════════════════════════
-  const lineCmds = [];
-  processed.split('\n').forEach(rawLine => {
-    const line = rawLine.trim();
-    if (!line) return;
-    if (line.startsWith('#') || line.startsWith('//')) return;
-    if (line === '@@BLOCK_EXTRACTED@@') return;
-    // Skip leftover block tags that weren't matched (malformed)
-    if (/^\[.*\]$/.test(line)) return;
-    // Skip lines that look like HTML (start with <)
-    // These are NOT valid .dhan commands and should be reported clearly
-    if (line.startsWith('<')) {
-      lineCmds.push({ cmd: '__HTML_LINE__', val: line }); return;
-    }
-    const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) {
-      // CMD with no colon — treat as command with empty value
-      const possibleCmd = line.toUpperCase().replace(/\s+/g, '_');
-      lineCmds.push({ cmd: possibleCmd, val: '' });
-    } else {
-      const cmd = line.substring(0, colonIdx).trim().toUpperCase();
-      const val = line.substring(colonIdx + 1).trim();
-      if (cmd) lineCmds.push({ cmd, val });
-    }
-  });
-
-  // Combine: line commands first (in order), then block commands (in order)
-  const allCmds = [...lineCmds, ...blockCmds];
-  let successCount = 0, errorCount = 0;
-
-  // ══════════════════════════════════════════════════
-  // STEP 3: Execute each command
-  // All local variables use var (not const/let) inside cases to avoid
-  // "Lexical declaration in case clause" errors across all browsers
-  // ══════════════════════════════════════════════════
-  allCmds.forEach(function(item) {
-    var cmd = item.cmd, val = item.val;
-    try {
-
-      // Special: HTML lines inside .dhan (shouldn't be there)
-      if (cmd === '__HTML_LINE__') {
-        log('err', '❌ Baris HTML mentah tidak valid. Gunakan perintah SET_INNER_HTML atau [HTML_BLOCK]');
-        errorCount++; return;
-      }
-
-      var parts, el, sep, pageEl, selStr, htmlStr, elFound, styleEl, blob, url, a;
-
-      switch(cmd) {
-
-        // ── METADATA ──────────────────────────────────
-        case 'VERSION':
-          log('info', '📌 Versi: ' + val); successCount++; break;
-        case 'AUTHOR':
-          log('info', '✍️ Author: ' + val); successCount++; break;
-        case 'DESCRIPTION':
-          log('info', '📋 ' + val); successCount++; break;
-        case 'LOG':
-          log('info', '📝 ' + val); successCount++; break;
-
-        // ── IDENTITAS ─────────────────────────────────
-        case 'SET_TITLE':
-          appState.appTitle = val;
-          document.getElementById('app-title-display').textContent = val;
-          document.getElementById('page-title').textContent = val;
-          document.getElementById('setting-apptitle').value = val;
-          log('ok', '✅ Judul → "' + val + '"'); successCount++; break;
-
-        case 'SET_USERNAME':
-          appState.username = val;
-          document.getElementById('setting-name').value = val;
-          updateProfile();
-          log('ok', '✅ Username → "' + val + '"'); successCount++; break;
-
-        case 'SET_LANG':
-          document.documentElement.lang = val;
-          log('ok', '✅ Lang → ' + val); successCount++; break;
-
-        case 'SET_META_DESC':
-          var metaEl = document.querySelector('meta[name="description"]');
-          if (!metaEl) { metaEl = document.createElement('meta'); metaEl.name='description'; document.head.appendChild(metaEl); }
-          metaEl.content = val;
-          log('ok', '✅ Meta description diset'); successCount++; break;
-
-        // ── TEMA ──────────────────────────────────────
-        case 'SET_THEME':
-          var validThemes = ['default','ocean','forest','sunset','midnight','rose'];
-          if (validThemes.indexOf(val.toLowerCase()) !== -1) {
-            var sw = document.querySelector('[data-theme="' + val.toLowerCase() + '"]');
-            if (sw) setTheme(val.toLowerCase(), sw);
-            else if (val.toLowerCase() === 'default') {
-              document.querySelectorAll('.theme-swatch').forEach(function(s){ s.classList.remove('active'); });
-              document.querySelector('[data-theme="default"]') && document.querySelector('[data-theme="default"]').classList.add('active');
-              delete document.documentElement.dataset.theme;
-              appState.theme = 'default'; saveState();
-            }
-            log('ok', '✅ Tema → ' + val); successCount++;
-          } else { log('err', '❌ Tema tidak dikenal: ' + val + ' (pilihan: ' + validThemes.join(', ') + ')'); errorCount++; }
-          break;
-
-        case 'SET_CSS_VAR':
-          parts = val.split(':');
-          if (parts.length >= 2) {
-            document.documentElement.style.setProperty(parts[0].trim(), parts.slice(1).join(':').trim());
-            log('ok', '✅ CSS var ' + parts[0].trim() + ' diset'); successCount++;
-          } else { log('err', '❌ Format: SET_CSS_VAR:--nama:nilai'); errorCount++; }
-          break;
-
-        case 'SET_BG_COLOR':
-          document.documentElement.style.setProperty('--bg', val);
-          log('ok', '✅ --bg → ' + val); successCount++; break;
-        case 'SET_PRIMARY_COLOR':
-          document.documentElement.style.setProperty('--primary', val);
-          log('ok', '✅ --primary → ' + val); successCount++; break;
-        case 'SET_ACCENT_COLOR':
-          document.documentElement.style.setProperty('--accent', val);
-          log('ok', '✅ --accent → ' + val); successCount++; break;
-        case 'SET_TEXT_COLOR':
-          document.documentElement.style.setProperty('--text', val);
-          log('ok', '✅ --text → ' + val); successCount++; break;
-        case 'SET_BORDER_RADIUS':
-          document.documentElement.style.setProperty('--radius', val);
-          log('ok', '✅ --radius → ' + val); successCount++; break;
-
-        case 'SET_FONT':
-          var fontLnk = document.createElement('link');
-          fontLnk.rel = 'stylesheet';
-          fontLnk.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(val) + ':wght@400;600;700&display=swap';
-          document.head.appendChild(fontLnk);
-          document.body.style.fontFamily = "'" + val + "', sans-serif";
-          log('ok', '✅ Font → ' + val); successCount++; break;
-
-        case 'REPLACE_STYLE':
-          styleEl = document.createElement('style');
-          styleEl.setAttribute('data-dhan', 'theme-override');
-          styleEl.textContent = ':root { ' + val + ' }';
-          document.querySelectorAll('style[data-dhan="theme-override"]').forEach(function(s){ s.remove(); });
-          document.head.appendChild(styleEl);
-          log('ok', '✅ :root override diinjeksi'); successCount++; break;
-
-        // ── CSS INJECT ────────────────────────────────
-        case 'INJECT_CSS':
-          styleEl = document.createElement('style');
-          styleEl.setAttribute('data-dhan', 'injected');
-          styleEl.textContent = val;
-          document.head.appendChild(styleEl);
-          log('ok', '✅ CSS diinjeksi (' + val.length + ' chars)'); successCount++; break;
-
-        case 'CSS_BLOCK':
-          // Multi-line CSS via block syntax
-          const styleBlock = document.createElement('style');
-          styleBlock.setAttribute('data-dhan', 'block');
-          styleBlock.textContent = val;
-          document.head.appendChild(styleBlock);
-          log('ok', `✅ CSS block diinjeksi (${val.trim().split('\n').length} baris)`); successCount++; break;
-
-        case 'REMOVE_CSS_INJECTED':
-          document.querySelectorAll('style[data-dhan]').forEach(s => s.remove());
-          log('ok', `✅ Semua CSS injeksi dihapus`); successCount++; break;
-
-        // ══════════════════════════════════════
-        // 4. INJECT JAVASCRIPT
-        // ── CSS BLOCK ─────────────────────────────────
-          styleEl = document.createElement('style');
-          styleEl.setAttribute('data-dhan', 'block');
-          styleEl.textContent = val;
-          document.head.appendChild(styleEl);
-          log('ok', '✅ CSS block diinjeksi (' + val.trim().split('\n').length + ' baris)'); successCount++; break;
-
-        case 'REMOVE_CSS_INJECTED':
-          document.querySelectorAll('style[data-dhan]').forEach(function(s){ s.remove(); });
-          log('ok', '✅ Semua CSS injeksi dihapus'); successCount++; break;
-
-        // ── JS INJECT ─────────────────────────────────
-        case 'INJECT_JS':
-          try { (new Function(val))(); log('ok', '✅ JS dieksekusi'); successCount++; }
-          catch(jsErr) { log('err', '❌ JS error: ' + jsErr.message); errorCount++; }
-          break;
-
-        case 'JS_BLOCK':
-          try { (new Function(val))(); log('ok', '✅ JS block dieksekusi (' + val.trim().split('\n').length + ' baris)'); successCount++; }
-          catch(jsErr) { log('err', '❌ JS block error: ' + jsErr.message); errorCount++; }
-          break;
-
-        case 'LOAD_SCRIPT':
-          var scEl = document.createElement('script');
-          scEl.src = val; scEl.async = true;
-          document.head.appendChild(scEl);
-          log('ok', '✅ Script dimuat: ' + val); successCount++; break;
-
-        // ── DOM MANIPULATION ──────────────────────────
-        case 'SET_INNER_HTML':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            selStr = val.substring(0, sep).trim();
-            htmlStr = val.substring(sep + 1).trim();
-            elFound = document.querySelector(selStr);
-            if (elFound) { elFound.innerHTML = htmlStr; log('ok', '✅ innerHTML "' + selStr + '" diupdate'); successCount++; }
-            else { log('err', '❌ Elemen "' + selStr + '" tidak ditemukan'); errorCount++; }
-          } else { log('err', '❌ Format: SET_INNER_HTML:selector:html'); errorCount++; }
-          break;
-
-        case 'HTML_BLOCK':
-          sep = val.indexOf('|||');
-          if (sep > -1) {
-            selStr = val.substring(0, sep).trim();
-            htmlStr = val.substring(sep + 3).trim();
-            elFound = document.querySelector(selStr);
-            if (elFound) { elFound.innerHTML = htmlStr; log('ok', '✅ HTML block → "' + selStr + '"'); successCount++; }
-            else { log('err', '❌ Selector "' + selStr + '" tidak ditemukan'); errorCount++; }
-          } else { log('err', '❌ Format HTML_BLOCK: selector|||html'); errorCount++; }
-          break;
-
-        case 'SET_TEXT':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            selStr = val.substring(0, sep).trim();
-            elFound = document.querySelector(selStr);
-            if (elFound) { elFound.textContent = val.substring(sep + 1).trim(); log('ok', '✅ Text "' + selStr + '" diupdate'); successCount++; }
-            else { log('err', '❌ Elemen "' + selStr + '" tidak ditemukan'); errorCount++; }
-          } break;
-
-        case 'SET_ATTR':
-          parts = val.split(':');
-          if (parts.length >= 3) {
-            elFound = document.querySelector(parts[0].trim());
-            if (elFound) { elFound.setAttribute(parts[1].trim(), parts.slice(2).join(':').trim()); log('ok', '✅ Attr "' + parts[1].trim() + '" diset'); successCount++; }
-            else { log('err', '❌ Elemen "' + parts[0] + '" tidak ditemukan'); errorCount++; }
-          } else { log('err', '❌ Format: SET_ATTR:selector:attr:nilai'); errorCount++; }
-          break;
-
-        case 'ADD_CLASS':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            elFound = document.querySelector(val.substring(0, sep).trim());
-            if (elFound) { elFound.classList.add(val.substring(sep+1).trim()); log('ok', '✅ Class ditambahkan'); successCount++; }
-            else { log('err', '❌ Elemen tidak ditemukan'); errorCount++; }
-          } break;
-
-        case 'REMOVE_CLASS':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            elFound = document.querySelector(val.substring(0, sep).trim());
-            if (elFound) { elFound.classList.remove(val.substring(sep+1).trim()); log('ok', '✅ Class dihapus'); successCount++; }
-            else { log('err', '❌ Elemen tidak ditemukan'); errorCount++; }
-          } break;
-
-        case 'HIDE_ELEMENT':
-          elFound = document.querySelector(val);
-          if (elFound) { elFound.style.display = 'none'; log('ok', '✅ "' + val + '" disembunyikan'); successCount++; }
-          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
-          break;
-
-        case 'SHOW_ELEMENT':
-          elFound = document.querySelector(val);
-          if (elFound) { elFound.style.display = ''; log('ok', '✅ "' + val + '" ditampilkan'); successCount++; }
-          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
-          break;
-
-        case 'REMOVE_ELEMENT':
-          elFound = document.querySelector(val);
-          if (elFound) { elFound.remove(); log('ok', '✅ "' + val + '" dihapus dari DOM'); successCount++; }
-          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
-          break;
-
-        case 'APPEND_HTML':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            elFound = document.querySelector(val.substring(0, sep).trim());
-            if (elFound) { elFound.insertAdjacentHTML('beforeend', val.substring(sep+1).trim()); log('ok', '✅ HTML di-append'); successCount++; }
-            else { log('err', '❌ Selector tidak ditemukan'); errorCount++; }
-          } break;
-
-        case 'PREPEND_HTML':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            elFound = document.querySelector(val.substring(0, sep).trim());
-            if (elFound) { elFound.insertAdjacentHTML('afterbegin', val.substring(sep+1).trim()); log('ok', '✅ HTML di-prepend'); successCount++; }
-            else { log('err', '❌ Selector tidak ditemukan'); errorCount++; }
-          } break;
-
-        // ── NAVIGASI ──────────────────────────────────
-        case 'NAV_TO':
-          var navBtns = document.querySelectorAll('.nav-item');
-          var navFound = false;
-          navBtns.forEach(function(btn) {
-            if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + val + "'") !== -1) {
-              btn.click(); navFound = true;
-            }
-          });
-          if (navFound) { log('ok', '✅ Navigasi ke tab "' + val + '"'); successCount++; }
-          else { log('err', '❌ Tab "' + val + '" tidak ditemukan. Pilihan: calendar, currency, calculator, settings'); errorCount++; }
-          break;
-
-        case 'ADD_NAV_TAB':
-          parts = val.split(':');
-          if (parts.length >= 3) {
-            var tabId = parts[0].trim();
-            var tabEmoji = parts[1].trim();
-            var tabLabel = parts.slice(2).join(':').trim();
-            var newPage = document.createElement('div');
-            newPage.className = 'page card'; newPage.id = 'page-' + tabId;
-            newPage.innerHTML = '<div class="section-pad"><div class="section-title">' + tabEmoji + ' ' + tabLabel + '</div><div id="custom-' + tabId + '-content" style="color:var(--text2);text-align:center;padding:40px 0">Tab baru. Gunakan SET_INNER_HTML atau HTML_BLOCK untuk mengisi konten.</div></div>';
-            var wrapper = document.querySelector('.app-wrapper');
-            wrapper.insertBefore(newPage, wrapper.lastElementChild);
-            var navBtn = document.createElement('button');
-            navBtn.className = 'nav-item';
-            navBtn.innerHTML = '<span class="nav-icon">' + tabEmoji + '</span>' + tabLabel;
-            navBtn.setAttribute('onclick', "switchPage('" + tabId + "',this)");
-            document.querySelector('.bottom-nav').appendChild(navBtn);
-            log('ok', '✅ Tab "' + tabLabel + '" (id:' + tabId + ') ditambahkan'); successCount++;
-          } else { log('err', '❌ Format: ADD_NAV_TAB:pageid:emoji:label'); errorCount++; }
-          break;
-
-        // ── PAGE REBUILD ───────────────────────────────
-        case 'REPLACE_PAGE_SECTION':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            pageEl = document.getElementById('page-' + val.substring(0, sep).trim());
-            if (pageEl) { pageEl.innerHTML = val.substring(sep + 1).trim(); log('ok', '✅ Halaman "' + val.substring(0,sep).trim() + '" diganti'); successCount++; }
-            else { log('err', '❌ Page tidak ditemukan'); errorCount++; }
-          } break;
-
-        case 'REPLACE_FULL_HTML_BLOCK':
-          if (confirm('⚠️ REPLACE_FULL_HTML: Seluruh halaman akan diganti dengan HTML baru dari file .dhan. Lanjutkan?')) {
-            document.open(); document.write(val.trim()); document.close();
-            log('ok', '✅ Halaman penuh diganti'); successCount++;
-            return;
-          } else { log('info', 'ℹ️ REPLACE_FULL_HTML dibatalkan'); }
-          break;
-
-        // ── KALENDER ──────────────────────────────────
-        case 'ADD_EVENT':
-          parts = val.split(':');
-          if (parts.length >= 2) {
-            var edate = parts[0].trim();
-            var etxt = parts.slice(1).join(':').trim();
-            if (/^\d{4}-\d{2}-\d{2}$/.test(edate)) {
-              if (!appState.events[edate]) appState.events[edate] = [];
-              appState.events[edate].push(etxt);
-              renderCalendar();
-              log('ok', '✅ Event: "' + etxt + '" @ ' + edate); successCount++;
-            } else { log('err', '❌ Format tanggal salah (YYYY-MM-DD): ' + edate); errorCount++; }
-          } else { log('err', '❌ Format: ADD_EVENT:YYYY-MM-DD:teks'); errorCount++; }
-          break;
-
-        case 'REMOVE_EVENT':
-          parts = val.split(':');
-          if (parts.length >= 2) {
-            var rdate = parts[0].trim(), ridx = parts[1].trim();
-            if (ridx === 'all') { delete appState.events[rdate]; }
-            else if (appState.events[rdate]) { appState.events[rdate].splice(parseInt(ridx), 1); }
-            renderCalendar(); log('ok', '✅ Event dihapus dari ' + rdate); successCount++;
-          } break;
-
-        case 'CLEAR_EVENTS':
-          appState.events = {}; renderCalendar();
-          log('ok', '✅ Semua event dihapus'); successCount++; break;
-
-        case 'GO_TO_DATE':
-          if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-            parts = val.split('-');
-            appState.calYear = parseInt(parts[0]); appState.calMonth = parseInt(parts[1]) - 1;
-            appState.calSelectedDate = val; renderCalendar();
-            log('ok', '✅ Kalender → ' + val); successCount++;
-          } else { log('err', '❌ Format: GO_TO_DATE:YYYY-MM-DD'); errorCount++; }
-          break;
-
-        // ── KALKULATOR ────────────────────────────────
-        case 'CALC_PRESET':
-          document.getElementById('calc-display').textContent = val;
-          calcState.expr = ''; calcState.waitingForOperand = false;
-          log('ok', '✅ Kalkulator preset → ' + val); successCount++; break;
-
-        case 'CALC_EVAL':
-          try {
-            var calcRes = (new Function('"use strict"; return (' + val + ')'))();
-            document.getElementById('calc-display').textContent = calcRes;
-            document.getElementById('calc-history').textContent = val + ' = ' + calcRes;
-            log('ok', '✅ Eval: ' + val + ' = ' + calcRes); successCount++;
-          } catch(calcErr) { log('err', '❌ Eval error: ' + calcErr.message); errorCount++; }
-          break;
-
-        // ── MATA UANG ─────────────────────────────────
-        case 'SET_CURRENCY_FROM':
-          if (CURRENCIES[val.toUpperCase()]) {
-            document.getElementById('curr-from').value = val.toUpperCase();
-            convertCurrency(); log('ok', '✅ Mata uang asal → ' + val.toUpperCase()); successCount++;
-          } else { log('err', '❌ Kode tidak valid: ' + val); errorCount++; }
-          break;
-
-        case 'SET_CURRENCY_TO':
-          if (CURRENCIES[val.toUpperCase()]) {
-            document.getElementById('curr-to').value = val.toUpperCase();
-            convertCurrency(); log('ok', '✅ Mata uang tujuan → ' + val.toUpperCase()); successCount++;
-          } else { log('err', '❌ Kode tidak valid: ' + val); errorCount++; }
-          break;
-
-        case 'SET_CURRENCY_AMOUNT':
-          document.getElementById('curr-amount').value = val;
-          convertCurrency(); log('ok', '✅ Jumlah → ' + val); successCount++; break;
-
-        case 'SET_EXCHANGE_RATE':
-          parts = val.split(':');
-          if (parts.length === 2 && RATES_TO_IDR[parts[0].trim().toUpperCase()] !== undefined) {
-            RATES_TO_IDR[parts[0].trim().toUpperCase()] = parseFloat(parts[1].trim());
-            convertCurrency(); renderQuickRates();
-            log('ok', '✅ Rate ' + parts[0].trim().toUpperCase() + ' → ' + parts[1].trim()); successCount++;
-          } else { log('err', '❌ Format: SET_EXCHANGE_RATE:KODE:nilai'); errorCount++; }
-          break;
-
-        // ── NOTIFIKASI ────────────────────────────────
-        case 'SHOW_TOAST':
-          showToast(val); log('ok', '✅ Toast: "' + val + '"'); successCount++; break;
-        case 'SHOW_TOAST_ERROR':
-          showToast(val, true); log('ok', '✅ Toast error: "' + val + '"'); successCount++; break;
-        case 'SHOW_ALERT':
-          alert(val); log('ok', '✅ Alert ditampilkan'); successCount++; break;
-
-        case 'SCROLL_TO':
-          elFound = document.querySelector(val);
-          if (elFound) { elFound.scrollIntoView({ behavior: 'smooth' }); log('ok', '✅ Scroll ke "' + val + '"'); successCount++; }
-          else { log('err', '❌ "' + val + '" tidak ditemukan'); errorCount++; }
-          break;
-
-        case 'FOCUS_ELEMENT':
-          elFound = document.querySelector(val);
-          if (elFound) { elFound.focus(); log('ok', '✅ Focus → "' + val + '"'); successCount++; }
-          else { log('err', '❌ "' + val + '" tidak ditemukan'); errorCount++; }
-          break;
-
-        // ── PRIVASI & STATE ───────────────────────────
-        case 'SET_PRIVACY_NAME':
-          appState.hideNamePrivacy = (val === 'true' || val === '1' || val === 'on');
-          document.getElementById('priv-hide-name').checked = appState.hideNamePrivacy;
-          updateProfile();
-          log('ok', '✅ Privasi nama → ' + appState.hideNamePrivacy); successCount++; break;
-
-        case 'SET_PRIVACY_EVENTS':
-          appState.hideEventsPrivacy = (val === 'true' || val === '1' || val === 'on');
-          document.getElementById('priv-hide-events').checked = appState.hideEventsPrivacy;
-          renderEventList();
-          log('ok', '✅ Privasi event → ' + appState.hideEventsPrivacy); successCount++; break;
-
-        case 'SAVE_STATE':
-          saveState(); log('ok', '✅ State disimpan ke localStorage'); successCount++; break;
-
-        case 'CLEAR_STATE':
-          localStorage.removeItem('dhanapp_state');
-          log('ok', '✅ State dihapus dari localStorage'); successCount++; break;
-
-        case 'SET_STATE_KEY':
-          sep = val.indexOf(':');
-          if (sep > -1) {
-            appState[val.substring(0, sep).trim()] = val.substring(sep + 1).trim();
-            saveState(); log('ok', '✅ appState["' + val.substring(0,sep).trim() + '"] diset'); successCount++;
-          } break;
-
-        // ── UTILITAS ──────────────────────────────────
-        case 'WAIT':
-          log('info', 'ℹ️ WAIT ' + val + 'ms (non-blocking)'); successCount++; break;
-
-        case 'RELOAD':
-          if (val === 'confirm') { if (confirm('Reload halaman?')) location.reload(); }
-          else { setTimeout(function(){ location.reload(); }, parseInt(val) || 1000); }
-          log('ok', '✅ Reload dijadwalkan'); successCount++; break;
-
-        case 'REDIRECT':
-          window.location.href = val; log('ok', '✅ Redirect → ' + val); successCount++; break;
-
-        case 'OPEN_URL':
-          window.open(val, '_blank'); log('ok', '✅ URL dibuka: ' + val); successCount++; break;
-
-        case 'COPY_TO_CLIPBOARD':
-          navigator.clipboard.writeText(val).then(function(){ log('ok', '✅ Disalin ke clipboard'); });
-          successCount++; break;
-
-        case 'SET_FAVICON':
-          var favEl = document.querySelector('link[rel="icon"]');
-          if (!favEl) { favEl = document.createElement('link'); favEl.rel = 'icon'; document.head.appendChild(favEl); }
-          favEl.href = val; log('ok', '✅ Favicon diubah'); successCount++; break;
-
-        case 'DOWNLOAD_SELF':
-          var dlHtml = '<!DOCTYPE html>' + document.documentElement.outerHTML;
-          blob = new Blob([dlHtml], { type: 'text/html' });
-          url = URL.createObjectURL(blob);
-          a = document.createElement('a');
-          a.href = url; a.download = (val || 'dhan-app-updated') + '.html';
-          a.click(); URL.revokeObjectURL(url);
-          log('ok', '✅ Diunduh sebagai "' + (val||'dhan-app-updated') + '.html"'); successCount++; break;
-
-        case 'REBUILD_PAGE':
-          log('info', 'ℹ️ Gunakan [REPLACE_FULL_HTML_BLOCK] untuk rebuild penuh'); break;
-
-        default:
-          log('err', '❌ Perintah tidak dikenal: "' + cmd + '"'); errorCount++;
-      }
-    } catch(execErr) {
-      log('err', '❌ Exception saat "' + cmd + '": ' + execErr.message); errorCount++;
-    }
-  });
-
-  saveState();
-  log('info', '─────────────────────────────────');
-  log(errorCount === 0 ? 'ok' : 'info',
-    '📊 Selesai: ' + successCount + ' berhasil, ' + errorCount + ' gagal dari ' + allCmds.length + ' perintah');
-  showToast(errorCount === 0
-    ? '✅ Update berhasil! (' + successCount + ' perintah)'
-    : '⚠️ Selesai dengan ' + errorCount + ' error', errorCount > 0);
-}
-
-function log(type, msg) {
-  const logEl = document.getElementById('update-log');
-  const line = document.createElement('div');
-  line.className = `log-line log-${type}`;
-  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-  logEl.appendChild(line);
-  logEl.scrollTop = logEl.scrollHeight;
-}
-
-function clearUpdateLog() {
-  const logEl = document.getElementById('update-log');
-  logEl.innerHTML = '';
-  logEl.style.display = 'none';
-}
-
-function downloadDhanTemplate() {
-  const template = `# ════════════════════════════════════════════════
-# DHAN FILE - Template Lengkap
-# Format: PERINTAH:nilai
-# Komentar dimulai dengan # atau //
-# Simpan sebagai .dhan (aslinya .txt)
-# ════════════════════════════════════════════════
-
-VERSION:1.0
-AUTHOR:Nama AI / Pembuat
-DESCRIPTION:Deskripsi update ini
-
-# ── IDENTITAS ──
-SET_TITLE:Nama Aplikasi Baru
-SET_USERNAME:Nama Pengguna
-SET_LANG:id
-
-# ── TEMA ──
-SET_THEME:midnight
-# Pilihan tema: default, ocean, forest, sunset, midnight, rose
-
-# ── WARNA KUSTOM ──
-SET_CSS_VAR:--primary:#ff6b35
-SET_BG_COLOR:#1a1a2e
-SET_PRIMARY_COLOR:#e94560
-SET_ACCENT_COLOR:#0f3460
-SET_TEXT_COLOR:#ffffff
-
-# ── FONT ──
-SET_FONT:Poppins
-
-# ── KALENDER ──
-ADD_EVENT:2024-12-25:Selamat Natal! 🎄
-ADD_EVENT:2024-01-01:Tahun Baru 2025! 🎉
-GO_TO_DATE:2024-12-25
-# CLEAR_EVENTS:
-
-# ── MATA UANG ──
-SET_CURRENCY_FROM:USD
-SET_CURRENCY_TO:IDR
-SET_CURRENCY_AMOUNT:100
-SET_EXCHANGE_RATE:USD:16000
-
-# ── KALKULATOR ──
-CALC_PRESET:9999
-# CALC_EVAL:100 * 365
-
-# ── MANIPULASI DOM ──
-SET_TEXT:#app-title-display:Judul Baru
-SET_INNER_HTML:.result-box:<div style="padding:20px">Konten Baru</div>
-SET_ATTR:body:data-version:2.0
-HIDE_ELEMENT:.rate-info
-# SHOW_ELEMENT:.rate-info
-# REMOVE_ELEMENT:#elemen-id
-APPEND_HTML:.cal-events:<p style="color:var(--primary);font-size:0.8rem">Info tambahan</p>
-
-# ── INJECT CSS SATU BARIS ──
-INJECT_CSS:body { letter-spacing: 0.5px; }
-
-# ── INJECT CSS MULTI-BARIS (gunakan block syntax) ──
-[CSS_BLOCK]
-.card {
-  transform: scale(1.01);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2) !important;
-}
-.app-header {
-  background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-}
-[/CSS_BLOCK]
-
-# ── INJECT JAVASCRIPT ──
-INJECT_JS:document.title = 'Updated! ' + document.title;
-
-# ── JAVASCRIPT MULTI-BARIS ──
-[JS_BLOCK]
-console.log('Dhan Updater JS Block aktif');
-document.querySelector('.app-header').style.transition = 'all 0.5s ease';
-showToast('JS Block berjalan!');
-[/JS_BLOCK]
-
-# ── NAVIGASI ──
-NAV_TO:currency
-# ADD_NAV_TAB:notes:📝:Catatan
-
-# ── GANTI KONTEN HALAMAN ──
-# REPLACE_PAGE_SECTION:calculator:<div class="calc-wrapper"><h2>Kalkulator diganti</h2></div>
-
-# ── REPLACE FULL HTML (HATI-HATI!) ──
-# [REPLACE_FULL_HTML_BLOCK]
-# <!DOCTYPE html><html>... seluruh HTML baru ...</html>
-# [/REPLACE_FULL_HTML_BLOCK]
-
-# ── UTILITAS ──
-SHOW_TOAST:Update berhasil diterapkan! ✨
-LOG:Ini pesan log kustom
-SCROLL_TO:.bottom-nav
-# RELOAD:confirm
-# OPEN_URL:https://example.com
-# COPY_TO_CLIPBOARD:Teks yang ingin disalin
-# SET_FAVICON:data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>
-# DOWNLOAD_SELF:dhan-app-v2
-
-# ── PRIVASI ──
-# SET_PRIVACY_NAME:false
-# SET_PRIVACY_EVENTS:false
-
-SAVE_STATE:
-`;
-  const blob = new Blob([template], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'template-update.dhan';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('Template berhasil diunduh!');
-}
-
-// ==================== MANUAL SYNC ====================
-async function manualSync() {
-  showToast('🔄 Menyinkronkan ke Supabase...');
-  setSyncStatus('syncing');
-  const ok = await sbFetch('POST', 'dhan_state', {
-    device_id: DEVICE_ID,
-    state_json: JSON.stringify(appState),
-    updated_at: new Date().toISOString()
-  });
-  setSyncStatus(ok ? 'ok' : 'error');
-  showToast(ok ? '✅ Sync berhasil!' : '❌ Sync gagal, cek koneksi', !ok);
-  updateSupabaseStatusUI(ok);
-}
-
-async function checkSupabaseConnection() {
-  const dot = document.getElementById('supabase-status-dot');
-  const txt = document.getElementById('supabase-status-text');
-  if (!dot || !txt) return;
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/dhan_state?limit=1', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-    });
-    if (res.ok || res.status === 406) {
-      updateSupabaseStatusUI(true);
-    } else if (res.status === 404 || res.status === 400) {
-      dot.style.background = '#f59e0b';
-      txt.innerHTML = '⚠️ Tabel <code>dhan_state</code> belum dibuat. <a href="#" onclick="showTableSQL()" style="color:var(--primary)">Lihat SQL</a>';
-    } else {
-      updateSupabaseStatusUI(false);
-    }
-  } catch(e) {
-    dot.style.background = '#94a3b8';
-    txt.textContent = 'Offline / tidak bisa menjangkau Supabase';
-  }
-}
-
-function updateSupabaseStatusUI(ok) {
-  const dot = document.getElementById('supabase-status-dot');
-  const txt = document.getElementById('supabase-status-text');
-  if (!dot || !txt) return;
-  if (ok) {
-    dot.style.background = '#22c55e';
-    txt.textContent = 'Terhubung ✓ — data tersimpan di cloud';
-  } else {
-    dot.style.background = '#ef4444';
-    txt.textContent = 'Gagal terhubung — data tersimpan lokal saja';
-  }
-}
-
-function showTableSQL() {
-  const sql = `-- Jalankan SQL ini di Supabase → SQL Editor\n\nCREATE TABLE IF NOT EXISTS dhan_state (\n  device_id TEXT PRIMARY KEY,\n  state_json TEXT NOT NULL,\n  updated_at TIMESTAMPTZ DEFAULT now()\n);\n\nALTER TABLE dhan_state ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY "allow_all" ON dhan_state\n  FOR ALL USING (true) WITH CHECK (true);`;
-  alert(sql);
-}
-
-// ==================== TOAST ====================
-let toastTimer;
-function showToast(msg, isError = false) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className = 'toast show' + (isError ? ' error' : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// ==================== INIT ====================
-function applyLoadedState() {
-  if (appState.theme && appState.theme !== 'default') {
-    document.documentElement.dataset.theme = appState.theme;
-    const swatch = document.querySelector(`[data-theme="${appState.theme}"]`);
-    if (swatch) { document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active')); swatch.classList.add('active'); }
-  }
-  document.getElementById('app-title-display').textContent = appState.appTitle;
-  document.getElementById('page-title').textContent = appState.appTitle;
-  document.getElementById('setting-apptitle').value = appState.appTitle;
-  document.getElementById('setting-name').value = appState.username;
-  const displayName = appState.hideNamePrivacy ? 'Anonim' : appState.username;
-  document.getElementById('header-username').textContent = displayName;
-  document.getElementById('header-avatar').textContent = displayName[0].toUpperCase();
-  document.getElementById('priv-hide-name').checked = appState.hideNamePrivacy;
-  document.getElementById('priv-hide-events').checked = appState.hideEventsPrivacy;
-}
-
-// ==================== ASYNC INIT ====================
-(async function init() {
-  // 1. Apply local state immediately so UI is not blank
-  try {
-    const local = localStorage.getItem('dhanapp_state');
-    if (local) appState = { ...appState, ...JSON.parse(local) };
-  } catch(e) {}
-  applyLoadedState();
-  initCurrencySelects();
-  convertCurrency();
-  renderQuickRates();
-  const today = new Date();
-  appState.calSelectedDate = getDateStr(today);
-  renderCalendar();
-
-  // 2. Then load from Supabase (updates UI if remote has newer data)
-  await loadState();
-  // 3. Check Supabase connection status
-  checkSupabaseConnection();
-})();
-</script>
-</body>
-</html>
+          <div class="theme-swatch active" da
