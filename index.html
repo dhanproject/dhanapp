@@ -625,16 +625,42 @@
           <button class="btn btn-sm" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="clearUpdateLog()">Bersihkan Log</button>
         </div>
         <details style="margin-top:16px;font-size:0.82rem;color:var(--text2)">
-          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">📋 Format Perintah .dhan</summary>
-          <div style="margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);line-height:2;font-family:monospace">
-            SET_TITLE:NamaAplikasimu<br>
-            SET_USERNAME:NamaKamu<br>
-            SET_THEME:ocean<br>
-            ADD_EVENT:2024-12-25:Selamat Natal!<br>
-            CLEAR_EVENTS:<br>
-            SET_CURRENCY_FROM:USD<br>
-            SET_CURRENCY_TO:IDR<br>
-            SHOW_TOAST:Pembaruan berhasil!<br>
+          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">📋 Referensi Cepat Perintah .dhan (50+ cmd)</summary>
+          <div style="margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);line-height:1.9;font-family:monospace;font-size:0.78rem">
+            <b style="color:var(--primary)">── Identitas ──</b><br>
+            SET_TITLE:Nama App &nbsp;|&nbsp; SET_USERNAME:Nama &nbsp;|&nbsp; SET_LANG:id<br><br>
+            <b style="color:var(--primary)">── Tema & Warna ──</b><br>
+            SET_THEME:midnight &nbsp;|&nbsp; SET_CSS_VAR:--primary:#ff0000<br>
+            SET_BG_COLOR:#fff &nbsp;|&nbsp; SET_PRIMARY_COLOR:#6C63FF<br>
+            SET_ACCENT_COLOR:#FF6584 &nbsp;|&nbsp; SET_FONT:Poppins<br><br>
+            <b style="color:var(--primary)">── CSS & JS ──</b><br>
+            INJECT_CSS:.card{transform:scale(1.02)}<br>
+            [CSS_BLOCK] ... css ... [/CSS_BLOCK]<br>
+            INJECT_JS:alert('hi') &nbsp;|&nbsp; [JS_BLOCK] ... [/JS_BLOCK]<br><br>
+            <b style="color:var(--primary)">── DOM ──</b><br>
+            SET_INNER_HTML:#id:html &nbsp;|&nbsp; SET_TEXT:#id:teks<br>
+            HIDE_ELEMENT:.class &nbsp;|&nbsp; SHOW_ELEMENT:.class<br>
+            APPEND_HTML:sel:html &nbsp;|&nbsp; REMOVE_ELEMENT:#id<br>
+            SET_ATTR:sel:attr:val &nbsp;|&nbsp; ADD_CLASS:sel:kelas<br><br>
+            <b style="color:var(--primary)">── Kalender ──</b><br>
+            ADD_EVENT:2024-12-25:Teks &nbsp;|&nbsp; CLEAR_EVENTS:<br>
+            GO_TO_DATE:2024-12-25 &nbsp;|&nbsp; REMOVE_EVENT:2024-12-25:0<br><br>
+            <b style="color:var(--primary)">── Kurs ──</b><br>
+            SET_CURRENCY_FROM:USD &nbsp;|&nbsp; SET_CURRENCY_TO:IDR<br>
+            SET_EXCHANGE_RATE:USD:16000 &nbsp;|&nbsp; SET_CURRENCY_AMOUNT:100<br><br>
+            <b style="color:var(--primary)">── Kalkulator ──</b><br>
+            CALC_PRESET:9999 &nbsp;|&nbsp; CALC_EVAL:100*365<br><br>
+            <b style="color:var(--primary)">── Navigasi & UI ──</b><br>
+            NAV_TO:currency &nbsp;|&nbsp; ADD_NAV_TAB:id:emoji:label<br>
+            SHOW_TOAST:pesan &nbsp;|&nbsp; SHOW_ALERT:pesan<br>
+            SCROLL_TO:.class &nbsp;|&nbsp; REPLACE_PAGE_SECTION:id:html<br><br>
+            <b style="color:var(--primary)">── Rebuild Penuh ──</b><br>
+            [REPLACE_FULL_HTML_BLOCK] ... html ... [/REPLACE_FULL_HTML_BLOCK]<br><br>
+            <b style="color:var(--primary)">── Utilitas ──</b><br>
+            DOWNLOAD_SELF:nama &nbsp;|&nbsp; RELOAD:confirm<br>
+            LOG:pesan &nbsp;|&nbsp; VERSION:1.0 &nbsp;|&nbsp; AUTHOR:Nama<br>
+            OPEN_URL:https://... &nbsp;|&nbsp; SET_FAVICON:url<br>
+            SAVE_STATE: &nbsp;|&nbsp; CLEAR_STATE:
           </div>
         </details>
       </div>
@@ -1047,95 +1073,537 @@ function processDhanContent(content, filename) {
   const logEl = document.getElementById('update-log');
   logEl.style.display = 'block';
   logEl.innerHTML = '';
-  log('info', `📦 Memproses file: ${filename}`);
-  
-  const lines = content.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  log('info', `📦 Memproses: ${filename}`);
+  log('info', `─────────────────────────────────`);
+
+  // ══════════════════════════════════════════════════
+  // STEP 1: Extract ALL block commands first
+  // Syntax: [BLOCKNAME] ... [/BLOCKNAME]  (no _BLOCK suffix needed in file)
+  // Also supports: [BLOCKNAME_BLOCK] ... [/BLOCKNAME_BLOCK]
+  // ══════════════════════════════════════════════════
+  let processed = content;
+  const blockCmds = [];
+
+  // Match [ANYTHING] body [/ANYTHING] — case-insensitive, captures block name + body
+  processed = processed.replace(/\[([A-Za-z_]+)\]([\s\S]*?)\[\/\1\]/g, (_, name, body) => {
+    // Normalize: if name ends in _BLOCK keep it, else add _BLOCK
+    const cmdName = name.toUpperCase().endsWith('_BLOCK') ? name.toUpperCase() : name.toUpperCase() + '_BLOCK';
+    blockCmds.push({ cmd: cmdName, val: body });
+    return '@@BLOCK_EXTRACTED@@'; // placeholder so line parser skips it
+  });
+
+  // ══════════════════════════════════════════════════
+  // STEP 2: Parse line commands
+  // Accept: CMD:value  OR  CMD:  (empty value)  OR  CMD  (no colon, treated as CMD with empty val)
+  // Skip: comments (#, //), empty lines, block placeholders
+  // ══════════════════════════════════════════════════
+  const lineCmds = [];
+  processed.split('\n').forEach(rawLine => {
+    const line = rawLine.trim();
+    if (!line) return;
+    if (line.startsWith('#') || line.startsWith('//')) return;
+    if (line === '@@BLOCK_EXTRACTED@@') return;
+    // Skip leftover block tags that weren't matched (malformed)
+    if (/^\[.*\]$/.test(line)) return;
+    // Skip lines that look like HTML (start with <)
+    // These are NOT valid .dhan commands and should be reported clearly
+    if (line.startsWith('<')) {
+      lineCmds.push({ cmd: '__HTML_LINE__', val: line }); return;
+    }
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) {
+      // CMD with no colon — treat as command with empty value
+      const possibleCmd = line.toUpperCase().replace(/\s+/g, '_');
+      lineCmds.push({ cmd: possibleCmd, val: '' });
+    } else {
+      const cmd = line.substring(0, colonIdx).trim().toUpperCase();
+      const val = line.substring(colonIdx + 1).trim();
+      if (cmd) lineCmds.push({ cmd, val });
+    }
+  });
+
+  // Combine: line commands first (in order), then block commands (in order)
+  const allCmds = [...lineCmds, ...blockCmds];
   let successCount = 0, errorCount = 0;
 
-  lines.forEach(line => {
-    const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) { log('err', `❌ Format tidak valid: "${line}"`); errorCount++; return; }
-    const cmd = line.substring(0, colonIdx).trim().toUpperCase();
-    const val = line.substring(colonIdx + 1).trim();
+  // ══════════════════════════════════════════════════
+  // STEP 3: Execute each command
+  // All local variables use var (not const/let) inside cases to avoid
+  // "Lexical declaration in case clause" errors across all browsers
+  // ══════════════════════════════════════════════════
+  allCmds.forEach(function(item) {
+    var cmd = item.cmd, val = item.val;
+    try {
 
-    switch(cmd) {
-      case 'SET_TITLE':
-        appState.appTitle = val;
-        document.getElementById('app-title-display').textContent = val;
-        document.getElementById('page-title').textContent = val;
-        document.getElementById('setting-apptitle').value = val;
-        log('ok', `✅ Judul diubah ke: "${val}"`); successCount++; break;
+      // Special: HTML lines inside .dhan (shouldn't be there)
+      if (cmd === '__HTML_LINE__') {
+        log('err', '❌ Baris HTML mentah tidak valid. Gunakan perintah SET_INNER_HTML atau [HTML_BLOCK]');
+        errorCount++; return;
+      }
 
-      case 'SET_USERNAME':
-        appState.username = val;
-        document.getElementById('setting-name').value = val;
-        updateProfile();
-        log('ok', `✅ Nama pengguna: "${val}"`); successCount++; break;
+      var parts, el, sep, pageEl, selStr, htmlStr, elFound, styleEl, blob, url, a;
 
-      case 'SET_THEME':
-        const validThemes = ['default','ocean','forest','sunset','midnight','rose'];
-        if (validThemes.includes(val.toLowerCase())) {
-          const swatch = document.querySelector(`[data-theme="${val.toLowerCase()}"]`);
-          if (swatch) setTheme(val.toLowerCase(), swatch);
-          log('ok', `✅ Tema diubah ke: "${val}"`); successCount++;
-        } else {
-          log('err', `❌ Tema tidak dikenal: "${val}". Pilihan: ${validThemes.join(', ')}`); errorCount++;
-        }
-        break;
+      switch(cmd) {
 
-      case 'ADD_EVENT':
-        const parts = val.split(':');
-        if (parts.length >= 2) {
-          const date = parts[0].trim();
-          const eventText = parts.slice(1).join(':').trim();
-          if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-            if (!appState.events[date]) appState.events[date] = [];
-            appState.events[date].push(eventText);
-            renderCalendar();
-            log('ok', `✅ Event ditambahkan: "${eventText}" pada ${date}`); successCount++;
-          } else {
-            log('err', `❌ Format tanggal salah: "${date}" (gunakan YYYY-MM-DD)`); errorCount++;
-          }
-        } else {
-          log('err', `❌ Format ADD_EVENT: ADD_EVENT:YYYY-MM-DD:teks event`); errorCount++;
-        }
-        break;
+        // ── METADATA ──────────────────────────────────
+        case 'VERSION':
+          log('info', '📌 Versi: ' + val); successCount++; break;
+        case 'AUTHOR':
+          log('info', '✍️ Author: ' + val); successCount++; break;
+        case 'DESCRIPTION':
+          log('info', '📋 ' + val); successCount++; break;
+        case 'LOG':
+          log('info', '📝 ' + val); successCount++; break;
 
-      case 'CLEAR_EVENTS':
-        appState.events = {};
-        renderCalendar();
-        log('ok', '✅ Semua event dihapus'); successCount++; break;
+        // ── IDENTITAS ─────────────────────────────────
+        case 'SET_TITLE':
+          appState.appTitle = val;
+          document.getElementById('app-title-display').textContent = val;
+          document.getElementById('page-title').textContent = val;
+          document.getElementById('setting-apptitle').value = val;
+          log('ok', '✅ Judul → "' + val + '"'); successCount++; break;
 
-      case 'SET_CURRENCY_FROM':
-        if (CURRENCIES[val.toUpperCase()]) {
-          document.getElementById('curr-from').value = val.toUpperCase();
-          convertCurrency();
-          log('ok', `✅ Mata uang asal: ${val.toUpperCase()}`); successCount++;
-        } else { log('err', `❌ Kode mata uang tidak valid: "${val}"`); errorCount++; }
-        break;
+        case 'SET_USERNAME':
+          appState.username = val;
+          document.getElementById('setting-name').value = val;
+          updateProfile();
+          log('ok', '✅ Username → "' + val + '"'); successCount++; break;
 
-      case 'SET_CURRENCY_TO':
-        if (CURRENCIES[val.toUpperCase()]) {
-          document.getElementById('curr-to').value = val.toUpperCase();
-          convertCurrency();
-          log('ok', `✅ Mata uang tujuan: ${val.toUpperCase()}`); successCount++;
-        } else { log('err', `❌ Kode mata uang tidak valid: "${val}"`); errorCount++; }
-        break;
+        case 'SET_LANG':
+          document.documentElement.lang = val;
+          log('ok', '✅ Lang → ' + val); successCount++; break;
 
-      case 'SHOW_TOAST':
-        showToast(val);
-        log('ok', `✅ Toast ditampilkan: "${val}"`); successCount++; break;
+        case 'SET_META_DESC':
+          var metaEl = document.querySelector('meta[name="description"]');
+          if (!metaEl) { metaEl = document.createElement('meta'); metaEl.name='description'; document.head.appendChild(metaEl); }
+          metaEl.content = val;
+          log('ok', '✅ Meta description diset'); successCount++; break;
 
-      default:
-        log('err', `❌ Perintah tidak dikenal: "${cmd}"`); errorCount++;
+        // ── TEMA ──────────────────────────────────────
+        case 'SET_THEME':
+          var validThemes = ['default','ocean','forest','sunset','midnight','rose'];
+          if (validThemes.indexOf(val.toLowerCase()) !== -1) {
+            var sw = document.querySelector('[data-theme="' + val.toLowerCase() + '"]');
+            if (sw) setTheme(val.toLowerCase(), sw);
+            else if (val.toLowerCase() === 'default') {
+              document.querySelectorAll('.theme-swatch').forEach(function(s){ s.classList.remove('active'); });
+              document.querySelector('[data-theme="default"]') && document.querySelector('[data-theme="default"]').classList.add('active');
+              delete document.documentElement.dataset.theme;
+              appState.theme = 'default'; saveState();
+            }
+            log('ok', '✅ Tema → ' + val); successCount++;
+          } else { log('err', '❌ Tema tidak dikenal: ' + val + ' (pilihan: ' + validThemes.join(', ') + ')'); errorCount++; }
+          break;
+
+        case 'SET_CSS_VAR':
+          parts = val.split(':');
+          if (parts.length >= 2) {
+            document.documentElement.style.setProperty(parts[0].trim(), parts.slice(1).join(':').trim());
+            log('ok', '✅ CSS var ' + parts[0].trim() + ' diset'); successCount++;
+          } else { log('err', '❌ Format: SET_CSS_VAR:--nama:nilai'); errorCount++; }
+          break;
+
+        case 'SET_BG_COLOR':
+          document.documentElement.style.setProperty('--bg', val);
+          log('ok', '✅ --bg → ' + val); successCount++; break;
+        case 'SET_PRIMARY_COLOR':
+          document.documentElement.style.setProperty('--primary', val);
+          log('ok', '✅ --primary → ' + val); successCount++; break;
+        case 'SET_ACCENT_COLOR':
+          document.documentElement.style.setProperty('--accent', val);
+          log('ok', '✅ --accent → ' + val); successCount++; break;
+        case 'SET_TEXT_COLOR':
+          document.documentElement.style.setProperty('--text', val);
+          log('ok', '✅ --text → ' + val); successCount++; break;
+        case 'SET_BORDER_RADIUS':
+          document.documentElement.style.setProperty('--radius', val);
+          log('ok', '✅ --radius → ' + val); successCount++; break;
+
+        case 'SET_FONT':
+          var fontLnk = document.createElement('link');
+          fontLnk.rel = 'stylesheet';
+          fontLnk.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(val) + ':wght@400;600;700&display=swap';
+          document.head.appendChild(fontLnk);
+          document.body.style.fontFamily = "'" + val + "', sans-serif";
+          log('ok', '✅ Font → ' + val); successCount++; break;
+
+        case 'REPLACE_STYLE':
+          styleEl = document.createElement('style');
+          styleEl.setAttribute('data-dhan', 'theme-override');
+          styleEl.textContent = ':root { ' + val + ' }';
+          document.querySelectorAll('style[data-dhan="theme-override"]').forEach(function(s){ s.remove(); });
+          document.head.appendChild(styleEl);
+          log('ok', '✅ :root override diinjeksi'); successCount++; break;
+
+        // ── CSS INJECT ────────────────────────────────
+        case 'INJECT_CSS':
+          styleEl = document.createElement('style');
+          styleEl.setAttribute('data-dhan', 'injected');
+          styleEl.textContent = val;
+          document.head.appendChild(styleEl);
+          log('ok', '✅ CSS diinjeksi (' + val.length + ' chars)'); successCount++; break;
+
+        case 'CSS_BLOCK':
+          // Multi-line CSS via block syntax
+          const styleBlock = document.createElement('style');
+          styleBlock.setAttribute('data-dhan', 'block');
+          styleBlock.textContent = val;
+          document.head.appendChild(styleBlock);
+          log('ok', `✅ CSS block diinjeksi (${val.trim().split('\n').length} baris)`); successCount++; break;
+
+        case 'REMOVE_CSS_INJECTED':
+          document.querySelectorAll('style[data-dhan]').forEach(s => s.remove());
+          log('ok', `✅ Semua CSS injeksi dihapus`); successCount++; break;
+
+        // ══════════════════════════════════════
+        // 4. INJECT JAVASCRIPT
+        // ── CSS BLOCK ─────────────────────────────────
+          styleEl = document.createElement('style');
+          styleEl.setAttribute('data-dhan', 'block');
+          styleEl.textContent = val;
+          document.head.appendChild(styleEl);
+          log('ok', '✅ CSS block diinjeksi (' + val.trim().split('\n').length + ' baris)'); successCount++; break;
+
+        case 'REMOVE_CSS_INJECTED':
+          document.querySelectorAll('style[data-dhan]').forEach(function(s){ s.remove(); });
+          log('ok', '✅ Semua CSS injeksi dihapus'); successCount++; break;
+
+        // ── JS INJECT ─────────────────────────────────
+        case 'INJECT_JS':
+          try { (new Function(val))(); log('ok', '✅ JS dieksekusi'); successCount++; }
+          catch(jsErr) { log('err', '❌ JS error: ' + jsErr.message); errorCount++; }
+          break;
+
+        case 'JS_BLOCK':
+          try { (new Function(val))(); log('ok', '✅ JS block dieksekusi (' + val.trim().split('\n').length + ' baris)'); successCount++; }
+          catch(jsErr) { log('err', '❌ JS block error: ' + jsErr.message); errorCount++; }
+          break;
+
+        case 'LOAD_SCRIPT':
+          var scEl = document.createElement('script');
+          scEl.src = val; scEl.async = true;
+          document.head.appendChild(scEl);
+          log('ok', '✅ Script dimuat: ' + val); successCount++; break;
+
+        // ── DOM MANIPULATION ──────────────────────────
+        case 'SET_INNER_HTML':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            selStr = val.substring(0, sep).trim();
+            htmlStr = val.substring(sep + 1).trim();
+            elFound = document.querySelector(selStr);
+            if (elFound) { elFound.innerHTML = htmlStr; log('ok', '✅ innerHTML "' + selStr + '" diupdate'); successCount++; }
+            else { log('err', '❌ Elemen "' + selStr + '" tidak ditemukan'); errorCount++; }
+          } else { log('err', '❌ Format: SET_INNER_HTML:selector:html'); errorCount++; }
+          break;
+
+        case 'HTML_BLOCK':
+          sep = val.indexOf('|||');
+          if (sep > -1) {
+            selStr = val.substring(0, sep).trim();
+            htmlStr = val.substring(sep + 3).trim();
+            elFound = document.querySelector(selStr);
+            if (elFound) { elFound.innerHTML = htmlStr; log('ok', '✅ HTML block → "' + selStr + '"'); successCount++; }
+            else { log('err', '❌ Selector "' + selStr + '" tidak ditemukan'); errorCount++; }
+          } else { log('err', '❌ Format HTML_BLOCK: selector|||html'); errorCount++; }
+          break;
+
+        case 'SET_TEXT':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            selStr = val.substring(0, sep).trim();
+            elFound = document.querySelector(selStr);
+            if (elFound) { elFound.textContent = val.substring(sep + 1).trim(); log('ok', '✅ Text "' + selStr + '" diupdate'); successCount++; }
+            else { log('err', '❌ Elemen "' + selStr + '" tidak ditemukan'); errorCount++; }
+          } break;
+
+        case 'SET_ATTR':
+          parts = val.split(':');
+          if (parts.length >= 3) {
+            elFound = document.querySelector(parts[0].trim());
+            if (elFound) { elFound.setAttribute(parts[1].trim(), parts.slice(2).join(':').trim()); log('ok', '✅ Attr "' + parts[1].trim() + '" diset'); successCount++; }
+            else { log('err', '❌ Elemen "' + parts[0] + '" tidak ditemukan'); errorCount++; }
+          } else { log('err', '❌ Format: SET_ATTR:selector:attr:nilai'); errorCount++; }
+          break;
+
+        case 'ADD_CLASS':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            elFound = document.querySelector(val.substring(0, sep).trim());
+            if (elFound) { elFound.classList.add(val.substring(sep+1).trim()); log('ok', '✅ Class ditambahkan'); successCount++; }
+            else { log('err', '❌ Elemen tidak ditemukan'); errorCount++; }
+          } break;
+
+        case 'REMOVE_CLASS':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            elFound = document.querySelector(val.substring(0, sep).trim());
+            if (elFound) { elFound.classList.remove(val.substring(sep+1).trim()); log('ok', '✅ Class dihapus'); successCount++; }
+            else { log('err', '❌ Elemen tidak ditemukan'); errorCount++; }
+          } break;
+
+        case 'HIDE_ELEMENT':
+          elFound = document.querySelector(val);
+          if (elFound) { elFound.style.display = 'none'; log('ok', '✅ "' + val + '" disembunyikan'); successCount++; }
+          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
+          break;
+
+        case 'SHOW_ELEMENT':
+          elFound = document.querySelector(val);
+          if (elFound) { elFound.style.display = ''; log('ok', '✅ "' + val + '" ditampilkan'); successCount++; }
+          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
+          break;
+
+        case 'REMOVE_ELEMENT':
+          elFound = document.querySelector(val);
+          if (elFound) { elFound.remove(); log('ok', '✅ "' + val + '" dihapus dari DOM'); successCount++; }
+          else { log('err', '❌ Elemen "' + val + '" tidak ditemukan'); errorCount++; }
+          break;
+
+        case 'APPEND_HTML':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            elFound = document.querySelector(val.substring(0, sep).trim());
+            if (elFound) { elFound.insertAdjacentHTML('beforeend', val.substring(sep+1).trim()); log('ok', '✅ HTML di-append'); successCount++; }
+            else { log('err', '❌ Selector tidak ditemukan'); errorCount++; }
+          } break;
+
+        case 'PREPEND_HTML':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            elFound = document.querySelector(val.substring(0, sep).trim());
+            if (elFound) { elFound.insertAdjacentHTML('afterbegin', val.substring(sep+1).trim()); log('ok', '✅ HTML di-prepend'); successCount++; }
+            else { log('err', '❌ Selector tidak ditemukan'); errorCount++; }
+          } break;
+
+        // ── NAVIGASI ──────────────────────────────────
+        case 'NAV_TO':
+          var navBtns = document.querySelectorAll('.nav-item');
+          var navFound = false;
+          navBtns.forEach(function(btn) {
+            if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + val + "'") !== -1) {
+              btn.click(); navFound = true;
+            }
+          });
+          if (navFound) { log('ok', '✅ Navigasi ke tab "' + val + '"'); successCount++; }
+          else { log('err', '❌ Tab "' + val + '" tidak ditemukan. Pilihan: calendar, currency, calculator, settings'); errorCount++; }
+          break;
+
+        case 'ADD_NAV_TAB':
+          parts = val.split(':');
+          if (parts.length >= 3) {
+            var tabId = parts[0].trim();
+            var tabEmoji = parts[1].trim();
+            var tabLabel = parts.slice(2).join(':').trim();
+            var newPage = document.createElement('div');
+            newPage.className = 'page card'; newPage.id = 'page-' + tabId;
+            newPage.innerHTML = '<div class="section-pad"><div class="section-title">' + tabEmoji + ' ' + tabLabel + '</div><div id="custom-' + tabId + '-content" style="color:var(--text2);text-align:center;padding:40px 0">Tab baru. Gunakan SET_INNER_HTML atau HTML_BLOCK untuk mengisi konten.</div></div>';
+            var wrapper = document.querySelector('.app-wrapper');
+            wrapper.insertBefore(newPage, wrapper.lastElementChild);
+            var navBtn = document.createElement('button');
+            navBtn.className = 'nav-item';
+            navBtn.innerHTML = '<span class="nav-icon">' + tabEmoji + '</span>' + tabLabel;
+            navBtn.setAttribute('onclick', "switchPage('" + tabId + "',this)");
+            document.querySelector('.bottom-nav').appendChild(navBtn);
+            log('ok', '✅ Tab "' + tabLabel + '" (id:' + tabId + ') ditambahkan'); successCount++;
+          } else { log('err', '❌ Format: ADD_NAV_TAB:pageid:emoji:label'); errorCount++; }
+          break;
+
+        // ── PAGE REBUILD ───────────────────────────────
+        case 'REPLACE_PAGE_SECTION':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            pageEl = document.getElementById('page-' + val.substring(0, sep).trim());
+            if (pageEl) { pageEl.innerHTML = val.substring(sep + 1).trim(); log('ok', '✅ Halaman "' + val.substring(0,sep).trim() + '" diganti'); successCount++; }
+            else { log('err', '❌ Page tidak ditemukan'); errorCount++; }
+          } break;
+
+        case 'REPLACE_FULL_HTML_BLOCK':
+          if (confirm('⚠️ REPLACE_FULL_HTML: Seluruh halaman akan diganti dengan HTML baru dari file .dhan. Lanjutkan?')) {
+            document.open(); document.write(val.trim()); document.close();
+            log('ok', '✅ Halaman penuh diganti'); successCount++;
+            return;
+          } else { log('info', 'ℹ️ REPLACE_FULL_HTML dibatalkan'); }
+          break;
+
+        // ── KALENDER ──────────────────────────────────
+        case 'ADD_EVENT':
+          parts = val.split(':');
+          if (parts.length >= 2) {
+            var edate = parts[0].trim();
+            var etxt = parts.slice(1).join(':').trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(edate)) {
+              if (!appState.events[edate]) appState.events[edate] = [];
+              appState.events[edate].push(etxt);
+              renderCalendar();
+              log('ok', '✅ Event: "' + etxt + '" @ ' + edate); successCount++;
+            } else { log('err', '❌ Format tanggal salah (YYYY-MM-DD): ' + edate); errorCount++; }
+          } else { log('err', '❌ Format: ADD_EVENT:YYYY-MM-DD:teks'); errorCount++; }
+          break;
+
+        case 'REMOVE_EVENT':
+          parts = val.split(':');
+          if (parts.length >= 2) {
+            var rdate = parts[0].trim(), ridx = parts[1].trim();
+            if (ridx === 'all') { delete appState.events[rdate]; }
+            else if (appState.events[rdate]) { appState.events[rdate].splice(parseInt(ridx), 1); }
+            renderCalendar(); log('ok', '✅ Event dihapus dari ' + rdate); successCount++;
+          } break;
+
+        case 'CLEAR_EVENTS':
+          appState.events = {}; renderCalendar();
+          log('ok', '✅ Semua event dihapus'); successCount++; break;
+
+        case 'GO_TO_DATE':
+          if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            parts = val.split('-');
+            appState.calYear = parseInt(parts[0]); appState.calMonth = parseInt(parts[1]) - 1;
+            appState.calSelectedDate = val; renderCalendar();
+            log('ok', '✅ Kalender → ' + val); successCount++;
+          } else { log('err', '❌ Format: GO_TO_DATE:YYYY-MM-DD'); errorCount++; }
+          break;
+
+        // ── KALKULATOR ────────────────────────────────
+        case 'CALC_PRESET':
+          document.getElementById('calc-display').textContent = val;
+          calcState.expr = ''; calcState.waitingForOperand = false;
+          log('ok', '✅ Kalkulator preset → ' + val); successCount++; break;
+
+        case 'CALC_EVAL':
+          try {
+            var calcRes = (new Function('"use strict"; return (' + val + ')'))();
+            document.getElementById('calc-display').textContent = calcRes;
+            document.getElementById('calc-history').textContent = val + ' = ' + calcRes;
+            log('ok', '✅ Eval: ' + val + ' = ' + calcRes); successCount++;
+          } catch(calcErr) { log('err', '❌ Eval error: ' + calcErr.message); errorCount++; }
+          break;
+
+        // ── MATA UANG ─────────────────────────────────
+        case 'SET_CURRENCY_FROM':
+          if (CURRENCIES[val.toUpperCase()]) {
+            document.getElementById('curr-from').value = val.toUpperCase();
+            convertCurrency(); log('ok', '✅ Mata uang asal → ' + val.toUpperCase()); successCount++;
+          } else { log('err', '❌ Kode tidak valid: ' + val); errorCount++; }
+          break;
+
+        case 'SET_CURRENCY_TO':
+          if (CURRENCIES[val.toUpperCase()]) {
+            document.getElementById('curr-to').value = val.toUpperCase();
+            convertCurrency(); log('ok', '✅ Mata uang tujuan → ' + val.toUpperCase()); successCount++;
+          } else { log('err', '❌ Kode tidak valid: ' + val); errorCount++; }
+          break;
+
+        case 'SET_CURRENCY_AMOUNT':
+          document.getElementById('curr-amount').value = val;
+          convertCurrency(); log('ok', '✅ Jumlah → ' + val); successCount++; break;
+
+        case 'SET_EXCHANGE_RATE':
+          parts = val.split(':');
+          if (parts.length === 2 && RATES_TO_IDR[parts[0].trim().toUpperCase()] !== undefined) {
+            RATES_TO_IDR[parts[0].trim().toUpperCase()] = parseFloat(parts[1].trim());
+            convertCurrency(); renderQuickRates();
+            log('ok', '✅ Rate ' + parts[0].trim().toUpperCase() + ' → ' + parts[1].trim()); successCount++;
+          } else { log('err', '❌ Format: SET_EXCHANGE_RATE:KODE:nilai'); errorCount++; }
+          break;
+
+        // ── NOTIFIKASI ────────────────────────────────
+        case 'SHOW_TOAST':
+          showToast(val); log('ok', '✅ Toast: "' + val + '"'); successCount++; break;
+        case 'SHOW_TOAST_ERROR':
+          showToast(val, true); log('ok', '✅ Toast error: "' + val + '"'); successCount++; break;
+        case 'SHOW_ALERT':
+          alert(val); log('ok', '✅ Alert ditampilkan'); successCount++; break;
+
+        case 'SCROLL_TO':
+          elFound = document.querySelector(val);
+          if (elFound) { elFound.scrollIntoView({ behavior: 'smooth' }); log('ok', '✅ Scroll ke "' + val + '"'); successCount++; }
+          else { log('err', '❌ "' + val + '" tidak ditemukan'); errorCount++; }
+          break;
+
+        case 'FOCUS_ELEMENT':
+          elFound = document.querySelector(val);
+          if (elFound) { elFound.focus(); log('ok', '✅ Focus → "' + val + '"'); successCount++; }
+          else { log('err', '❌ "' + val + '" tidak ditemukan'); errorCount++; }
+          break;
+
+        // ── PRIVASI & STATE ───────────────────────────
+        case 'SET_PRIVACY_NAME':
+          appState.hideNamePrivacy = (val === 'true' || val === '1' || val === 'on');
+          document.getElementById('priv-hide-name').checked = appState.hideNamePrivacy;
+          updateProfile();
+          log('ok', '✅ Privasi nama → ' + appState.hideNamePrivacy); successCount++; break;
+
+        case 'SET_PRIVACY_EVENTS':
+          appState.hideEventsPrivacy = (val === 'true' || val === '1' || val === 'on');
+          document.getElementById('priv-hide-events').checked = appState.hideEventsPrivacy;
+          renderEventList();
+          log('ok', '✅ Privasi event → ' + appState.hideEventsPrivacy); successCount++; break;
+
+        case 'SAVE_STATE':
+          saveState(); log('ok', '✅ State disimpan ke localStorage'); successCount++; break;
+
+        case 'CLEAR_STATE':
+          localStorage.removeItem('dhanapp_state');
+          log('ok', '✅ State dihapus dari localStorage'); successCount++; break;
+
+        case 'SET_STATE_KEY':
+          sep = val.indexOf(':');
+          if (sep > -1) {
+            appState[val.substring(0, sep).trim()] = val.substring(sep + 1).trim();
+            saveState(); log('ok', '✅ appState["' + val.substring(0,sep).trim() + '"] diset'); successCount++;
+          } break;
+
+        // ── UTILITAS ──────────────────────────────────
+        case 'WAIT':
+          log('info', 'ℹ️ WAIT ' + val + 'ms (non-blocking)'); successCount++; break;
+
+        case 'RELOAD':
+          if (val === 'confirm') { if (confirm('Reload halaman?')) location.reload(); }
+          else { setTimeout(function(){ location.reload(); }, parseInt(val) || 1000); }
+          log('ok', '✅ Reload dijadwalkan'); successCount++; break;
+
+        case 'REDIRECT':
+          window.location.href = val; log('ok', '✅ Redirect → ' + val); successCount++; break;
+
+        case 'OPEN_URL':
+          window.open(val, '_blank'); log('ok', '✅ URL dibuka: ' + val); successCount++; break;
+
+        case 'COPY_TO_CLIPBOARD':
+          navigator.clipboard.writeText(val).then(function(){ log('ok', '✅ Disalin ke clipboard'); });
+          successCount++; break;
+
+        case 'SET_FAVICON':
+          var favEl = document.querySelector('link[rel="icon"]');
+          if (!favEl) { favEl = document.createElement('link'); favEl.rel = 'icon'; document.head.appendChild(favEl); }
+          favEl.href = val; log('ok', '✅ Favicon diubah'); successCount++; break;
+
+        case 'DOWNLOAD_SELF':
+          var dlHtml = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+          blob = new Blob([dlHtml], { type: 'text/html' });
+          url = URL.createObjectURL(blob);
+          a = document.createElement('a');
+          a.href = url; a.download = (val || 'dhan-app-updated') + '.html';
+          a.click(); URL.revokeObjectURL(url);
+          log('ok', '✅ Diunduh sebagai "' + (val||'dhan-app-updated') + '.html"'); successCount++; break;
+
+        case 'REBUILD_PAGE':
+          log('info', 'ℹ️ Gunakan [REPLACE_FULL_HTML_BLOCK] untuk rebuild penuh'); break;
+
+        default:
+          log('err', '❌ Perintah tidak dikenal: "' + cmd + '"'); errorCount++;
+      }
+    } catch(execErr) {
+      log('err', '❌ Exception saat "' + cmd + '": ' + execErr.message); errorCount++;
     }
   });
 
   saveState();
-  log('info', `─────────────────────────────────`);
-  log(errorCount === 0 ? 'ok' : 'info', 
-      `📊 Selesai: ${successCount} berhasil, ${errorCount} gagal dari ${lines.length} baris`);
-  showToast(errorCount === 0 ? `✅ Update berhasil! (${successCount} perintah)` : `⚠️ Update selesai dengan ${errorCount} error`, errorCount > 0);
+  log('info', '─────────────────────────────────');
+  log(errorCount === 0 ? 'ok' : 'info',
+    '📊 Selesai: ' + successCount + ' berhasil, ' + errorCount + ' gagal dari ' + allCmds.length + ' perintah');
+  showToast(errorCount === 0
+    ? '✅ Update berhasil! (' + successCount + ' perintah)'
+    : '⚠️ Selesai dengan ' + errorCount + ' error', errorCount > 0);
 }
 
 function log(type, msg) {
@@ -1154,30 +1622,112 @@ function clearUpdateLog() {
 }
 
 function downloadDhanTemplate() {
-  const template = `# Template Dhan Updater
-# Baris dimulai dengan # adalah komentar dan diabaikan
+  const template = `# ════════════════════════════════════════════════
+# DHAN FILE - Template Lengkap
 # Format: PERINTAH:nilai
-# Simpan file ini sebagai nama_file.dhan
+# Komentar dimulai dengan # atau //
+# Simpan sebagai .dhan (aslinya .txt)
+# ════════════════════════════════════════════════
 
-# Ubah judul aplikasi
-SET_TITLE:Aplikasi Saya
+VERSION:1.0
+AUTHOR:Nama AI / Pembuat
+DESCRIPTION:Deskripsi update ini
 
-# Ubah nama pengguna
-SET_USERNAME:Nama Kamu
+# ── IDENTITAS ──
+SET_TITLE:Nama Aplikasi Baru
+SET_USERNAME:Nama Pengguna
+SET_LANG:id
 
-# Ubah tema (pilihan: default, ocean, forest, sunset, midnight, rose)
-SET_THEME:ocean
+# ── TEMA ──
+SET_THEME:midnight
+# Pilihan tema: default, ocean, forest, sunset, midnight, rose
 
-# Tambah event kalender (format tanggal: YYYY-MM-DD)
-ADD_EVENT:2024-12-25:Selamat Natal!
-ADD_EVENT:2024-01-01:Tahun Baru!
+# ── WARNA KUSTOM ──
+SET_CSS_VAR:--primary:#ff6b35
+SET_BG_COLOR:#1a1a2e
+SET_PRIMARY_COLOR:#e94560
+SET_ACCENT_COLOR:#0f3460
+SET_TEXT_COLOR:#ffffff
 
-# Atur mata uang default
+# ── FONT ──
+SET_FONT:Poppins
+
+# ── KALENDER ──
+ADD_EVENT:2024-12-25:Selamat Natal! 🎄
+ADD_EVENT:2024-01-01:Tahun Baru 2025! 🎉
+GO_TO_DATE:2024-12-25
+# CLEAR_EVENTS:
+
+# ── MATA UANG ──
 SET_CURRENCY_FROM:USD
 SET_CURRENCY_TO:IDR
+SET_CURRENCY_AMOUNT:100
+SET_EXCHANGE_RATE:USD:16000
 
-# Tampilkan pesan notifikasi
-SHOW_TOAST:Update berhasil diterapkan!
+# ── KALKULATOR ──
+CALC_PRESET:9999
+# CALC_EVAL:100 * 365
+
+# ── MANIPULASI DOM ──
+SET_TEXT:#app-title-display:Judul Baru
+SET_INNER_HTML:.result-box:<div style="padding:20px">Konten Baru</div>
+SET_ATTR:body:data-version:2.0
+HIDE_ELEMENT:.rate-info
+# SHOW_ELEMENT:.rate-info
+# REMOVE_ELEMENT:#elemen-id
+APPEND_HTML:.cal-events:<p style="color:var(--primary);font-size:0.8rem">Info tambahan</p>
+
+# ── INJECT CSS SATU BARIS ──
+INJECT_CSS:body { letter-spacing: 0.5px; }
+
+# ── INJECT CSS MULTI-BARIS (gunakan block syntax) ──
+[CSS_BLOCK]
+.card {
+  transform: scale(1.01);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2) !important;
+}
+.app-header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+}
+[/CSS_BLOCK]
+
+# ── INJECT JAVASCRIPT ──
+INJECT_JS:document.title = 'Updated! ' + document.title;
+
+# ── JAVASCRIPT MULTI-BARIS ──
+[JS_BLOCK]
+console.log('Dhan Updater JS Block aktif');
+document.querySelector('.app-header').style.transition = 'all 0.5s ease';
+showToast('JS Block berjalan!');
+[/JS_BLOCK]
+
+# ── NAVIGASI ──
+NAV_TO:currency
+# ADD_NAV_TAB:notes:📝:Catatan
+
+# ── GANTI KONTEN HALAMAN ──
+# REPLACE_PAGE_SECTION:calculator:<div class="calc-wrapper"><h2>Kalkulator diganti</h2></div>
+
+# ── REPLACE FULL HTML (HATI-HATI!) ──
+# [REPLACE_FULL_HTML_BLOCK]
+# <!DOCTYPE html><html>... seluruh HTML baru ...</html>
+# [/REPLACE_FULL_HTML_BLOCK]
+
+# ── UTILITAS ──
+SHOW_TOAST:Update berhasil diterapkan! ✨
+LOG:Ini pesan log kustom
+SCROLL_TO:.bottom-nav
+# RELOAD:confirm
+# OPEN_URL:https://example.com
+# COPY_TO_CLIPBOARD:Teks yang ingin disalin
+# SET_FAVICON:data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>
+# DOWNLOAD_SELF:dhan-app-v2
+
+# ── PRIVASI ──
+# SET_PRIVACY_NAME:false
+# SET_PRIVACY_EVENTS:false
+
+SAVE_STATE:
 `;
   const blob = new Blob([template], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
@@ -1229,3 +1779,4 @@ renderCalendar();
 </script>
 </body>
 </html>
+     
