@@ -625,7 +625,7 @@
 
   <!-- Note -->
   <div class="note">
-    ⚡ <strong>Demo UI:</strong> Ini adalah tampilan frontend. Untuk download nyata, perlu backend menggunakan <strong>yt-dlp</strong> atau API seperti <strong>RapidAPI</strong>. Lihat dokumentasi backend di bawah atau jalankan server lokal.
+    ⚡ <strong>Live API:</strong> Terhubung ke <strong>social-download-all-in-one</strong> via RapidAPI. Jika muncul CORS error, jalankan proxy lokal — panduan otomatis muncul.
   </div>
 
   <!-- Main Card -->
@@ -716,21 +716,29 @@
 </div>
 
 <script>
+  // =====================================================
+  // KONFIGURASI RAPIDAPI
+  // =====================================================
+  const RAPIDAPI_KEY = 'f0739bbcbemsh78e13c6e01b858ap1ea79bjsndc5ce8fd47e4';
+  const RAPIDAPI_HOST = 'social-download-all-in-one.p.rapidapi.com';
+  const RAPIDAPI_URL = 'https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink';
+
   let selectedFormat = 'mp4';
   let selectedQuality = '720p';
-  let fetchTimeout;
+  let lastApiData = null; // simpan hasil API terakhir
 
+  // =====================================================
+  // FORMAT & QUALITY SELECTOR
+  // =====================================================
   function setFormat(fmt, btn) {
     selectedFormat = fmt;
     document.querySelectorAll('.format-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-
     const qs = document.getElementById('qualitySection');
-    if (fmt === 'mp4') {
-      qs.classList.add('visible');
-    } else {
-      qs.classList.remove('visible');
-    }
+    qs.classList.toggle('visible', fmt === 'mp4');
+
+    // Re-render hasil kalau sudah ada data
+    if (lastApiData) renderResults(lastApiData);
   }
 
   function selectQuality(btn) {
@@ -739,13 +747,15 @@
     selectedQuality = btn.textContent.trim().split('\n')[0].trim();
   }
 
+  // =====================================================
+  // UTILITIES
+  // =====================================================
   async function pasteFromClipboard() {
     try {
       const text = await navigator.clipboard.readText();
       document.getElementById('urlInput').value = text;
     } catch {
       document.getElementById('urlInput').focus();
-      document.execCommand('paste');
     }
   }
 
@@ -757,7 +767,7 @@
     if (url.includes('facebook.com') || url.includes('fb.watch')) return { name: 'Facebook', icon: '👥' };
     if (url.includes('vimeo.com')) return { name: 'Vimeo', icon: '🎬' };
     if (url.includes('soundcloud.com')) return { name: 'SoundCloud', icon: '🔊' };
-    return { name: 'Unknown', icon: '🌐' };
+    return { name: 'Platform', icon: '🌐' };
   }
 
   function isValidUrl(str) {
@@ -777,16 +787,25 @@
     dot.className = 'status-dot' + (state === 'done' ? ' done' : state === 'error' ? ' error' : '');
   }
 
+  function shake(el) {
+    el.style.borderColor = '#ff3d71';
+    el.style.transform = 'translateX(-6px)';
+    setTimeout(() => { el.style.transform = 'translateX(6px)'; }, 80);
+    setTimeout(() => { el.style.transform = 'translateX(-4px)'; }, 160);
+    setTimeout(() => { el.style.transform = 'translateX(0)'; el.style.borderColor = ''; }, 240);
+  }
+
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // =====================================================
+  // MAIN FETCH — PANGGIL RAPIDAPI
+  // =====================================================
   async function fetchMedia() {
     const url = document.getElementById('urlInput').value.trim();
-    if (!url) {
-      shake(document.getElementById('urlInput'));
-      return;
-    }
+
+    if (!url) { shake(document.getElementById('urlInput')); return; }
     if (!isValidUrl(url)) {
       showStatus('❌ URL tidak valid. Masukkan link yang benar.', 'error');
-      document.getElementById('statusCard').classList.add('visible');
-      document.getElementById('resultCard').classList.remove('visible');
       return;
     }
 
@@ -795,153 +814,244 @@
     btn.disabled = true;
     document.getElementById('fetchBtnText').textContent = '⏳ MEMPROSES...';
     document.getElementById('resultCard').classList.remove('visible');
+    lastApiData = null;
 
-    showStatus(`Mendeteksi media dari ${platform.name}...`);
-    setProgress(15);
+    showStatus(`🔍 Mendeteksi media dari ${platform.name}...`);
+    setProgress(20);
 
-    // Simulate processing steps
-    await delay(600);
-    setProgress(35);
-    showStatus('Mengambil informasi media...');
+    try {
+      setProgress(40);
+      showStatus('📡 Menghubungi server RapidAPI...');
 
-    await delay(700);
-    setProgress(60);
-    showStatus('Menyiapkan opsi download...');
+      const response = await fetch(RAPIDAPI_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-rapidapi-host': RAPIDAPI_HOST,
+          'x-rapidapi-key': RAPIDAPI_KEY
+        },
+        body: JSON.stringify({ url: url })
+      });
 
-    await delay(600);
-    setProgress(90);
+      setProgress(70);
+      showStatus('📦 Memproses data...');
 
-    await delay(400);
-    setProgress(100);
-    showStatus(`✅ Media berhasil dianalisis dari ${platform.name}!`, 'done');
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errText}`);
+      }
 
-    // Show result (demo data)
-    showResult(url, platform);
+      const data = await response.json();
+      console.log('RapidAPI response:', data); // debug
+
+      setProgress(100);
+
+      if (data && (data.medias || data.links || data.url || data.data)) {
+        showStatus(`✅ Media berhasil ditemukan dari ${platform.name}!`, 'done');
+        lastApiData = { data, platform, url };
+        renderResults({ data, platform, url });
+      } else if (data && data.error) {
+        throw new Error(data.error);
+      } else {
+        throw new Error('Tidak ada media yang ditemukan. Coba link lain.');
+      }
+
+    } catch (err) {
+      console.error('Error:', err);
+      setProgress(100);
+
+      let errMsg = err.message;
+      if (errMsg.includes('Failed to fetch') || errMsg.includes('CORS')) {
+        errMsg = '⚠️ CORS Error: API tidak bisa dipanggil langsung dari browser. Butuh backend proxy. Lihat panduan di bawah.';
+      } else if (errMsg.includes('429')) {
+        errMsg = '⏱️ Rate limit tercapai. Tunggu sebentar lalu coba lagi.';
+      } else if (errMsg.includes('403')) {
+        errMsg = '🔑 API Key tidak valid atau kuota habis. Cek di RapidAPI dashboard.';
+      }
+
+      showStatus('❌ ' + errMsg, 'error');
+
+      // Tampilkan panduan CORS jika relevan
+      if (err.message.includes('fetch') || err.message.includes('CORS')) {
+        showCorsGuide();
+      }
+    }
 
     btn.disabled = false;
     document.getElementById('fetchBtnText').textContent = '⚡ ANALISIS & DOWNLOAD';
   }
 
-  function showResult(url, platform) {
+  // =====================================================
+  // RENDER HASIL DOWNLOAD
+  // =====================================================
+  function renderResults({ data, platform, url }) {
     const card = document.getElementById('resultCard');
     const thumb = document.getElementById('mediaThumbnail');
-    const title = document.getElementById('mediaTitle');
-    const meta = document.getElementById('mediaMeta');
-    const opts = document.getElementById('downloadOptions');
+    const titleEl = document.getElementById('mediaTitle');
+    const metaEl = document.getElementById('mediaMeta');
+    const optsEl = document.getElementById('downloadOptions');
 
-    // Demo titles based on platform
-    const demoTitles = {
-      'YouTube': 'Video YouTube - Klik untuk download versi asli',
-      'Instagram': 'Instagram Reel / Post',
-      'TikTok': 'TikTok Video',
-      'Twitter/X': 'Twitter/X Media',
-      'Facebook': 'Facebook Video',
-      'Vimeo': 'Vimeo Video',
-      'SoundCloud': 'SoundCloud Track',
-      'Unknown': 'Media dari ' + url.substring(0, 40) + '...',
-    };
+    // Normalize response — berbagai API punya struktur berbeda
+    // API ini: { title, thumbnail, medias: [{url, quality, extension, ...}] }
+    const title = data.title || data.meta?.title || 'Media';
+    const thumbnail = data.thumbnail || data.picture || null;
+    
+    // Ambil array media/links
+    let medias = data.medias || data.links || data.data?.medias || [];
 
-    thumb.textContent = platform.icon;
-    thumb.style.fontSize = '40px';
-    title.textContent = demoTitles[platform.name] || 'Media';
+    // Set thumbnail
+    if (thumbnail) {
+      const img = document.createElement('img');
+      img.src = thumbnail;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:9px;';
+      img.onerror = () => { thumb.textContent = platform.icon; thumb.style.fontSize = '40px'; };
+      thumb.innerHTML = '';
+      thumb.appendChild(img);
+    } else {
+      thumb.textContent = platform.icon;
+      thumb.style.fontSize = '40px';
+    }
 
-    meta.innerHTML = `
+    titleEl.textContent = title.length > 80 ? title.substring(0, 80) + '...' : title;
+
+    metaEl.innerHTML = `
       <span class="meta-tag">${platform.name}</span>
-      <span class="meta-tag">${selectedFormat.toUpperCase()}</span>
-      ${selectedFormat === 'mp4' ? `<span class="meta-tag">${selectedQuality}</span>` : ''}
+      <span class="meta-tag">${medias.length} opsi tersedia</span>
     `;
 
-    // Build download options
+    // Filter berdasarkan format yang dipilih
+    let filtered = medias;
     if (selectedFormat === 'mp4') {
-      opts.innerHTML = `
-        ${makeDownloadItem('MP4', '1080p FHD', '~180 MB', 'mp4', url)}
-        ${makeDownloadItem('MP4', '720p HD', '~90 MB', 'mp4', url)}
-        ${makeDownloadItem('MP4', '480p', '~50 MB', 'mp4', url)}
-        ${makeDownloadItem('MP4', '360p', '~25 MB', 'mp4', url)}
-      `;
-    } else if (selectedFormat === 'mp3') {
-      opts.innerHTML = `
-        ${makeDownloadItem('MP3', '320 kbps', '~8 MB', 'mp3', url)}
-        ${makeDownloadItem('MP3', '192 kbps', '~5 MB', 'mp3', url)}
-        ${makeDownloadItem('MP3', '128 kbps', '~3.5 MB', 'mp3', url)}
-      `;
+      // Prioritas video — ambil semua yang ada video atau tanpa audio-only flag
+      filtered = medias.filter(m => {
+        const ext = (m.extension || m.type || m.format || '').toLowerCase();
+        const q = (m.quality || '').toLowerCase();
+        return !ext.includes('mp3') && !ext.includes('m4a') && !q.includes('audio only') && !q.includes('mp3');
+      });
+      if (filtered.length === 0) filtered = medias; // fallback semua
+    } else if (selectedFormat === 'mp3' || selectedFormat === 'm4a') {
+      // Audio only
+      filtered = medias.filter(m => {
+        const ext = (m.extension || m.type || m.format || '').toLowerCase();
+        const q = (m.quality || '').toLowerCase();
+        return ext.includes('mp3') || ext.includes('m4a') || ext.includes('audio') || q.includes('audio');
+      });
+      if (filtered.length === 0) filtered = medias; // fallback semua
+    }
+
+    if (filtered.length === 0) {
+      optsEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.85rem;">Tidak ada media tersedia untuk format ini.</div>`;
     } else {
-      opts.innerHTML = `
-        ${makeDownloadItem('M4A', '256 kbps', '~7 MB', 'wav', url)}
-        ${makeDownloadItem('M4A', '128 kbps', '~4 MB', 'wav', url)}
-      `;
+      optsEl.innerHTML = filtered.map((m, i) => buildDownloadItem(m, i)).join('');
     }
 
     card.classList.add('visible');
   }
 
-  function makeDownloadItem(fmt, quality, size, iconClass, url) {
+  function buildDownloadItem(media, index) {
+    // Normalize field names — API bisa pakai: url/link/download_url
+    const dlUrl = media.url || media.link || media.download_url || '#';
+    const quality = media.quality || media.resolution || media.label || `Opsi ${index + 1}`;
+    const ext = (media.extension || media.type || media.format || 'mp4').toUpperCase().replace('.', '');
+    const size = media.formattedSize || media.size || '';
+
+    // Pilih icon class
+    let iconClass = 'mp4';
+    if (ext === 'MP3' || ext === 'M4A' || quality.toLowerCase().includes('audio')) iconClass = 'mp3';
+
+    const sizeLabel = size ? `· ${size}` : '';
+    const qualityLabel = quality.length > 30 ? quality.substring(0, 30) + '...' : quality;
+
     return `
       <div class="download-item">
         <div class="download-info">
-          <div class="format-icon icon-${iconClass}">${fmt}</div>
+          <div class="format-icon icon-${iconClass}">${ext || 'DL'}</div>
           <div>
-            <div class="dl-label">${fmt} · ${quality}</div>
-            <div class="dl-size">Est. ${size}</div>
+            <div class="dl-label">${qualityLabel}</div>
+            <div class="dl-size">${ext} ${sizeLabel}</div>
           </div>
         </div>
-        <button class="dl-btn" onclick="triggerDownload('${url}', '${fmt}', '${quality}')">
+        <a class="dl-btn" href="${dlUrl}" target="_blank" rel="noopener"
+           onclick="trackDownload(event, '${dlUrl}')">
           ↓ Download
-        </button>
+        </a>
       </div>
     `;
   }
 
-  function triggerDownload(url, fmt, quality) {
-    // In production, this calls your backend API
-    // Example: fetch(`/api/download?url=${encodeURIComponent(url)}&format=${fmt}&quality=${quality}`)
-    // Then redirect to download URL
-
-    // Demo: show alert with backend instruction
-    const backendUrl = `/api/download?url=${encodeURIComponent(url)}&format=${fmt.toLowerCase()}&quality=${quality}`;
-    
-    // Try to open backend URL (works if backend is running)
-    const win = window.open(backendUrl, '_blank');
-    if (!win) {
-      showBackendNote(backendUrl);
+  function trackDownload(e, url) {
+    if (url === '#') {
+      e.preventDefault();
+      showToast('⚠️ URL download tidak tersedia untuk opsi ini.', 'error');
     }
+    // bisa tambah analytics di sini
   }
 
-  function showBackendNote(endpoint) {
+  // =====================================================
+  // CORS GUIDE TOAST
+  // =====================================================
+  function showCorsGuide() {
     const note = document.createElement('div');
     note.style.cssText = `
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #141b22; border: 1px solid #00e5ff; border-radius: 12px;
-      padding: 16px 24px; font-family: 'Space Mono', monospace; font-size: 0.8rem;
-      color: #00e5ff; z-index: 9999; max-width: 480px; text-align: center;
-      box-shadow: 0 8px 32px rgba(0,229,255,0.15); animation: fadeUp 0.3s ease;
+      background: var(--card); border: 1px solid var(--warning); border-radius: 16px;
+      padding: 20px 24px; margin-bottom: 24px; font-size: 0.82rem;
+      color: var(--warning); font-family: 'Space Mono', monospace; line-height: 1.7;
+      animation: fadeUp 0.3s ease; position: relative; z-index: 1;
     `;
-    note.innerHTML = `⚡ Backend endpoint: <br><span style="color:#a259ff">${endpoint}</span><br><span style="color:#5a7a8a;margin-top:6px;display:block">Jalankan backend yt-dlp untuk download nyata</span>`;
-    document.body.appendChild(note);
-    setTimeout(() => note.remove(), 5000);
+    note.innerHTML = `
+      <strong style="color:#fff;display:block;margin-bottom:8px;">⚠️ CORS Error — Butuh Proxy Backend</strong>
+      RapidAPI tidak mengizinkan request langsung dari browser karena CORS policy.<br>
+      Solusi: buat proxy sederhana di Node.js atau Python, lalu ganti <code style="color:var(--accent)">RAPIDAPI_URL</code> dengan URL proxy kamu.<br><br>
+      <strong style="color:#fff;">Contoh proxy Node.js (simpan sebagai proxy.js):</strong><br>
+      <pre style="background:var(--surface);padding:12px;border-radius:8px;overflow-x:auto;margin-top:8px;color:var(--text);font-size:0.75rem;">const express = require('express');
+const fetch = require('node-fetch');
+const cors = require('cors');
+const app = express();
+app.use(cors()); app.use(express.json());
+
+app.post('/proxy', async (req, res) => {
+  const r = await fetch('https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-rapidapi-key': 'f0739bbcbemsh78e13c6e01b858ap1ea79bjsndc5ce8fd47e4',
+      'x-rapidapi-host': 'social-download-all-in-one.p.rapidapi.com'
+    },
+    body: JSON.stringify(req.body)
+  });
+  res.json(await r.json());
+});
+app.listen(3001, () => console.log('Proxy running on :3001'));</pre>
+      Lalu ubah <code style="color:var(--accent)">RAPIDAPI_URL</code> di atas menjadi <code style="color:var(--accent3)">http://localhost:3001/proxy</code>
+    `;
+
+    const container = document.querySelector('.container');
+    const statusCard = document.getElementById('statusCard');
+    statusCard.after(note);
   }
 
-  function shake(el) {
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'shake 0.4s ease';
-    el.style.borderColor = '#ff3d71';
-    setTimeout(() => {
-      el.style.borderColor = '';
-      el.style.animation = '';
-    }, 600);
+  function showToast(msg, type = 'info') {
+    const t = document.createElement('div');
+    t.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:var(--card);border:1px solid ${type==='error'?'var(--accent2)':'var(--accent)'};
+      border-radius:12px;padding:14px 24px;font-family:'Space Mono',monospace;
+      font-size:0.82rem;color:${type==='error'?'var(--accent2)':'var(--accent)'};
+      z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    `;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
   }
 
-  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  // Auto-detect when user pastes
+  // =====================================================
+  // EVENT LISTENERS
+  // =====================================================
   document.getElementById('urlInput').addEventListener('paste', () => {
     setTimeout(() => {
-      const val = document.getElementById('urlInput').value;
-      if (val && isValidUrl(val)) {
-        document.getElementById('statusCard').classList.remove('visible');
-        document.getElementById('resultCard').classList.remove('visible');
-      }
+      document.getElementById('statusCard').classList.remove('visible');
+      document.getElementById('resultCard').classList.remove('visible');
+      lastApiData = null;
     }, 100);
   });
 
@@ -949,70 +1059,16 @@
     if (e.key === 'Enter') fetchMedia();
   });
 
-  // Shake animation
-  const style = document.createElement('style');
-  style.textContent = `
+  // Shake animation via CSS
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
     @keyframes shake {
-      0%,100%{transform:translateX(0)}
-      20%{transform:translateX(-8px)}
-      40%{transform:translateX(8px)}
-      60%{transform:translateX(-5px)}
-      80%{transform:translateX(5px)}
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
     }
   `;
-  document.head.appendChild(style);
+  document.head.appendChild(styleEl);
 </script>
-
-<!-- BACKEND INTEGRATION GUIDE (comment) -->
-<!--
-=====================================================
-CARA INTEGRASI BACKEND (yt-dlp)
-=====================================================
-
-1. INSTALL DEPENDENCIES:
-   pip install yt-dlp fastapi uvicorn python-multipart
-
-2. BUAT FILE backend.py:
-
-from fastapi import FastAPI, Query
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import yt_dlp, os, tempfile
-
-app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-
-@app.get("/api/download")
-async def download(url: str = Query(...), format: str = "mp4", quality: str = "720p"):
-    tmpdir = tempfile.mkdtemp()
-    
-    if format == "mp3":
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': f'{tmpdir}/%(title)s.%(ext)s',
-            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '192'}],
-        }
-    else:
-        height = quality.replace('p','')
-        ydl_opts = {
-            'format': f'bestvideo[height<={height}]+bestaudio/best[height<={height}]',
-            'outtmpl': f'{tmpdir}/%(title)s.%(ext)s',
-            'merge_output_format': 'mp4',
-        }
-    
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
-    
-    return FileResponse(filename, filename=os.path.basename(filename))
-
-3. JALANKAN:
-   uvicorn backend:app --reload --port 8000
-
-4. Ubah di frontend:
-   const backendUrl = `http://localhost:8000/api/download?url=...`
-=====================================================
--->
 
 </body>
 </html>
