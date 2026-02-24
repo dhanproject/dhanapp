@@ -2,1062 +2,1017 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title id="page-title">Dhan App</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRABR — Media Downloader</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#6C63FF;--primary-light:#a099ff;--primary-dark:#4a43cc;--accent:#FF6584;--bg:#F0F4FF;--surface:#fff;--surface2:#f7f8ff;--text:#2d2d3f;--text2:#6b6b8a;--border:#e2e6ff;--shadow:rgba(108,99,255,.12);--radius:18px;--radius-sm:10px;--transition:.3s cubic-bezier(.4,0,.2,1)}
-[data-theme="ocean"]{--primary:#0077b6;--primary-light:#00b4d8;--primary-dark:#005f8a;--accent:#f77f00;--bg:#e8f4fd;--border:#cce7f5;--shadow:rgba(0,119,182,.12)}
-[data-theme="forest"]{--primary:#2d6a4f;--primary-light:#52b788;--primary-dark:#1b4332;--accent:#d62828;--bg:#edf7ee;--border:#c8e6d0;--shadow:rgba(45,106,79,.12)}
-[data-theme="sunset"]{--primary:#e76f51;--primary-light:#f4a261;--primary-dark:#c04a2e;--accent:#264653;--bg:#fff5f0;--border:#fdd5c6;--shadow:rgba(231,111,81,.12)}
-[data-theme="midnight"]{--primary:#bb86fc;--primary-light:#d4a8ff;--primary-dark:#985eff;--accent:#03dac6;--bg:#121212;--surface:#1e1e2e;--surface2:#252535;--text:#e0e0f0;--text2:#9999bb;--border:#333355;--shadow:rgba(187,134,252,.15)}
-[data-theme="rose"]{--primary:#c9184a;--primary-light:#ff4d6d;--primary-dark:#a4133c;--accent:#f77f00;--bg:#fff0f5;--border:#ffc8dd;--shadow:rgba(201,24,74,.12)}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition);padding-bottom:80px}
-.app-wrapper{max-width:900px;margin:0 auto;padding:20px 16px 90px}
-.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:18px 24px;background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
-.app-header h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--primary);letter-spacing:-.5px}
-.user-badge{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text2);font-size:.9rem}
-.avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem}
-.sync-indicator{display:flex;align-items:center;gap:5px}
-#sync-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;transition:background .3s;flex-shrink:0}
-#sync-text{font-size:.7rem;color:var(--text2);min-width:0}
-.card{background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border);overflow:hidden;animation:fadeUp .4s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 14px;box-shadow:0 -4px 24px var(--shadow);z-index:100;overflow-x:auto;saf-area-inset-bottom: env(safe-area-inset-bottom)}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border-radius:var(--radius-sm);transition:var(--transition);color:var(--text2);font-size:.7rem;font-weight:600;border:none;background:none;white-space:nowrap}
-.nav-item.active{color:var(--primary)}
-.nav-item .nav-icon{font-size:1.3rem;transition:var(--transition)}
-.nav-item.active .nav-icon{transform:scale(1.15)}
-.page{display:none}.page.active{display:block}
-.cal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
-.cal-header h2{font-size:1.2rem;font-weight:700;color:var(--primary)}
-.cal-nav{display:flex;gap:8px}
-.cal-nav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:1rem;transition:var(--transition)}
-.cal-nav button:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
-.cal-body{padding:20px 24px}
-.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:10px}
-.cal-days-header span{font-size:.75rem;font-weight:700;color:var(--text2);padding:4px 0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;font-weight:600;font-size:.88rem;transition:var(--transition);position:relative}
-.cal-day:hover{background:var(--surface2)}
-.cal-day.other-month{color:var(--border)}
-.cal-day.today{background:var(--primary);color:#fff;box-shadow:0 4px 12px var(--shadow)}
-.cal-day.selected{background:var(--accent);color:#fff}
-.cal-day.has-event::after{content:'';position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
-.cal-day.today::after{background:#fff}
-.cal-events{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.cal-events h3{font-size:.9rem;color:var(--text2);margin-bottom:12px;font-weight:700}.event-input-row{display:flex;gap:8px;margin-bottom:12px}
-.event-input-row input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.88rem;outline:none;transition:var(--transition)}
-.event-input-row input:focus{border-color:var(--primary)}
-.btn{padding:10px 18px;border-radius:var(--radius-sm);border:none;background:var(--primary);color:#fff;font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:var(--transition);white-space:nowrap}
-.btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
-.btn-sm{padding:6px 12px;font-size:.8rem}
-.btn-danger{background:var(--accent)}
-.btn-danger:hover{background:#cc3a5a}
-.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-.btn-ghost:hover{background:var(--surface);border-color:var(--primary);color:var(--primary);transform:translateY(-1px)}
-.event-list{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto}
-.event-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
-.event-item span{font-size:.85rem;font-weight:600}
-.event-date{font-size:.75rem;color:var(--text2);margin-left:8px}
-.section-pad{padding:24px}
-.section-title{font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.input-group{margin-bottom:16px}
-.input-label{font-size:.8rem;font-weight:700;color:var(--text2);margin-bottom:6px;display:block}
-.input-row{display:flex;gap:10px}
-.styled-input{width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:1rem;outline:none;transition:var(--transition)}
-.styled-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
-.styled-select{padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.9rem;outline:none;transition:var(--transition);cursor:pointer;min-width:100px}
-.styled-select:focus{border-color:var(--primary)}
-.swap-btn{background:var(--primary);color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.3rem;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end;margin-bottom:2px}
-.swap-btn:hover{background:var(--primary-dark);transform:rotate(180deg)}
-.result-box{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-radius:var(--radius);padding:20px 24px;text-align:center;margin-top:16px}
-.result-box .result-value{font-size:2rem;font-weight:800}
-.result-box .result-label{font-size:.85rem;opacity:.85;margin-top:4px}
-.rate-info{font-size:.75rem;opacity:.7;margin-top:8px}
-.quick-rates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
-.rate-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;cursor:pointer;transition:var(--transition)}
-.rate-card:hover{border-color:var(--primary);background:var(--surface)}
-.rate-card .flag{font-size:1.4rem}
-.rate-card .code{font-size:.75rem;font-weight:700;color:var(--text2);margin-top:4px}
-.rate-card .val{font-size:.9rem;font-weight:800;color:var(--primary)}
-.calc-wrapper{padding:24px;max-width:360px;margin:0 auto}
-.calc-display{background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;color:#fff;text-align:right;min-height:90px;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 8px 24px var(--shadow)}
-.calc-expr{font-size:.85rem;opacity:.7;min-height:20px}
-.calc-result{font-size:2.4rem;font-weight:800;line-height:1.1;word-break:break-all}
-.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.calc-btn{padding:18px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;transition:var(--transition);background:var(--surface2);color:var(--text);border:1.5px solid var(--border);aspect-ratio:1}
-.calc-btn:hover{transform:scale(1.05)}
-.calc-btn:active{transform:scale(.97)}
-.calc-btn.op{background:var(--surface);color:var(--primary);border-color:var(--primary-light)}
-.calc-btn.eq{background:var(--primary);color:#fff;border-color:var(--primary)}
-.calc-btn.eq:hover{background:var(--primary-dark)}
-.calc-btn.clear{background:var(--accent);color:#fff;border-color:var(--accent)}
-.calc-btn.zero{grid-column:span 2;aspect-ratio:auto}
-.settings-section{padding:24px}
-.settings-group{margin-bottom:28px}.settings-group-title{font-size:.78rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
-.settings-row:last-child{border-bottom:none}
-.settings-row-label{font-weight:600;font-size:.92rem}
-.settings-row-desc{font-size:.78rem;color:var(--text2);margin-top:2px}
-.settings-row-control{flex-shrink:0;margin-left:16px}
-.theme-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
-.theme-swatch{height:42px;border-radius:var(--radius-sm);cursor:pointer;border:3px solid transparent;transition:var(--transition);position:relative}
-.theme-swatch:hover{transform:scale(1.08)}
-.theme-swatch.active{border-color:var(--text);box-shadow:0 4px 12px var(--shadow)}
-.theme-swatch.active::after{content:'ok';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65rem;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.4)}
-.settings-input-full{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit;font-size:.92rem;outline:none;transition:var(--transition)}
-.settings-input-full:focus{border-color:var(--primary)}
-.toggle{position:relative;width:48px;height:26px}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:26px;cursor:pointer;transition:var(--transition)}
-.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:var(--transition)}
-.toggle input:checked + .toggle-slider{background:var(--primary)}
-.toggle input:checked + .toggle-slider::before{transform:translateX(22px)}
-.updater-box{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:var(--transition);margin-bottom:20px}
-.updater-box:hover,.updater-box.dragover{border-color:var(--primary);background:var(--surface2)}
-.updater-icon{font-size:2.5rem;margin-bottom:12px}
-.updater-title{font-weight:800;font-size:1rem;color:var(--primary)}
-.updater-sub{font-size:.82rem;color:var(--text2);margin-top:6px}
-#dhan-file-input{display:none}
-.update-log{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-family:'Courier New',monospace;font-size:.78rem;max-height:220px;overflow-y:auto;color:var(--text2)}
-.update-log .log-line{margin-bottom:3px}
-.update-log .log-ok{color:#22c55e}
-.update-log .log-err{color:var(--accent)}
-.update-log .log-info{color:var(--primary)}
-.patch-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:160px;overflow-y:auto}
-.patch-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.8rem}
-.patch-item .patch-name{font-weight:700;color:var(--primary)}
-.patch-item .patch-time{color:var(--text2);font-size:.72rem}
-.supabase-status-box{margin-top:16px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
-.sb-status-row{display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:6px}
-#sb-dot{width:10px;height:10px;border-radius:50%;background:#94a3b8;flex-shrink:0;transition:background .3s}
-.toast{position:fixed;top:20px;right:20px;z-index:9999;background:var(--primary);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:700;font-size:.88rem;box-shadow:0 8px 24px var(--shadow);transform:translateX(110%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-width:280px}
-.toast.show{transform:translateX(0)}
-.toast.error{background:var(--accent)}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+  :root {
+    --bg: #080c10;
+    --surface: #0e1318;
+    --card: #141b22;
+    --border: #1e2a35;
+    --accent: #00e5ff;
+    --accent2: #ff3d71;
+    --accent3: #a259ff;
+    --text: #e8f0fe;
+    --muted: #5a7a8a;
+    --success: #00f5a0;
+    --warning: #ffcc00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 { width: 600px; height: 600px; background: rgba(0,229,255,0.06); top: -200px; left: -200px; }
+  .orb-2 { width: 500px; height: 500px; background: rgba(162,89,255,0.06); bottom: -200px; right: -100px; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(255,61,113,0.05); top: 50%; left: 60%; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeDown 0.8s ease;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+
+  .logo-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Supported platforms badges */
+  .platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .platform-badge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .platform-badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Main card */
+  .main-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease 0.2s both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .main-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+  }
+
+  .input-label {
+    font-size: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .url-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .url-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+  }
+
+  .url-input::placeholder { color: var(--muted); }
+
+  .paste-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 20px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .paste-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Format selector */
+  .format-section {
+    margin-bottom: 24px;
+  }
+
+  .format-tabs {
+    display: flex;
+    gap: 8px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 6px;
+  }
+
+  .format-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.03em;
+  }
+
+  .format-tab.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .format-tab.active.mp4 { color: var(--accent); }
+  .format-tab.active.mp3 { color: var(--accent2); }
+  .format-tab.active.audio { color: var(--accent3); }
+
+  /* Quality options */
+  .quality-section {
+    display: none;
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .quality-section.visible { display: block; }
+
+  .quality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .quality-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .quality-btn:hover, .quality-btn.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .quality-btn .badge {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--success);
+    margin-top: 2px;
+  }
+
+  /* Fetch button */
+  .fetch-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border: none;
+    border-radius: 12px;
+    color: #080c10;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fetch-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .fetch-btn:hover::before { opacity: 1; }
+  .fetch-btn span { position: relative; z-index: 1; }
+  
+  .fetch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Progress / Status */
+  .status-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .status-card.visible { display: block; }
+
+  .status-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.5s infinite;
+  }
+
+  .status-dot.done { background: var(--success); animation: none; }
+  .status-dot.error { background: var(--accent2); animation: none; }
+
+  .status-text {
+    font-size: 0.9rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 100px;
+    width: 0;
+    transition: width 0.4s ease;
+  }
+
+  /* Result card */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .result-card.visible { display: block; }
+
+  .media-info {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .thumb {
+    width: 140px;
+    height: 90px;
+    background: var(--surface);
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  .media-details { flex: 1; }
+  .media-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .media-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+  }
+
+  .download-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .download-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.2s;
+  }
+
+  .download-item:hover { border-color: var(--accent); }
+
+  .download-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .format-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .icon-mp4 { background: rgba(0,229,255,0.1); color: var(--accent); }
+  .icon-mp3 { background: rgba(255,61,113,0.1); color: var(--accent2); }
+  .icon-wav { background: rgba(162,89,255,0.1); color: var(--accent3); }
+
+  .dl-label { font-size: 0.9rem; font-weight: 700; }
+  .dl-size { font-size: 0.75rem; font-family: 'Space Mono', monospace; color: var(--muted); }
+
+  .dl-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dl-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  /* How to use */
+  .how-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--bg);
+  }
+
+  .step-title { font-weight: 700; font-size: 0.9rem; }
+  .step-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* Note about backend */
+  .note {
+    background: rgba(255,204,0,0.06);
+    border: 1px solid rgba(255,204,0,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.82rem;
+    color: var(--warning);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .note strong { color: #fff; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    animation: fadeUp 0.8s ease 0.6s both;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .loading-shimmer {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .input-row { flex-direction: column; }
+    .paste-btn { padding: 14px; }
+    .media-info { flex-direction: column; }
+    .thumb { width: 100%; height: 160px; }
+    .main-card { padding: 20px; }
+  }
 </style>
 </head>
 <body>
-<div class="app-wrapper">
-  <div class="app-header">
-    <h1 id="app-title-display">Dhan App</h1>
-    <div class="user-badge">      <div class="sync-indicator">
-        <span id="sync-dot"></span>
-        <span id="sync-text"></span>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⬇</div>
+      <span class="logo-text">GRABR</span>
+    </div>
+    <p class="tagline">// all-in-one media downloader — paste. pick. grab.</p>
+    <div class="platforms">
+      <span class="platform-badge">YouTube</span>
+      <span class="platform-badge">Instagram</span>
+      <span class="platform-badge">TikTok</span>
+      <span class="platform-badge">Twitter/X</span>
+      <span class="platform-badge">Facebook</span>
+      <span class="platform-badge">Vimeo</span>
+      <span class="platform-badge">SoundCloud</span>
+      <span class="platform-badge">+ banyak lagi</span>
+    </div>
+  </header>
+
+  <!-- Note -->
+  <div class="note">
+    ⚡ <strong>Demo UI:</strong> Ini adalah tampilan frontend. Untuk download nyata, perlu backend menggunakan <strong>yt-dlp</strong> atau API seperti <strong>RapidAPI</strong>. Lihat dokumentasi backend di bawah atau jalankan server lokal.
+  </div>
+
+  <!-- Main Card -->
+  <div class="main-card">
+    <div class="input-label">// paste url media kamu</div>
+    <div class="input-row">
+      <input type="text" class="url-input" id="urlInput" placeholder="https://youtube.com/watch?v=... atau link lainnya" />
+      <button class="paste-btn" onclick="pasteFromClipboard()">📋 Paste</button>
+    </div>
+
+    <!-- Format Tabs -->
+    <div class="format-section">
+      <div class="input-label">// pilih format</div>
+      <div class="format-tabs">
+        <button class="format-tab mp4 active" onclick="setFormat('mp4', this)">🎬 Video MP4</button>
+        <button class="format-tab mp3" onclick="setFormat('mp3', this)">🎵 Audio MP3</button>
+        <button class="format-tab audio" onclick="setFormat('m4a', this)">🎧 Audio M4A</button>
       </div>
-      <span id="header-username">Pengguna</span>
-      <div class="avatar" id="header-avatar">D</div>
+    </div>
+
+    <!-- Quality (for video) -->
+    <div class="quality-section visible" id="qualitySection">
+      <div class="input-label">// pilih kualitas</div>
+      <div class="quality-grid">
+        <button class="quality-btn" onclick="selectQuality(this)">360p</button>
+        <button class="quality-btn selected" onclick="selectQuality(this)">720p <span class="badge">HD</span></button>
+        <button class="quality-btn" onclick="selectQuality(this)">1080p <span class="badge">FHD</span></button>
+        <button class="quality-btn" onclick="selectQuality(this)">1440p <span class="badge">2K</span></button>
+        <button class="quality-btn" onclick="selectQuality(this)">2160p <span class="badge">4K</span></button>
+      </div>
+    </div>
+
+    <button class="fetch-btn" id="fetchBtn" onclick="fetchMedia()">
+      <span id="fetchBtnText">⚡ ANALISIS & DOWNLOAD</span>
+    </button>
+  </div>
+
+  <!-- Status Card -->
+  <div class="status-card" id="statusCard">
+    <div class="status-header">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">Menganalisis URL...</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
     </div>
   </div>
 
-  <!-- CALENDAR -->
-  <div class="page active card" id="page-calendar">
-    <div class="cal-header">
-      <h2 id="cal-month-year">Januari 2024</h2>
-      <div class="cal-nav">
-        <button onclick="changeMonth(-1)">&#8249;</button>
-        <button onclick="goToday()">Hari Ini</button>
-        <button onclick="changeMonth(1)">&#8250;</button>
+  <!-- Result Card -->
+  <div class="result-card" id="resultCard">
+    <div class="media-info">
+      <div class="thumb" id="mediaThumbnail">🎬</div>
+      <div class="media-details">
+        <div class="media-title" id="mediaTitle">—</div>
+        <div class="media-meta" id="mediaMeta"></div>
       </div>
     </div>
-    <div class="cal-body">
-      <div class="cal-days-header"><span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span></div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div class="cal-events">
-        <h3>&#128205; Catatan / Event</h3>
-        <div class="event-input-row">
-          <input type="text" id="event-input" placeholder="Tambah catatan untuk tanggal terpilih..."/>
-          <button class="btn" onclick="addEvent()">+ Tambah</button>
-        </div>
-        <div class="event-list" id="event-list"></div>
+    <div class="download-options" id="downloadOptions"></div>
+  </div>
+
+  <!-- How to use -->
+  <div class="how-card">
+    <div class="section-title">// cara pakai</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Copy Link</div>
+        <div class="step-desc">Salin URL video dari YouTube, TikTok, Instagram, atau platform lainnya</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Paste & Pilih</div>
+        <div class="step-desc">Paste link, pilih format MP4 atau MP3, dan pilih kualitas yang diinginkan</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Download</div>
+        <div class="step-desc">Klik tombol download dan file langsung tersimpan ke perangkatmu</div>
       </div>
     </div>
   </div>
 
-  <!-- CURRENCY -->
-  <div class="page card" id="page-currency">
-    <div class="section-pad">
-      <div class="section-title">&#128178; Konverter Mata Uang</div>
-      <div class="input-group">
-        <label class="input-label">Jumlah</label>
-        <input type="number" id="curr-amount" class="styled-input" value="1" oninput="convertCurrency()"/>
-      </div>
-      <div class="input-row" style="align-items:flex-end;gap:10px">
-        <div style="flex:1"><label class="input-label">Dari</label><select id="curr-from" class="styled-select" style="width:100%" onchange="convertCurrency()"></select></div>
-        <button class="swap-btn" onclick="swapCurrencies()" title="Tukar">&#8644;</button>
-        <div style="flex:1"><label class="input-label">Ke</label><select id="curr-to" class="styled-select" style="width:100%" onchange="convertCurrency()"></select></div>
-      </div>
-      <div class="result-box" id="curr-result">
-        <div class="result-value" id="curr-result-val">&#8212;</div>
-        <div class="result-label" id="curr-result-label">Masukkan jumlah untuk konversi</div>
-        <div class="rate-info" id="curr-rate-info"></div>      </div>
-      <div style="margin-top:20px"><label class="input-label">&#9889; Kurs Populer vs IDR</label><div class="quick-rates" id="quick-rates"></div></div>
-    </div>
-  </div>
+  <footer>
+    <p>GRABR — All-In-One Media Downloader &nbsp;|&nbsp; Gunakan untuk keperluan pribadi saja</p>
+    <p style="margin-top:8px;opacity:0.5;">Backend: yt-dlp + FastAPI / Express &nbsp;·&nbsp; Frontend: Vanilla JS</p>
+  </footer>
 
-  <!-- CALCULATOR -->
-  <div class="page card" id="page-calculator">
-    <div class="calc-wrapper">
-      <div class="section-title">&#129518; Kalkulator</div>
-      <div class="calc-display">
-        <div class="calc-expr" id="calc-expr"></div>
-        <div class="calc-result" id="calc-display">0</div>
-      </div>
-      <div class="calc-grid">
-        <button class="calc-btn clear" onclick="calcClear()">AC</button>
-        <button class="calc-btn op" onclick="calcSign()">+/-</button>
-        <button class="calc-btn op" onclick="calcPercent()">%</button>
-        <button class="calc-btn op" onclick="calcInput('/')">&#247;</button>
-        <button class="calc-btn" onclick="calcInput('7')">7</button>
-        <button class="calc-btn" onclick="calcInput('8')">8</button>
-        <button class="calc-btn" onclick="calcInput('9')">9</button>
-        <button class="calc-btn op" onclick="calcInput('*')">&#215;</button>
-        <button class="calc-btn" onclick="calcInput('4')">4</button>
-        <button class="calc-btn" onclick="calcInput('5')">5</button>
-        <button class="calc-btn" onclick="calcInput('6')">6</button>
-        <button class="calc-btn op" onclick="calcInput('-')">&#8722;</button>
-        <button class="calc-btn" onclick="calcInput('1')">1</button>
-        <button class="calc-btn" onclick="calcInput('2')">2</button>
-        <button class="calc-btn" onclick="calcInput('3')">3</button>
-        <button class="calc-btn op" onclick="calcInput('+')">+</button>
-        <button class="calc-btn zero" onclick="calcInput('0')">0</button>
-        <button class="calc-btn" onclick="calcDot()">.</button>
-        <button class="calc-btn eq" onclick="calcEquals()">=</button>
-      </div>
-      <div style="margin-top:16px;text-align:center;color:var(--text2);font-size:.78rem">Riwayat: <span id="calc-history" style="color:var(--text)">&#8212;</span></div>
-    </div>
-  </div>
-
-  <!-- SETTINGS -->
-  <div class="page card" id="page-settings">
-    <div class="settings-section">
-      <div class="settings-group">
-        <div class="settings-group-title">&#128100; Profil</div>
-        <div class="settings-row">
-          <div><div class="settings-row-label">Nama Pengguna</div><div class="settings-row-desc">Tampil di header</div></div>
-          <div class="settings-row-control"><input type="text" id="setting-name" class="settings-input-full" style="width:160px" placeholder="Nama kamu" value="Pengguna" oninput="updateProfile()"/></div>
-        </div>
-        <div class="settings-row">
-          <div><div class="settings-row-label">Judul Aplikasi</div><div class="settings-row-desc">Nama app di header & tab browser</div></div>
-          <div class="settings-row-control"><input type="text" id="setting-apptitle" class="settings-input-full" style="width:160px" placeholder="Nama Aplikasi" value="Dhan App" oninput="updateAppTitle()"/></div>        </div>
-      </div>
-      <div class="settings-group">
-        <div class="settings-group-title">&#127912; Tema Warna</div>
-        <div class="theme-grid" id="theme-grid">
-          <div class="theme-swatch active" data-theme="default" style="background:linear-gradient(135deg,#6C63FF,#FF6584)" onclick="setTheme('default',this)" title="Default"></div>
-          <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#0077b6,#00b4d8)" onclick="setTheme('ocean',this)" title="Ocean"></div>
-          <div class="theme-swatch" data-theme="forest" style="background:linear-gradient(135deg,#2d6a4f,#52b788)" onclick="setTheme('forest',this)" title="Forest"></div>
-          <div class="theme-swatch" data-theme="sunset" style="background:linear-gradient(135deg,#e76f51,#f4a261)" onclick="setTheme('sunset',this)" title="Sunset"></div>
-          <div class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#1e1e2e,#bb86fc)" onclick="setTheme('midnight',this)" title="Midnight"></div>
-          <div class="theme-swatch" data-theme="rose" style="background:linear-gradient(135deg,#c9184a,#ff4d6d)" onclick="setTheme('rose',this)" title="Rose"></div>
-        </div>
-      </div>
-      <div class="settings-group">
-        <div class="settings-group-title">&#128274; Privasi</div>
-        <div class="settings-row">
-          <div><div class="settings-row-label">Sembunyikan Nama</div><div class="settings-row-desc">Tampil sebagai "Anonim"</div></div>
-          <div class="settings-row-control"><label class="toggle"><input type="checkbox" id="priv-hide-name" onchange="toggleHideName()"><span class="toggle-slider"></span></label></div>
-        </div>
-        <div class="settings-row">
-          <div><div class="settings-row-label">Mode Privat Kalender</div><div class="settings-row-desc">Sembunyikan catatan</div></div>
-          <div class="settings-row-control"><label class="toggle"><input type="checkbox" id="priv-hide-events" onchange="togglePrivateEvents()"><span class="toggle-slider"></span></label></div>
-        </div>
-        <div class="settings-row">
-          <div><div class="settings-row-label">Reset Semua Data</div><div class="settings-row-desc">Hapus state + semua patch cloud</div></div>
-          <div class="settings-row-control"><button class="btn btn-sm btn-danger" onclick="resetAll()">Reset</button></div>
-        </div>
-      </div>
-      <div class="settings-group">
-        <div class="settings-group-title">&#9889; Dhan Updater</div>
-        <p style="font-size:.83rem;color:var(--text2);margin-bottom:16px;line-height:1.6">Upload file <strong>.dhan</strong> berisi perintah. Tersimpan ke Supabase &rarr; aktif di semua device, tidak hilang saat refresh.</p>
-        <div class="updater-box" id="updater-drop" onclick="document.getElementById('dhan-file-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDhanDrop(event)">
-          <div class="updater-icon">&#128230;</div>
-          <div class="updater-title">Klik atau Seret File .dhan</div>
-          <div class="updater-sub">Disimpan ke cloud &rarr; aktif permanen di semua device</div>
-        </div>
-        <input type="file" id="dhan-file-input" accept=".dhan,.txt" onchange="handleDhanFile(this.files[0])">
-        <div id="update-log" class="update-log" style="display:none"></div>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-sm" onclick="downloadDhanTemplate()">&#128229; Template .dhan</button>
-          <button class="btn btn-sm btn-ghost" onclick="clearUpdateLog()">Bersihkan Log</button>
-          <button class="btn btn-sm btn-ghost" onclick="manualSync()">&#9729;&#65039; Sync Sekarang</button>
-          <button class="btn btn-sm btn-danger" onclick="confirmClearPatches()">&#128465;&#65039; Hapus Semua Patch</button>
-        </div>
-        <div style="margin-top:16px">
-          <div style="font-size:.78rem;font-weight:800;color:var(--text2);margin-bottom:8px">&#128230; PATCH TERSIMPAN</div>
-          <div class="patch-list" id="patch-list"><div style="color:var(--text2);font-size:.8rem;padding:8px 0">Memuat...</div></div>
-        </div>
-        <div class="supabase-status-box">
-          <div style="font-size:.78rem;font-weight:800;color:var(--text2);margin-bottom:10px">&#9729;&#65039; STATUS SUPABASE</div>          <div class="sb-status-row"><span id="sb-dot"></span><span id="sb-text" style="color:var(--text2)">Memeriksa...</span></div>
-          <div style="font-size:.72rem;color:var(--text2);margin-top:8px">URL: <code style="color:var(--primary)">olkokmuburmgslpsiwpi.supabase.co</code></div>
-        </div>
-        <details style="margin-top:16px;font-size:.82rem;color:var(--text2)">
-          <summary style="cursor:pointer;font-weight:700;color:var(--primary)">&#128203; Referensi Perintah .dhan</summary>
-          <div style="margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);line-height:1.9;font-family:monospace;font-size:.76rem">
-            <b style="color:var(--primary)">Identitas:</b> SET_TITLE | SET_USERNAME | SET_LANG<br>
-            <b style="color:var(--primary)">Tema:</b> SET_THEME | SET_CSS_VAR:--nama:val | SET_BG_COLOR | SET_PRIMARY_COLOR | SET_FONT<br>
-            <b style="color:var(--primary)">CSS:</b> INJECT_CSS:... | [CSS_BLOCK]...[/CSS_BLOCK]<br>
-            <b style="color:var(--primary)">JS:</b> INJECT_JS:... | [JS_BLOCK]...[/JS_BLOCK]<br>
-            <b style="color:var(--primary)">DOM:</b> SET_INNER_HTML:sel:html | SET_TEXT:sel:txt | HIDE_ELEMENT:sel | SHOW_ELEMENT:sel | APPEND_HTML:sel:html | REMOVE_ELEMENT:sel<br>
-            <b style="color:var(--primary)">HTML block:</b> [HTML_BLOCK]sel|||html[/HTML_BLOCK]<br>
-            <b style="color:var(--primary)">Nav:</b> NAV_TO:currency | ADD_NAV_TAB:id:emoji:label<br>
-            <b style="color:var(--primary)">Kalender:</b> ADD_EVENT:YYYY-MM-DD:teks | CLEAR_EVENTS | GO_TO_DATE<br>
-            <b style="color:var(--primary)">Kurs:</b> SET_CURRENCY_FROM:USD | SET_CURRENCY_TO:IDR | SET_EXCHANGE_RATE:USD:16000<br>
-            <b style="color:var(--primary)">UI:</b> SHOW_TOAST:pesan | SHOW_ALERT:pesan | SCROLL_TO:sel<br>
-            <b style="color:var(--primary)">Rebuild:</b> REPLACE_PAGE_SECTION:id:html | [REPLACE_FULL_HTML_BLOCK]...[/REPLACE_FULL_HTML_BLOCK]<br>
-            <b style="color:var(--primary)">Util:</b> LOG | VERSION | AUTHOR | DOWNLOAD_SELF:nama | RELOAD | SAVE_STATE
-          </div>
-        </details>
-      </div>
-    </div>
-  </div>
 </div>
 
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="nav-item active" onclick="switchPage('calendar',this)"><span class="nav-icon">&#128197;</span>Kalender</button>
-  <button class="nav-item" onclick="switchPage('currency',this)"><span class="nav-icon">&#128178;</span>Kurs</button>
-  <button class="nav-item" onclick="switchPage('calculator',this)"><span class="nav-icon">&#129518;</span>Hitung</button>
-  <button class="nav-item" onclick="switchPage('settings',this)"><span class="nav-icon">&#9881;&#65039;</span>Pengaturan</button>
-</nav>
-
-<div class="toast" id="toast"></div>
-
 <script>
-// ==================== STATE ====================
-var appState = {
-  appTitle: 'Dhan App', username: 'Pengguna', theme: 'default',
-  hideNamePrivacy: false, hideEventsPrivacy: false,
-  events: {}, calSelectedDate: null,
-  calYear: new Date().getFullYear(), calMonth: new Date().getMonth()
-};
+  let selectedFormat = 'mp4';
+  let selectedQuality = '720p';
+  let fetchTimeout;
 
-// ==================== SUPABASE ====================
-var SUPABASE_URL = 'https://olkokmuburmgslpsiwpi.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_FHgCHk8ocJPkEGWUiejlCA_BHRcN17v';
-var APP_ID = 'dhan_main';
+  function setFormat(fmt, btn) {
+    selectedFormat = fmt;
+    document.querySelectorAll('.format-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
 
-async function sbFetch(method, path, body) {
-  try {    var opts = {
-      method: method,
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-      }
-    };
-    if (body) opts.body = JSON.stringify(body);
-    var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
-    if (method === 'GET') return await res.json();
-    return res.ok;
-  } catch(e) { 
-    console.warn("Supabase Error:", e);
-    return method === 'GET' ? null : false; 
-  }
-}
-
-function setSyncStatus(s) {
-  var dot = document.getElementById('sync-dot');
-  var txt = document.getElementById('sync-text');
-  if (!dot) return;
-  var colors = { syncing:'#f59e0b', ok:'#22c55e', offline:'#94a3b8', error:'#ef4444' };
-  var labels = { syncing:'Menyimpan...', ok:'Tersimpan', offline:'Offline', error:'Gagal sync' };
-  dot.style.background = colors[s] || '#94a3b8';
-  if (txt) txt.textContent = labels[s] || '';
-  if (s === 'ok') setTimeout(function(){ if (txt) txt.textContent = ''; }, 3000);
-}
-
-// ── appState sync ──
-async function loadAppState() {
-  try { var loc = localStorage.getItem('dhanapp_state'); if (loc) appState = Object.assign({}, appState, JSON.parse(loc)); } catch(e) {}
-  var rows = await sbFetch('GET', 'dhan_state?device_id=eq.' + APP_ID + '&select=state_json&limit=1');
-  if (rows && rows.length > 0) {
-    try {
-      appState = Object.assign({}, appState, JSON.parse(rows[0].state_json));
-      localStorage.setItem('dhanapp_state', JSON.stringify(appState));
-    } catch(e) {}
-  }
-}
-
-var saveTimer = null;
-function saveState() {
-  try { localStorage.setItem('dhanapp_state', JSON.stringify(appState)); } catch(e) {}
-  clearTimeout(saveTimer);
-  setSyncStatus('syncing');
-  saveTimer = setTimeout(async function() {
-    var ok = await sbFetch('POST', 'dhan_state', { device_id: APP_ID, state_json: JSON.stringify(appState), updated_at: new Date().toISOString() });
-    setSyncStatus(ok ? 'ok' : 'error');  }, 800);
-}
-
-// ==================== DHAN PATCHES ====================
-async function savePatch(filename, rawContent) {
-  var ok = await sbFetch('POST', 'dhan_patches', {
-    app_id: APP_ID, filename: filename, content: rawContent,
-    applied_at: new Date().toISOString()
-  });
-  if (ok) {
-    log('ok', 'Cloud: patch "' + filename + '" tersimpan -> aktif di semua device');
-  } else {
-    log('err', 'Cloud gagal -> tersimpan lokal saja');
-    try {
-      var loc = JSON.parse(localStorage.getItem('dhan_patches_local') || '[]');
-      loc.push({ app_id: APP_ID, filename: filename, content: rawContent, applied_at: new Date().toISOString() });
-      localStorage.setItem('dhan_patches_local', JSON.stringify(loc));
-    } catch(e) {}
-  }
-  renderPatchList();
-  return ok;
-}
-
-async function loadAllPatches() {
-  var patches = [];
-  var rows = await sbFetch('GET', 'dhan_patches?app_id=eq.' + APP_ID + '&order=applied_at.asc&select=filename,content,applied_at');
-  if (rows && Array.isArray(rows)) patches = rows.slice();
-  try {
-    var loc = JSON.parse(localStorage.getItem('dhan_patches_local') || '[]');
-    loc.forEach(function(lp) {
-      if (!patches.find(function(p){ return p.filename===lp.filename && p.applied_at===lp.applied_at; })) patches.push(lp);
-    });
-  } catch(e) {}
-  patches.sort(function(a,b){ return new Date(a.applied_at) - new Date(b.applied_at); });
-  return patches;
-}
-
-async function replayPatches() {
-  setSyncStatus('syncing');
-  var patches = await loadAllPatches();
-  if (!patches || patches.length === 0) { setSyncStatus('ok'); renderPatchList(); return; }
-  var logEl = document.getElementById('update-log');
-  if (logEl) logEl.style.display = 'block';
-  log('info', 'Memuat ' + patches.length + ' patch dari cloud...');
-  for (var i = 0; i < patches.length; i++) {
-    await processDhanContent(patches[i].content, patches[i].filename, true);
-  }
-  log('ok', patches.length + ' patch di-replay. Semua perubahan aktif kembali.');
-  setSyncStatus('ok');
-  renderPatchList();  setTimeout(function(){ if (logEl) logEl.style.display = 'none'; }, 4000);
-}
-
-async function renderPatchList() {
-  var listEl = document.getElementById('patch-list');
-  if (!listEl) return;
-  var patches = await loadAllPatches();
-  if (!patches || patches.length === 0) {
-    listEl.innerHTML = '<div style="color:var(--text2);font-size:.8rem;padding:8px 0">Belum ada patch tersimpan</div>'; return;
-  }
-  listEl.innerHTML = patches.map(function(p) {
-    var d = new Date(p.applied_at);
-    var time = d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID');
-    return '<div class="patch-item"><div><span class="patch-name">' + p.filename + '</span></div><span class="patch-time">' + time + '</span></div>';
-  }).join('');
-}
-
-async function confirmClearPatches() {
-  if (!confirm('Hapus SEMUA patch dari cloud dan lokal? Semua perubahan .dhan akan hilang.')) return;
-  await sbFetch('DELETE', 'dhan_patches?app_id=eq.' + APP_ID);
-  localStorage.removeItem('dhan_patches_local');
-  renderPatchList();
-  showToast('Semua patch dihapus');
-  log('ok', 'Semua patch dihapus dari cloud dan lokal');
-  var logEl = document.getElementById('update-log');
-  if(logEl) logEl.style.display = 'block';
-}
-
-async function manualSync() {
-  showToast('Menyinkronkan...');
-  setSyncStatus('syncing');
-  var ok = await sbFetch('POST', 'dhan_state', { device_id: APP_ID, state_json: JSON.stringify(appState), updated_at: new Date().toISOString() });
-  setSyncStatus(ok ? 'ok' : 'error');
-  showToast(ok ? 'Sync berhasil!' : 'Sync gagal', !ok);
-  checkSupabaseStatus();
-}
-
-async function checkSupabaseStatus() {
-  var dot = document.getElementById('sb-dot');
-  var txt = document.getElementById('sb-text');
-  if (!dot) return;
-  try {
-    var res = await fetch(SUPABASE_URL + '/rest/v1/dhan_patches?limit=1', { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } });
-    if (res.ok || res.status === 406) {
-      dot.style.background = '#22c55e';
-      txt.textContent = 'Terhubung - data tersimpan di cloud';
-    } else if (res.status === 404 || res.status === 42501) {
-      dot.style.background = '#f59e0b';
-      txt.innerHTML = 'Tabel belum dibuat. <a href="#" onclick="showSetupSQL()" style="color:var(--primary)">Lihat SQL Setup</a>';
-    } else {      dot.style.background = '#ef4444';
-      txt.textContent = 'Error: ' + res.status;
-    }
-  } catch(e) {
-    dot.style.background = '#94a3b8';
-    txt.textContent = 'Tidak bisa menjangkau Supabase';
-  }
-}
-
-function showSetupSQL() {
-  alert('Jalankan SQL ini di Supabase > SQL Editor:\n\n' +
-    'CREATE TABLE IF NOT EXISTS dhan_state (\n  device_id TEXT PRIMARY KEY,\n  state_json TEXT NOT NULL,\n  updated_at TIMESTAMPTZ DEFAULT now()\n);\nALTER TABLE dhan_state ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "allow_all" ON dhan_state FOR ALL USING (true) WITH CHECK (true);\n\n' +
-    'CREATE TABLE IF NOT EXISTS dhan_patches (\n  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,\n  app_id TEXT NOT NULL,\n  filename TEXT NOT NULL,\n  content TEXT NOT NULL,\n  applied_at TIMESTAMPTZ DEFAULT now()\n);\nALTER TABLE dhan_patches ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "allow_all" ON dhan_patches FOR ALL USING (true) WITH CHECK (true);'
-  );
-}
-
-async function resetAll() {
-  if (!confirm('Reset SEMUA data: state, patch cloud, dan lokal?')) return;
-  await sbFetch('DELETE', 'dhan_patches?app_id=eq.' + APP_ID);
-  localStorage.removeItem('dhanapp_state');
-  localStorage.removeItem('dhan_patches_local');
-  location.reload();
-}
-
-// ==================== NAVIGATION ====================
-function switchPage(name, el) {
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  var pg = document.getElementById('page-' + name);
-  if (pg) pg.classList.add('active');
-  if (el) el.classList.add('active');
-}
-
-// ==================== CALENDAR ====================
-var monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-function renderCalendar() {
-  var yr = appState.calYear, mo = appState.calMonth;
-  var monthLabel = document.getElementById('cal-month-year');
-  if(monthLabel) monthLabel.textContent = monthNames[mo] + ' ' + yr;
-  
-  var grid = document.getElementById('cal-grid');
-  if(!grid) return;
-  grid.innerHTML = '';
-  
-  var firstDay = new Date(yr, mo, 1).getDay();
-  var daysInMonth = new Date(yr, mo+1, 0).getDate();
-  var daysInPrev = new Date(yr, mo, 0).getDate();
-  var today = new Date();
-  
-  // Prev month days  for (var i = firstDay-1; i >= 0; i--) { 
-    var d = document.createElement('div'); 
-    d.className='cal-day other-month'; 
-    d.textContent=daysInPrev-i; 
-    grid.appendChild(d); 
-  }
-  
-  // Current month days
-  for (var d2 = 1; d2 <= daysInMonth; d2++) {
-    (function(day){
-      var el = document.createElement('div'); 
-      el.className = 'cal-day'; 
-      el.textContent = day;
-      var ds = yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-      if (day===today.getDate()&&mo===today.getMonth()&&yr===today.getFullYear()) el.classList.add('today');
-      if (appState.calSelectedDate===ds) el.classList.add('selected');
-      if (appState.events[ds]&&appState.events[ds].length>0) el.classList.add('has-event');
-      el.onclick = function(){ appState.calSelectedDate=ds; renderCalendar(); };
-      grid.appendChild(el);
-    })(d2);
-  }
-  
-  // Next month days
-  var total = firstDay + daysInMonth;
-  var remain = total%7===0?0:7-(total%7);
-  for (var r = 1; r <= remain; r++) { 
-    var rd = document.createElement('div'); 
-    rd.className='cal-day other-month'; 
-    rd.textContent=r; 
-    grid.appendChild(rd); 
-  }
-  renderEventList();
-}
-
-function changeMonth(dir){ 
-  appState.calMonth+=dir; 
-  if(appState.calMonth>11){appState.calMonth=0;appState.calYear++;} 
-  if(appState.calMonth<0){appState.calMonth=11;appState.calYear--;} 
-  renderCalendar(); 
-}
-
-function goToday(){ 
-  var t=new Date(); 
-  appState.calYear=t.getFullYear(); 
-  appState.calMonth=t.getMonth(); 
-  appState.calSelectedDate=getDateStr(t); 
-  renderCalendar(); 
-}
-
-function addEvent(){   var inp=document.getElementById('event-input'); 
-  if(!inp) return;
-  var txt=inp.value.trim(); 
-  if(!txt)return showToast('Tulis catatan dulu!',true); 
-  var dt=appState.calSelectedDate||getDateStr(new Date()); 
-  if(!appState.events[dt])appState.events[dt]=[]; 
-  appState.events[dt].push(txt); 
-  inp.value=''; 
-  saveState(); 
-  renderCalendar(); 
-  showToast('Catatan ditambahkan'); 
-}
-
-function deleteEvent(date,idx){ 
-  if(!appState.events[date]) return;
-  appState.events[date].splice(idx,1); 
-  if(appState.events[date].length===0)delete appState.events[date]; 
-  saveState(); 
-  renderCalendar(); 
-}
-
-function renderEventList(){
-  var list=document.getElementById('event-list'); 
-  if(!list) return;
-  list.innerHTML='';
-  var priv=appState.hideEventsPrivacy;
-  var allDates=Object.keys(appState.events).sort();
-  if(allDates.length===0){list.innerHTML='<div style="color:var(--text2);font-size:.82rem;padding:8px 0">Belum ada catatan</div>';return;}
-  allDates.forEach(function(date){
-    (appState.events[date]||[]).forEach(function(ev,idx){
-      var item=document.createElement('div'); item.className='event-item';
-      item.innerHTML='<span>'+(priv?'Tersembunyi':ev)+' <span class="event-date">'+formatDate(date)+'</span></span><button class="btn btn-sm btn-danger" onclick="deleteEvent(\''+date+'\','+idx+')">x</button>';
-      list.appendChild(item);
-    });
-  });
-}
-
-function getDateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function formatDate(s){ var p=s.split('-'); return p[2]+' '+monthNames[parseInt(p[1])-1]+' '+p[0]; }
-
-// ==================== CURRENCY ====================
-var CURRENCIES = { IDR:{name:'Rupiah',symbol:'Rp',flag:'ID'},USD:{name:'US Dollar',symbol:'$',flag:'US'},EUR:{name:'Euro',symbol:'€',flag:'EU'},GBP:{name:'Pound',symbol:'£',flag:'GB'},JPY:{name:'Yen',symbol:'¥',flag:'JP'},SGD:{name:'SGD',symbol:'S$',flag:'SG'},MYR:{name:'Ringgit',symbol:'RM',flag:'MY'},AUD:{name:'AUD',symbol:'A$',flag:'AU'},CNY:{name:'Yuan',symbol:'¥',flag:'CN'},KRW:{name:'Won',symbol:'W',flag:'KR'},SAR:{name:'Riyal',symbol:'R',flag:'SA'},AED:{name:'Dirham',symbol:'D',flag:'AE'},THB:{name:'Baht',symbol:'B',flag:'TH'},HKD:{name:'HKD',symbol:'HK$',flag:'HK'},CAD:{name:'CAD',symbol:'C$',flag:'CA'} };
-var RATES_TO_IDR = { IDR:1,USD:15800,EUR:17200,GBP:20100,JPY:107,SGD:11800,MYR:3400,AUD:10400,CNY:2200,KRW:12,SAR:4200,AED:4300,THB:450,HKD:2020,CAD:11700 };
-
-function initCurrencySelects(){
-  var from=document.getElementById('curr-from'); 
-  var to=document.getElementById('curr-to');
-  if(!from || !to) return;
-  from.innerHTML=''; to.innerHTML='';
-  Object.keys(CURRENCIES).forEach(function(code){    var info=CURRENCIES[code];
-    from.appendChild(new Option(code+' - '+info.name, code));
-    to.appendChild(new Option(code+' - '+info.name, code));
-  });
-  from.value='USD'; to.value='IDR';
-}
-
-function convertCurrency(){
-  var amountEl = document.getElementById('curr-amount');
-  var fromEl = document.getElementById('curr-from');
-  var toEl = document.getElementById('curr-to');
-  var resVal = document.getElementById('curr-result-val');
-  var resLab = document.getElementById('curr-result-label');
-  var rateInfo = document.getElementById('curr-rate-info');
-
-  if(!amountEl || !fromEl || !toEl) return;
-
-  var amount=parseFloat(amountEl.value)||0;
-  var from=fromEl.value;
-  var to=toEl.value;
-  
-  if(!amount){
-    if(resVal) resVal.textContent='—';
-    if(resLab) resLab.textContent='Masukkan jumlah';
-    if(rateInfo) rateInfo.textContent='';
-    return;
-  }
-  
-  var result=(amount*RATES_TO_IDR[from])/RATES_TO_IDR[to];
-  var rate=RATES_TO_IDR[from]/RATES_TO_IDR[to];
-  var toInfo=CURRENCIES[to]; var fromInfo=CURRENCIES[from];
-  var decimals=(to==='IDR'||to==='KRW')?0:4;
-  
-  if(resVal) resVal.textContent=toInfo.symbol+' '+result.toLocaleString('id-ID',{maximumFractionDigits:decimals});
-  if(resLab) resLab.textContent=amount.toLocaleString()+' '+from+' = '+toInfo.symbol+' '+result.toLocaleString('id-ID',{maximumFractionDigits:4})+' '+to;
-  if(rateInfo) rateInfo.textContent='1 '+from+' = '+toInfo.symbol+' '+rate.toLocaleString('id-ID',{maximumFractionDigits:4})+' '+to+' *kurs perkiraan';
-}
-
-function swapCurrencies(){ 
-  var f=document.getElementById('curr-from'); 
-  var t=document.getElementById('curr-to'); 
-  if(!f || !t) return;
-  var tmp=f.value; f.value=t.value; t.value=tmp; 
-  convertCurrency(); 
-}
-
-function renderQuickRates(){
-  var c=document.getElementById('quick-rates');
-  if(!c) return;
-  ['USD','EUR','SGD','MYR','JPY','AUD'].forEach(function(code){    var info=CURRENCIES[code]; var rate=RATES_TO_IDR[code];
-    var el=document.createElement('div'); el.className='rate-card';
-    el.innerHTML='<div class="flag">'+code+'</div><div class="code">'+code+'</div><div class="val">Rp '+rate.toLocaleString('id-ID')+'</div>';
-    el.onclick=function(){ 
-      var from=document.getElementById('curr-from'); 
-      var to=document.getElementById('curr-to'); 
-      var amt=document.getElementById('curr-amount');
-      if(from) from.value=code; 
-      if(to) to.value='IDR'; 
-      if(amt) amt.value='1'; 
-      convertCurrency(); 
-    };
-    c.appendChild(el);
-  });
-}
-
-// ==================== CALCULATOR ====================
-var calcState = { expr:'', waitingForOperand:false };
-
-function updateCalcDisplay(v){ 
-  var d=document.getElementById('calc-display');
-  if(d) d.textContent=v; 
-}
-
-function calcInput(v){
-  var d=document.getElementById('calc-display');
-  if(!d) return;
-  var isOp=['+','-','*','/'].indexOf(v)!==-1;
-  if(isOp){ 
-    document.getElementById('calc-expr').textContent=d.textContent+' '+(v==='*'?'x':v==='/'?'/':v); 
-    calcState.expr=d.textContent+v; 
-    calcState.waitingForOperand=true; 
-  } else { 
-    if(calcState.waitingForOperand||d.textContent==='0'){
-      updateCalcDisplay(v);
-      calcState.waitingForOperand=false;
+    const qs = document.getElementById('qualitySection');
+    if (fmt === 'mp4') {
+      qs.classList.add('visible');
     } else {
-      updateCalcDisplay(d.textContent+v);
-    } 
-  }
-}
-
-function calcDot(){ 
-  var d=document.getElementById('calc-display'); 
-  if(d && d.textContent.indexOf('.')===-1) updateCalcDisplay(d.textContent+'.'); 
-}
-
-function calcEquals(){
-  var d=document.getElementById('calc-display'); 
-  if(!d || !calcState.expr) return;  var full=calcState.expr+d.textContent;
-  try { 
-    var r=Math.round((new Function('"use strict";return('+full+')')())*1e10)/1e10; 
-    document.getElementById('calc-expr').textContent=full+' ='; 
-    document.getElementById('calc-history').textContent=full+' = '+r.toLocaleString('id-ID'); 
-    updateCalcDisplay(r.toString()); 
-    calcState.expr=''; 
-    calcState.waitingForOperand=true; 
-  } catch(e){ 
-    updateCalcDisplay('Error'); 
-    calcState.expr=''; 
-  }
-}
-
-function calcClear(){ 
-  updateCalcDisplay('0'); 
-  var expr=document.getElementById('calc-expr');
-  if(expr) expr.textContent=''; 
-  calcState={expr:'',waitingForOperand:false}; 
-}
-
-function calcSign(){ 
-  var d=document.getElementById('calc-display'); 
-  if(d) updateCalcDisplay((parseFloat(d.textContent)*-1).toString()); 
-}
-
-function calcPercent(){ 
-  var d=document.getElementById('calc-display'); 
-  if(d) updateCalcDisplay((parseFloat(d.textContent)/100).toString()); 
-}
-
-// ==================== SETTINGS ====================
-function updateProfile(){
-  var nameEl=document.getElementById('setting-name');
-  if(!nameEl) return;
-  var name=nameEl.value.trim()||'Pengguna';
-  appState.username=name;
-  var display=appState.hideNamePrivacy?'Anonim':name;
-  var userEl=document.getElementById('header-username');
-  var avEl=document.getElementById('header-avatar');
-  if(userEl) userEl.textContent=display;
-  if(avEl) avEl.textContent=display[0].toUpperCase();
-  saveState();
-}
-
-function updateAppTitle(){
-  var titleEl=document.getElementById('setting-apptitle');
-  if(!titleEl) return;
-  var title=titleEl.value.trim()||'Dhan App';
-  appState.appTitle=title;  var dispEl=document.getElementById('app-title-display');
-  var pageEl=document.getElementById('page-title');
-  if(dispEl) dispEl.textContent=title;
-  if(pageEl) pageEl.textContent=title;
-  saveState();
-}
-
-function setTheme(theme, el){
-  document.querySelectorAll('.theme-swatch').forEach(function(s){s.classList.remove('active');});
-  if(el) el.classList.add('active');
-  if(theme==='default') delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme=theme;
-  appState.theme=theme; saveState();
-}
-
-function toggleHideName(){ 
-  var chk=document.getElementById('priv-hide-name');
-  if(chk) appState.hideNamePrivacy=chk.checked; 
-  updateProfile(); 
-}
-
-function togglePrivateEvents(){ 
-  var chk=document.getElementById('priv-hide-events');
-  if(chk) appState.hideEventsPrivacy=chk.checked; 
-  renderEventList(); 
-  saveState(); 
-}
-
-function applyLoadedState(){
-  if(appState.theme&&appState.theme!=='default'){ 
-    document.documentElement.dataset.theme=appState.theme; 
-    var sw=document.querySelector('[data-theme="'+appState.theme+'"]'); 
-    if(sw){
-      document.querySelectorAll('.theme-swatch').forEach(function(s){s.classList.remove('active');}); 
-      sw.classList.add('active');
-    } 
-  }
-  var t1=document.getElementById('app-title-display');
-  var t2=document.getElementById('page-title');
-  var t3=document.getElementById('setting-apptitle');
-  if(t1) t1.textContent=appState.appTitle;
-  if(t2) t2.textContent=appState.appTitle;
-  if(t3) t3.value=appState.appTitle;
-  
-  var n1=document.getElementById('setting-name');
-  if(n1) n1.value=appState.username;
-  
-  var dn=appState.hideNamePrivacy?'Anonim':appState.username;
-  var u1=document.getElementById('header-username');
-  var u2=document.getElementById('header-avatar');  if(u1) u1.textContent=dn;
-  if(u2) u2.textContent=dn[0].toUpperCase();
-  
-  var p1=document.getElementById('priv-hide-name');
-  var p2=document.getElementById('priv-hide-events');
-  if(p1) p1.checked=appState.hideNamePrivacy;
-  if(p2) p2.checked=appState.hideEventsPrivacy;
-}
-
-// ==================== DHAN UPDATER ENGINE ====================
-function handleDhanFile(file){
-  if(!file)return;
-  var drop=document.getElementById('updater-drop');
-  if(drop) drop.classList.remove('dragover');
-  var reader=new FileReader();
-  reader.onload=function(e){ processDhanContent(e.target.result, file.name, false); };
-  reader.readAsText(file);
-  var inp=document.getElementById('dhan-file-input');
-  if(inp) inp.value='';
-}
-
-function handleDhanDrop(e){
-  e.preventDefault();
-  var drop=document.getElementById('updater-drop');
-  if(drop) drop.classList.remove('dragover');
-  var file=e.dataTransfer.files[0]; if(file) handleDhanFile(file);
-}
-
-async function processDhanContent(content, filename, silent) {
-  var logEl = document.getElementById('update-log');
-  if (!silent) { 
-    if(logEl) {
-      logEl.style.display='block'; 
-      logEl.innerHTML=''; 
+      qs.classList.remove('visible');
     }
-    log('info','Memproses: '+filename); 
-    log('info','─────────────────────────────────'); 
   }
 
-  // Extract block commands [NAME]...[/NAME]
-  var blockCmds = [];
-  var processed = content.replace(/\[([A-Za-z_]+)\]([\s\S]*?)\[\/\1\]/g, function(_, name, body){
-    var cmdName = name.toUpperCase().endsWith('_BLOCK') ? name.toUpperCase() : name.toUpperCase()+'_BLOCK';
-    blockCmds.push({ cmd: cmdName, val: body }); return '@@BLOCK@@';
-  });
+  function selectQuality(btn) {
+    document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedQuality = btn.textContent.trim().split('\n')[0].trim();
+  }
 
-  // Parse line commands
-  var lineCmds = [];
-  processed.split('\n').forEach(function(rawLine){
-    var line = rawLine.trim();    if (!line || line.startsWith('#') || line.startsWith('//') || line==='@@BLOCK@@') return;
-    if (/^\[.*\]$/.test(line)) return;
-    if (line.startsWith('<')) { lineCmds.push({cmd:'__HTML__',val:line}); return; }
-    var ci = line.indexOf(':');
-    if (ci===-1) lineCmds.push({cmd:line.toUpperCase().replace(/\s+/g,'_'),val:''});
-    else lineCmds.push({cmd:line.substring(0,ci).trim().toUpperCase(), val:line.substring(ci+1).trim()});
-  });
-
-  var allCmds = lineCmds.concat(blockCmds);
-  var ok=0, err=0;
-  var sep, parts, elFound, styleEl, blob, url, a, pageEl;
-
-  allCmds.forEach(function(item){
-    var cmd=item.cmd, val=item.val;
+  async function pasteFromClipboard() {
     try {
-      if (cmd==='__HTML__') { if(!silent)log('err','Baris HTML mentah tidak valid. Gunakan SET_INNER_HTML atau [HTML_BLOCK]'); err++; return; }
-      switch(cmd) {
-        case 'VERSION': if(!silent)log('info','Versi: '+val); ok++; break;
-        case 'AUTHOR': if(!silent)log('info','Author: '+val); ok++; break;
-        case 'DESCRIPTION': if(!silent)log('info',val); ok++; break;
-        case 'LOG': if(!silent)log('info',val); ok++; break;
-        case 'SET_TITLE': 
-          appState.appTitle=val; 
-          var t1=document.getElementById('app-title-display');
-          var t2=document.getElementById('page-title');
-          var t3=document.getElementById('setting-apptitle');
-          if(t1) t1.textContent=val; 
-          if(t2) t2.textContent=val; 
-          if(t3) t3.value=val; 
-          if(!silent)log('ok','Judul -> '+val); ok++; break;
-        case 'SET_USERNAME': 
-          appState.username=val; 
-          var n1=document.getElementById('setting-name');
-          if(n1) n1.value=val; 
-          updateProfile(); 
-          if(!silent)log('ok','Username -> '+val); ok++; break;
-        case 'SET_LANG': document.documentElement.lang=val; if(!silent)log('ok','Lang -> '+val); ok++; break;
-        case 'SET_THEME':
-          var validT=['default','ocean','forest','sunset','midnight','rose'];
-          if(validT.indexOf(val.toLowerCase())!==-1){ 
-            var sw=document.querySelector('[data-theme="'+val.toLowerCase()+'"]'); 
-            if(sw)setTheme(val.toLowerCase(),sw); 
-            if(!silent)log('ok','Tema -> '+val); ok++; 
-          } else { if(!silent)log('err','Tema tidak dikenal: '+val); err++; } break;
-        case 'SET_CSS_VAR': parts=val.split(':'); if(parts.length>=2){document.documentElement.style.setProperty(parts[0].trim(),parts.slice(1).join(':').trim()); if(!silent)log('ok','CSS var '+parts[0].trim()); ok++;}else{if(!silent)log('err','Format: SET_CSS_VAR:--nama:nilai');err++;} break;
-        case 'SET_BG_COLOR': document.documentElement.style.setProperty('--bg',val); if(!silent)log('ok','--bg -> '+val); ok++; break;
-        case 'SET_PRIMARY_COLOR': document.documentElement.style.setProperty('--primary',val); if(!silent)log('ok','--primary -> '+val); ok++; break;
-        case 'SET_ACCENT_COLOR': document.documentElement.style.setProperty('--accent',val); if(!silent)log('ok','--accent -> '+val); ok++; break;
-        case 'SET_TEXT_COLOR': document.documentElement.style.setProperty('--text',val); if(!silent)log('ok','--text -> '+val); ok++; break;
-        case 'SET_BORDER_RADIUS': document.documentElement.style.setProperty('--radius',val); if(!silent)log('ok','--radius -> '+val); ok++; break;        case 'SET_FONT': var fl=document.createElement('link'); fl.rel='stylesheet'; fl.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(val)+':wght@400;600;700&display=swap'; document.head.appendChild(fl); document.body.style.fontFamily="'"+val+"',sans-serif"; if(!silent)log('ok','Font -> '+val); ok++; break;
-        case 'REPLACE_STYLE': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','theme-override'); styleEl.textContent=':root{'+val+'}'; document.querySelectorAll('style[data-dhan="theme-override"]').forEach(function(s){s.remove();}); document.head.appendChild(styleEl); if(!silent)log('ok',':root override'); ok++; break;
-        case 'INJECT_CSS': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','injected'); styleEl.textContent=val; document.head.appendChild(styleEl); if(!silent)log('ok','CSS injeksi'); ok++; break;
-        case 'CSS_BLOCK': styleEl=document.createElement('style'); styleEl.setAttribute('data-dhan','block'); styleEl.textContent=val; document.head.appendChild(styleEl); if(!silent)log('ok','CSS block ('+val.trim().split('\n').length+' baris)'); ok++; break;
-        case 'REMOVE_CSS_INJECTED': document.querySelectorAll('style[data-dhan]').forEach(function(s){s.remove();}); if(!silent)log('ok','CSS injeksi dihapus'); ok++; break;
-        case 'INJECT_JS': try{(new Function(val))(); if(!silent)log('ok','JS dieksekusi'); ok++;}catch(je){if(!silent)log('err','JS error: '+je.message); err++;} break;
-        case 'JS_BLOCK': try{(new Function(val))(); if(!silent)log('ok','JS block ('+val.trim().split('\n').length+' baris)'); ok++;}catch(je){if(!silent)log('err','JS block error: '+je.message); err++;} break;
-        case 'LOAD_SCRIPT': var sc=document.createElement('script'); sc.src=val; sc.async=true; document.head.appendChild(sc); if(!silent)log('ok','Script dimuat: '+val); ok++; break;
-        case 'SET_INNER_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.innerHTML=val.substring(sep+1).trim(); if(!silent)log('ok','innerHTML diupdate'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan: '+val.substring(0,sep));err++;}}else{if(!silent)log('err','Format: SET_INNER_HTML:sel:html');err++;} break;
-        case 'HTML_BLOCK': sep=val.indexOf('|||'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.innerHTML=val.substring(sep+3).trim(); if(!silent)log('ok','HTML block injected'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}}else{if(!silent)log('err','Format: [HTML_BLOCK]sel|||html[/HTML_BLOCK]');err++;} break;
-        case 'SET_TEXT': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.textContent=val.substring(sep+1).trim(); if(!silent)log('ok','Text diupdate'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
-        case 'SET_ATTR': parts=val.split(':'); if(parts.length>=3){elFound=document.querySelector(parts[0].trim()); if(elFound){elFound.setAttribute(parts[1].trim(),parts.slice(2).join(':').trim()); if(!silent)log('ok','Attr diset'); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}}else{if(!silent)log('err','Format: SET_ATTR:sel:attr:val');err++;} break;
-        case 'ADD_CLASS': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.classList.add(val.substring(sep+1).trim()); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
-        case 'REMOVE_CLASS': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.classList.remove(val.substring(sep+1).trim()); ok++;}else{if(!silent)log('err','Elemen tidak ditemukan');err++;}} break;
-        case 'HIDE_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.style.display='none'; if(!silent)log('ok','Disembunyikan: '+val); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
-        case 'SHOW_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.style.display=''; if(!silent)log('ok','Ditampilkan: '+val); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
-        case 'REMOVE_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.remove(); if(!silent)log('ok','Dihapus dari DOM'); ok++;}else{if(!silent)log('err','Tidak ditemukan');err++;} break;
-        case 'APPEND_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.insertAdjacentHTML('beforeend',val.substring(sep+1).trim()); if(!silent)log('ok','HTML di-append'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}} break;
-        case 'PREPEND_HTML': sep=val.indexOf(':'); if(sep>-1){elFound=document.querySelector(val.substring(0,sep).trim()); if(elFound){elFound.insertAdjacentHTML('afterbegin',val.substring(sep+1).trim()); if(!silent)log('ok','HTML di-prepend'); ok++;}else{if(!silent)log('err','Selector tidak ditemukan');err++;}} break;
-        case 'NAV_TO':
-          var navFound=false;
-          document.querySelectorAll('.nav-item').forEach(function(btn){ var oc=btn.getAttribute('onclick'); if(oc&&oc.indexOf("'"+val+"'")!==-1){btn.click();navFound=true;} });
-          if(navFound){if(!silent)log('ok','Navigasi -> '+val); ok++;}else{if(!silent)log('err','Tab tidak ditemukan: '+val+' (pilihan: calendar,currency,calculator,settings)');err++;} break;
-        case 'ADD_NAV_TAB':
-          parts=val.split(':'); if(parts.length>=3){
-            var tid=parts[0].trim(),temoji=parts[1].trim(),tlabel=parts.slice(2).join(':').trim();
-            if(!document.getElementById('page-'+tid)){
-              var np=document.createElement('div'); np.className='page card'; np.id='page-'+tid;
-              np.innerHTML='<div class="section-pad"><div class="section-title">'+temoji+' '+tlabel+'</div><div id="custom-'+tid+'-content" style="color:var(--text2);text-align:center;padding:40px 0">Tab baru</div></div>';
-              var wr=document.querySelector('.app-wrapper'); if(wr) wr.insertBefore(np,wr.lastElementChild);
-            }
-            if(!document.querySelector('.nav-item[onclick*="\''+tid+'\'"]')){
-              var nb=document.createElement('button'); nb.className='nav-item';
-              nb.innerHTML='<span class="nav-icon">'+temoji+'</span>'+tlabel;
-              nb.setAttribute('onclick',"switchPage('"+tid+"',this)");
-              var nav=document.getElementById('bottom-nav'); if(nav) nav.appendChild(nb);
-            }
-            if(!silent)log('ok','Tab "'+tlabel+'" ditambahkan'); ok++;
-          }else{if(!silent)log('err','Format: ADD_NAV_TAB:id:emoji:label');err++;} break;
-        case 'REPLACE_PAGE_SECTION': sep=val.indexOf(':'); if(sep>-1){pageEl=document.getElementById('page-'+val.substring(0,sep).trim()); if(pageEl){pageEl.innerHTML=val.substring(sep+1).trim(); if(!silent)log('ok','Page diganti'); ok++;}else{if(!silent)log('err','Page tidak ditemukan');err++;}} break;
-        case 'REPLACE_FULL_HTML_BLOCK': if(confirm('Ganti SELURUH halaman dengan HTML baru?')){document.open();document.write(val.trim());document.close(); return;}else{if(!silent)log('info','Dibatalkan');} break;
-        case 'ADD_EVENT': parts=val.split(':'); if(parts.length>=2){var ed=parts[0].trim(),et=parts.slice(1).join(':').trim(); if(/^\d{4}-\d{2}-\d{2}$/.test(ed)){if(!appState.events[ed])appState.events[ed]=[]; appState.events[ed].push(et); renderCalendar(); if(!silent)log('ok','Event: "'+et+'" @ '+ed); ok++;}else{if(!silent)log('err','Format tanggal: YYYY-MM-DD');err++;}}else{if(!silent)log('err','Format: ADD_EVENT:YYYY-MM-DD:teks');err++;} break;
-        case 'REMOVE_EVENT': parts=val.split(':'); if(parts.length>=2){var rd2=parts[0].trim(),ri=parts[1].trim(); if(ri==='all')delete appState.events[rd2]; else if(appState.events[rd2])appState.events[rd2].splice(parseInt(ri),1); renderCalendar(); if(!silent)log('ok','Event dihapus'); ok++;} break;
-        case 'CLEAR_EVENTS': appState.events={}; renderCalendar(); if(!silent)log('ok','Semua event dihapus'); ok++; break;
-        case 'GO_TO_DATE': if(/^\d{4}-\d{2}-\d{2}$/.test(val)){parts=val.split('-'); appState.calYear=parseInt(parts[0]); appState.calMonth=parseInt(parts[1])-1; appState.calSelectedDate=val; renderCalendar(); if(!silent)log('ok','Kalender -> '+val); ok++;}else{if(!silent)log('err','Format: YYYY-MM-DD');err++;} break;
-        case 'CALC_PRESET': var cd=document.getElementById('calc-display'); if(cd){cd.textContent=val; calcState={expr:'',waitingForOperand:false};} if(!silent)log('ok','Kalkulator -> '+val); ok++; break;
-        case 'CALC_EVAL': try{var cr=(new Function('"use strict";return('+val+')')());var cd2=document.getElementById('calc-display'); if(cd2){cd2.textContent=cr; var ch=document.getElementById('calc-history'); if(ch)ch.textContent=val+' = '+cr;} if(!silent)log('ok',val+' = '+cr); ok++;}catch(ce){if(!silent)log('err','Eval error: '+ce.message);err++;} break;
-        case 'SET_CURRENCY_FROM': if(CURRENCIES[val.toUpperCase()]){var cf=document.getElementById('curr-from'); if(cf){cf.value=val.toUpperCase(); convertCurrency();} if(!silent)log('ok','Kurs dari -> '+val.toUpperCase()); ok++;}else{if(!silent)log('err','Kode tidak valid: '+val);err++;} break;
-        case 'SET_CURRENCY_TO': if(CURRENCIES[val.toUpperCase()]){var ct=document.getElementById('curr-to'); if(ct){ct.value=val.toUpperCase(); convertCurrency();} if(!silent)log('ok','Kurs ke -> '+val.toUpperCase()); ok++;}else{if(!silent)log('err','Kode tidak valid: '+val);err++;} break;
-        case 'SET_CURRENCY_AMOUNT': var ca=document.getElementById('curr-amount'); if(ca){ca.value=val; convertCurrency();} if(!silent)log('ok','Jumlah -> '+val); ok++; break;        case 'SET_EXCHANGE_RATE': parts=val.split(':'); if(parts.length===2&&RATES_TO_IDR[parts[0].trim().toUpperCase()]!==undefined){RATES_TO_IDR[parts[0].trim().toUpperCase()]=parseFloat(parts[1].trim()); convertCurrency(); renderQuickRates(); if(!silent)log('ok','Rate '+parts[0].trim().toUpperCase()+' -> '+parts[1].trim()); ok++;}else{if(!silent)log('err','Format: SET_EXCHANGE_RATE:KODE:nilai');err++;} break;
-        case 'SHOW_TOAST': showToast(val); if(!silent)log('ok','Toast: "'+val+'"'); ok++; break;
-        case 'SHOW_TOAST_ERROR': showToast(val,true); ok++; break;
-        case 'SHOW_ALERT': alert(val); ok++; break;
-        case 'SCROLL_TO': elFound=document.querySelector(val); if(elFound){elFound.scrollIntoView({behavior:'smooth'}); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
-        case 'FOCUS_ELEMENT': elFound=document.querySelector(val); if(elFound){elFound.focus(); ok++;}else{if(!silent)log('err','Tidak ditemukan: '+val);err++;} break;
-        case 'SET_PRIVACY_NAME': appState.hideNamePrivacy=(val==='true'||val==='1'||val==='on'); var phn=document.getElementById('priv-hide-name'); if(phn)phn.checked=appState.hideNamePrivacy; updateProfile(); ok++; break;
-        case 'SET_PRIVACY_EVENTS': appState.hideEventsPrivacy=(val==='true'||val==='1'||val==='on'); var phe=document.getElementById('priv-hide-events'); if(phe)phe.checked=appState.hideEventsPrivacy; renderEventList(); ok++; break;
-        case 'SAVE_STATE': saveState(); if(!silent)log('ok','State disimpan'); ok++; break;
-        case 'CLEAR_STATE': localStorage.removeItem('dhanapp_state'); if(!silent)log('ok','State dihapus'); ok++; break;
-        case 'SET_STATE_KEY': sep=val.indexOf(':'); if(sep>-1){appState[val.substring(0,sep).trim()]=val.substring(sep+1).trim(); saveState(); ok++;} break;
-        case 'WAIT': ok++; break;
-        case 'RELOAD': if(val==='confirm'){if(confirm('Reload?'))location.reload();}else{setTimeout(function(){location.reload();},parseInt(val)||1000);} ok++; break;
-        case 'REDIRECT': window.location.href=val; ok++; break;
-        case 'OPEN_URL': window.open(val,'_blank'); ok++; break;
-        case 'COPY_TO_CLIPBOARD': if(navigator.clipboard) navigator.clipboard.writeText(val); ok++; break;
-        case 'SET_FAVICON': var fv=document.querySelector('link[rel="icon"]'); if(!fv){fv=document.createElement('link');fv.rel='icon';document.head.appendChild(fv);} fv.href=val; ok++; break;
-        case 'DOWNLOAD_SELF': var dh='<!DOCTYPE html>'+document.documentElement.outerHTML; blob=new Blob([dh],{type:'text/html'}); url=URL.createObjectURL(blob); a=document.createElement('a'); a.href=url; a.download=(val||'dhan-app-updated')+'.html'; a.click(); URL.revokeObjectURL(url); if(!silent)log('ok','Diunduh: '+(val||'dhan-app-updated')+'.html'); ok++; break;
-        case 'REBUILD_PAGE': if(!silent)log('info','Gunakan [REPLACE_FULL_HTML_BLOCK] untuk rebuild penuh'); break;
-        default: if(!silent)log('err','Perintah tidak dikenal: "'+cmd+'"'); err++;
+      const text = await navigator.clipboard.readText();
+      document.getElementById('urlInput').value = text;
+    } catch {
+      document.getElementById('urlInput').focus();
+      document.execCommand('paste');
+    }
+  }
+
+  function detectPlatform(url) {
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return { name: 'YouTube', icon: '▶' };
+    if (url.includes('instagram.com')) return { name: 'Instagram', icon: '📷' };
+    if (url.includes('tiktok.com')) return { name: 'TikTok', icon: '🎵' };
+    if (url.includes('twitter.com') || url.includes('x.com')) return { name: 'Twitter/X', icon: '✕' };
+    if (url.includes('facebook.com') || url.includes('fb.watch')) return { name: 'Facebook', icon: '👥' };
+    if (url.includes('vimeo.com')) return { name: 'Vimeo', icon: '🎬' };
+    if (url.includes('soundcloud.com')) return { name: 'SoundCloud', icon: '🔊' };
+    return { name: 'Unknown', icon: '🌐' };
+  }
+
+  function isValidUrl(str) {
+    try { new URL(str); return true; } catch { return false; }
+  }
+
+  function setProgress(pct) {
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function showStatus(msg, state = 'loading') {
+    const card = document.getElementById('statusCard');
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    card.classList.add('visible');
+    text.textContent = msg;
+    dot.className = 'status-dot' + (state === 'done' ? ' done' : state === 'error' ? ' error' : '');
+  }
+
+  async function fetchMedia() {
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) {
+      shake(document.getElementById('urlInput'));
+      return;
+    }
+    if (!isValidUrl(url)) {
+      showStatus('❌ URL tidak valid. Masukkan link yang benar.', 'error');
+      document.getElementById('statusCard').classList.add('visible');
+      document.getElementById('resultCard').classList.remove('visible');
+      return;
+    }
+
+    const platform = detectPlatform(url);
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true;
+    document.getElementById('fetchBtnText').textContent = '⏳ MEMPROSES...';
+    document.getElementById('resultCard').classList.remove('visible');
+
+    showStatus(`Mendeteksi media dari ${platform.name}...`);
+    setProgress(15);
+
+    // Simulate processing steps
+    await delay(600);
+    setProgress(35);
+    showStatus('Mengambil informasi media...');
+
+    await delay(700);
+    setProgress(60);
+    showStatus('Menyiapkan opsi download...');
+
+    await delay(600);
+    setProgress(90);
+
+    await delay(400);
+    setProgress(100);
+    showStatus(`✅ Media berhasil dianalisis dari ${platform.name}!`, 'done');
+
+    // Show result (demo data)
+    showResult(url, platform);
+
+    btn.disabled = false;
+    document.getElementById('fetchBtnText').textContent = '⚡ ANALISIS & DOWNLOAD';
+  }
+
+  function showResult(url, platform) {
+    const card = document.getElementById('resultCard');
+    const thumb = document.getElementById('mediaThumbnail');
+    const title = document.getElementById('mediaTitle');
+    const meta = document.getElementById('mediaMeta');
+    const opts = document.getElementById('downloadOptions');
+
+    // Demo titles based on platform
+    const demoTitles = {
+      'YouTube': 'Video YouTube - Klik untuk download versi asli',
+      'Instagram': 'Instagram Reel / Post',
+      'TikTok': 'TikTok Video',
+      'Twitter/X': 'Twitter/X Media',
+      'Facebook': 'Facebook Video',
+      'Vimeo': 'Vimeo Video',
+      'SoundCloud': 'SoundCloud Track',
+      'Unknown': 'Media dari ' + url.substring(0, 40) + '...',
+    };
+
+    thumb.textContent = platform.icon;
+    thumb.style.fontSize = '40px';
+    title.textContent = demoTitles[platform.name] || 'Media';
+
+    meta.innerHTML = `
+      <span class="meta-tag">${platform.name}</span>
+      <span class="meta-tag">${selectedFormat.toUpperCase()}</span>
+      ${selectedFormat === 'mp4' ? `<span class="meta-tag">${selectedQuality}</span>` : ''}
+    `;
+
+    // Build download options
+    if (selectedFormat === 'mp4') {
+      opts.innerHTML = `
+        ${makeDownloadItem('MP4', '1080p FHD', '~180 MB', 'mp4', url)}
+        ${makeDownloadItem('MP4', '720p HD', '~90 MB', 'mp4', url)}
+        ${makeDownloadItem('MP4', '480p', '~50 MB', 'mp4', url)}
+        ${makeDownloadItem('MP4', '360p', '~25 MB', 'mp4', url)}
+      `;
+    } else if (selectedFormat === 'mp3') {
+      opts.innerHTML = `
+        ${makeDownloadItem('MP3', '320 kbps', '~8 MB', 'mp3', url)}
+        ${makeDownloadItem('MP3', '192 kbps', '~5 MB', 'mp3', url)}
+        ${makeDownloadItem('MP3', '128 kbps', '~3.5 MB', 'mp3', url)}
+      `;
+    } else {
+      opts.innerHTML = `
+        ${makeDownloadItem('M4A', '256 kbps', '~7 MB', 'wav', url)}
+        ${makeDownloadItem('M4A', '128 kbps', '~4 MB', 'wav', url)}
+      `;
+    }
+
+    card.classList.add('visible');
+  }
+
+  function makeDownloadItem(fmt, quality, size, iconClass, url) {
+    return `
+      <div class="download-item">
+        <div class="download-info">
+          <div class="format-icon icon-${iconClass}">${fmt}</div>
+          <div>
+            <div class="dl-label">${fmt} · ${quality}</div>
+            <div class="dl-size">Est. ${size}</div>
+          </div>
+        </div>
+        <button class="dl-btn" onclick="triggerDownload('${url}', '${fmt}', '${quality}')">
+          ↓ Download
+        </button>
+      </div>
+    `;
+  }
+
+  function triggerDownload(url, fmt, quality) {
+    // In production, this calls your backend API
+    // Example: fetch(`/api/download?url=${encodeURIComponent(url)}&format=${fmt}&quality=${quality}`)
+    // Then redirect to download URL
+
+    // Demo: show alert with backend instruction
+    const backendUrl = `/api/download?url=${encodeURIComponent(url)}&format=${fmt.toLowerCase()}&quality=${quality}`;
+    
+    // Try to open backend URL (works if backend is running)
+    const win = window.open(backendUrl, '_blank');
+    if (!win) {
+      showBackendNote(backendUrl);
+    }
+  }
+
+  function showBackendNote(endpoint) {
+    const note = document.createElement('div');
+    note.style.cssText = `
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #141b22; border: 1px solid #00e5ff; border-radius: 12px;
+      padding: 16px 24px; font-family: 'Space Mono', monospace; font-size: 0.8rem;
+      color: #00e5ff; z-index: 9999; max-width: 480px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,229,255,0.15); animation: fadeUp 0.3s ease;
+    `;
+    note.innerHTML = `⚡ Backend endpoint: <br><span style="color:#a259ff">${endpoint}</span><br><span style="color:#5a7a8a;margin-top:6px;display:block">Jalankan backend yt-dlp untuk download nyata</span>`;
+    document.body.appendChild(note);
+    setTimeout(() => note.remove(), 5000);
+  }
+
+  function shake(el) {
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'shake 0.4s ease';
+    el.style.borderColor = '#ff3d71';
+    setTimeout(() => {
+      el.style.borderColor = '';
+      el.style.animation = '';
+    }, 600);
+  }
+
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Auto-detect when user pastes
+  document.getElementById('urlInput').addEventListener('paste', () => {
+    setTimeout(() => {
+      const val = document.getElementById('urlInput').value;
+      if (val && isValidUrl(val)) {
+        document.getElementById('statusCard').classList.remove('visible');
+        document.getElementById('resultCard').classList.remove('visible');
       }
-    } catch(execErr) { if(!silent)log('err','Exception "'+cmd+'": '+execErr.message); err++; }
+    }, 100);
   });
 
-  saveState();
-  if (!silent) {
-    log('info','─────────────────────────────────');
-    log(err===0?'ok':'info','Selesai: '+ok+' berhasil, '+err+' gagal dari '+allCmds.length+' perintah');
-    showToast(err===0 ? 'Update berhasil! ('+ok+' perintah)' : 'Selesai dengan '+err+' error', err>0);
-    await savePatch(filename, content);
-  }
-}
+  document.getElementById('urlInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') fetchMedia();
+  });
 
-// ==================== LOG & TOAST ====================
-function log(type, msg){
-  var logEl=document.getElementById('update-log');
-  if(!logEl) return;
-  var line=document.createElement('div'); line.className='log-line log-'+type;
-  line.textContent='['+new Date().toLocaleTimeString()+'] '+msg;
-  logEl.appendChild(line); logEl.scrollTop=logEl.scrollHeight;
-}
-
-function clearUpdateLog(){ 
-  var l=document.getElementById('update-log'); 
-  if(l) { l.innerHTML=''; l.style.display='none'; } 
-}
-
-var toastTimer;
-function showToast(msg, isError){
-  var t=document.getElementById('toast');   if(!t) return;
-  t.textContent=msg;
-  t.className='toast show'+(isError?' error':'');
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},3000);
-}
-
-function downloadDhanTemplate(){
-  var tpl='# DHAN FILE TEMPLATE\nVERSION:1.0\nAUTHOR:AI\nDESCRIPTION:Update ini\n\nSET_TITLE:Nama Baru\nSET_USERNAME:Nama Kamu\nSET_THEME:midnight\n\nSET_CSS_VAR:--primary:#ff6b35\n\n[CSS_BLOCK]\n.app-header { background: linear-gradient(135deg,#1a1a2e,#16213e) !important; }\n[/CSS_BLOCK]\n\n[JS_BLOCK]\nconsole.log("Dhan patch aktif");\n[/JS_BLOCK]\n\nADD_EVENT:2024-12-25:Selamat Natal!\nSET_CURRENCY_FROM:USD\nSHOW_TOAST:Update berhasil!\nSAVE_STATE:\n';
-  var blob=new Blob([tpl],{type:'text/plain'}); var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download='template.dhan'; a.click(); URL.revokeObjectURL(url);
-  showToast('Template diunduh!');
-}
-
-// ==================== INIT ====================
-(async function init(){
-  // 1. Tampilkan UI dari localStorage dulu (instan)
-  try { var loc=localStorage.getItem('dhanapp_state'); if(loc) appState=Object.assign({},appState,JSON.parse(loc)); } catch(e){}
-  applyLoadedState(); initCurrencySelects(); convertCurrency(); renderQuickRates();
-  appState.calSelectedDate = getDateStr(new Date()); renderCalendar();
-  setSyncStatus('syncing');
-
-  // 2. Load appState dari Supabase
-  await loadAppState(); applyLoadedState(); renderCalendar(); convertCurrency();
-
-  // 3. Replay semua patch .dhan dari Supabase
-  await replayPatches();
-
-  // 4. Cek status Supabase
-  checkSupabaseStatus();
-  renderPatchList();
-})();
+  // Shake animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)}
+      60%{transform:translateX(-5px)}
+      80%{transform:translateX(5px)}
+    }
+  `;
+  document.head.appendChild(style);
 </script>
+
+<!-- BACKEND INTEGRATION GUIDE (comment) -->
+<!--
+=====================================================
+CARA INTEGRASI BACKEND (yt-dlp)
+=====================================================
+
+1. INSTALL DEPENDENCIES:
+   pip install yt-dlp fastapi uvicorn python-multipart
+
+2. BUAT FILE backend.py:
+
+from fastapi import FastAPI, Query
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+import yt_dlp, os, tempfile
+
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+@app.get("/api/download")
+async def download(url: str = Query(...), format: str = "mp4", quality: str = "720p"):
+    tmpdir = tempfile.mkdtemp()
+    
+    if format == "mp3":
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': f'{tmpdir}/%(title)s.%(ext)s',
+            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '192'}],
+        }
+    else:
+        height = quality.replace('p','')
+        ydl_opts = {
+            'format': f'bestvideo[height<={height}]+bestaudio/best[height<={height}]',
+            'outtmpl': f'{tmpdir}/%(title)s.%(ext)s',
+            'merge_output_format': 'mp4',
+        }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=True)
+        filename = ydl.prepare_filename(info)
+    
+    return FileResponse(filename, filename=os.path.basename(filename))
+
+3. JALANKAN:
+   uvicorn backend:app --reload --port 8000
+
+4. Ubah di frontend:
+   const backendUrl = `http://localhost:8000/api/download?url=...`
+=====================================================
+-->
+
 </body>
 </html>
